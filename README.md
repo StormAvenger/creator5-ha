@@ -9,6 +9,8 @@ Hardware compatibility is **not yet verified** on the user's reported stock firm
 Follow the [project completion guide](docs/project-guide.md) for the ordered plan,
 current status, offline work and the next printer session. Development follows the
 [scope and provenance rules](docs/legal-and-sources.md).
+The user requires [no paid GitHub usage](docs/cost-policy.md). Repository Actions
+are disabled; future tests and builds run locally.
 
 ## Start on macOS or Ubuntu
 
@@ -23,8 +25,9 @@ python3 -m venv .venv
 .venv/bin/mypy
 ```
 
-The tests use synthetic responses and never contact a printer. GitHub Actions runs
-the client checks on macOS and Ubuntu, Python 3.12 and 3.14. It needs no LAN credentials.
+The tests use synthetic responses and never contact a printer. Earlier GitHub CI
+validated macOS/Ubuntu and Python 3.12/3.14; future checks run locally. The former
+workflow is archived under docs/reference and Actions is disabled for the repository.
 
 ## First read-only probe
 
@@ -58,7 +61,7 @@ custom_components/creator5/
   manifest.json
 tests/             # offline protocol and credential-boundary tests
 docs/              # API evidence, deployment and next steps
-.github/workflows/ # portable checks
+docs/reference/   # archived workflow reference, never automatically executed
 ```
 
 The wheel exports `creator5py` as a top-level Python package from this canonical
@@ -71,7 +74,7 @@ Build it using `.venv/bin/python -m build`; do not upload version 0.1.0 to PyPI 
 
 See [installation and limitations](docs/home-assistant.md). Nine runtime tests
 exercise Home Assistant 2026.9.2 with synthetic printer data and external network
-sockets disabled. The separate HA CI job uses Python 3.14 and a pinned test framework.
+sockets disabled. The HA tests use Python 3.14 and a pinned framework; run them locally.
 Validate it on a development HA instance after the live printer probe succeeds.
 This is not HACS/release-ready.
 

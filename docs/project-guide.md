@@ -15,6 +15,11 @@ wait until later. No further printer probes should run until the user resumes.
 
 ## Working boundaries
 
+**Cost:** no paid GitHub usage. Actions is disabled; run checks locally. Student
+benefits may be considered only once active and verified free with no-overage
+controls. See [cost policy](cost-policy.md). Past CI success is historical evidence;
+new workflow runs are not part of the current plan.
+
 Use normal LAN mode and the owner's credentials. Write our own implementation
 from documented protocol behavior and observations of the owner's equipment.
 Keep testing offline until a route to the printer is verified. Remote access uses
@@ -130,7 +135,7 @@ Virtual environments and secret files are recreated, never copied between OSes.
 
 - [ ] Finalize legal/provenance notes, owner-selected license and notices.
 - [ ] Confirm supported firmware and HA versions from evidence.
-- [ ] Run hassfest and HACS validation if HACS distribution is chosen.
+- [ ] Run hassfest and HACS validation locally if HACS distribution is chosen.
 - [ ] Write installation/troubleshooting/uninstall instructions and release notes.
 - [ ] Review the full repository for secrets and proprietary assets.
 - [ ] Obtain the owner's decision to publish publicly and create the first release.
@@ -149,6 +154,6 @@ changes and cloud experiments are not assumed parts of this integration.
 
 Start from the first unchecked item whose prerequisites are available. Keep
 hardware items pending while offline. For each change, record what was verified,
-update this guide, run relevant checks and publish a reviewable development branch/PR.
+update this guide, run relevant checks locally and publish a reviewable development branch/PR.
 The user supplies hardware observations and decisions; Codex handles code, tests,
-docs and CI. Never mark a hardware milestone complete from synthetic tests alone.
+docs and local validation. Never mark a hardware milestone complete from synthetic tests alone.

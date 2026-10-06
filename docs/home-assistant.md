@@ -22,7 +22,7 @@ its sensor platform. Missing numeric fields remain unknown rather than zero.
 ## Offline runtime tests
 
 Use a separate Python 3.14 environment to keep HA's pinned dependencies separate
-from the lightweight standalone client environment. Linux CI runs:
+from the lightweight standalone client environment. Run locally (Actions is disabled):
 
 ```sh
 python -m pip install -r requirements-ha-test.txt
@@ -48,6 +48,6 @@ Developer references:
 
 Before distribution: run HA runtime tests against the user's target HA release, add more
 sensor mappings from sanitized observations, choose a license with the owner,
-validate packaging with hassfest/HACS as applicable. CI tests the client across OSes
-and tests the integration against the pinned HA baseline; it does not establish
+validate packaging with hassfest/HACS locally as applicable. Historical CI tested the
+client across OSes and the pinned HA baseline; it does not establish
 physical-printer compatibility or support for untested HA versions.
