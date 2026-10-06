@@ -70,10 +70,9 @@ HA instance after the live printer probe succeeds. This is not HACS/release-read
 
 ## GitHub and moving to Ubuntu
 
-This is a local repository on branch `main`. The GitHub connector authenticated,
-but returned zero accessible repositories on 2026-10-06. No remote has been selected
-or files uploaded. Once an empty destination repository is available to the connector,
-verify its access before setting `origin` and pushing. Keep it private initially if desired.
+The private project repository is [StormAvenger/creator5-ha](https://github.com/StormAvenger/creator5-ha),
+with default branch `main`. The GitHub connector installation is limited to this
+repository. The local `origin` points to that repository.
 
 Commit source and synthetic fixtures only. On Ubuntu, clone the repository and repeat
 the setup commands above. Recreate `.venv` and `.env`; never copy virtual environments

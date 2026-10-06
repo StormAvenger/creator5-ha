@@ -25,6 +25,5 @@ Developer references:
 
 Before distribution: run HA runtime tests against the target HA release, add more
 sensor mappings from sanitized observations, choose a license with the owner,
-replace documentation/codeowner metadata with the real project repository, and
 validate packaging with hassfest/HACS as applicable. Current CI checks the standalone
 client and static integration source; it does not claim HA runtime compatibility.

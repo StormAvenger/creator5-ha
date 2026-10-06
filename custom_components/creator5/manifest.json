@@ -3,9 +3,10 @@
   "name": "FlashForge Creator 5 (experimental)",
   "version": "0.1.0",
   "config_flow": true,
-  "documentation": "https://github.com/Parallel-7/flashforge-api-docs/wiki/Creator-5-Series",
+  "documentation": "https://github.com/StormAvenger/creator5-ha",
+  "issue_tracker": "https://github.com/StormAvenger/creator5-ha/issues",
   "integration_type": "device",
   "iot_class": "local_polling",
   "requirements": [],
-  "codeowners": []
+  "codeowners": ["@StormAvenger"]
 }
