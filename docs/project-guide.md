@@ -48,7 +48,7 @@ reuse has its license and required notices. No blanket legal clearance is claime
 Exact installed terms and public-license choice remain release gates, not blockers
 for original offline code and synthetic tests.
 
-### 3. Validate Home Assistant without the printer — runtime tests complete locally
+### 3. Validate Home Assistant without the printer — complete
 
 - [x] Use a pinned HA test framework and document the exact HA baseline.
 - [x] Test setup validation, duplicates, invalid inputs and rejected credentials.
@@ -56,12 +56,14 @@ for original offline code and synthetic tests.
 - [x] Test missing fields, lost connectivity and recovery.
 - [x] Test changed credentials/reauthentication and platform unload.
 - [x] Add a separate Linux CI job for actual HA runtime tests.
-- [ ] Confirm the new HA job passes on GitHub.
+- [x] Confirm the new HA job passes on GitHub.
 
 **Complete when:** the tests exercise real HA classes with synthetic status data,
 no printer/network credentials, and CI passes. Mocks prove integration behavior,
 not firmware compatibility.
-Evidence so far: 30 client tests and nine real HA 2026.9.2 runtime tests pass locally.
+Evidence: 30 client tests and nine real HA 2026.9.2 runtime tests pass locally.
+All five [GitHub CI jobs](https://github.com/StormAvenger/creator5-ha/actions/runs/37501135092)
+passed for implementation commit `c8889c1`, including the Linux HA job.
 
 ### 4. Confirm live LAN access — resume with the printer
 
