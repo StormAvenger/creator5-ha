@@ -25,7 +25,7 @@ Tool head fields and material station data differ from older printers; those sen
 are deferred until a real response is checked. Unknown fields are kept in memory
 and not logged. No capability inference comes from success replies to control commands.
 
-The source covers stock firmware through 1.9.8. The user reports stock 1.9.9-330,
+The source covers stock firmware through 1.9.8. The user reports stock `1.9.9-1.3.0`,
 LAN mode enabled. That firmware remains unverified here. The local target address
 belongs in `.env`, not source or fixtures.
 

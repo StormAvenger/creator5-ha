@@ -6,14 +6,17 @@ read-only monitoring. macOS development, Ubuntu deployment, GitHub for source an
 
 This guide carries forward the project and legal boundaries from **TPU Jams
 Troubleshooting**. It is the ordered checklist we update as work progresses.
-Last reviewed: 2026-10-06. Hardware is unavailable until the user returns later today;
-there is no automatic retry or scheduled printer access.
+Last reviewed: 2026-10-06. The user is away from home but can access Home Assistant
+remotely; printer access may be possible through an existing VPN route or an
+authorized terminal on the HA host. Reported stock firmware: `1.9.9-1.3.0`.
+There is no automatic retry or scheduled printer access.
 
 ## Working boundaries
 
 Use normal LAN mode and the owner's credentials. Write our own implementation
 from documented protocol behavior and observations of the owner's equipment.
-Keep testing offline until hardware access resumes. See [legal and source notes](legal-and-sources.md).
+Keep testing offline until a route to the printer is verified. Remote access uses
+the same normal LAN API and credentials. See [legal and source notes](legal-and-sources.md).
 
 Work remains limited to the normal LAN API. Proprietary-code decompilation,
 firmware extraction/modification, rooting, signing/authentication bypasses and
@@ -69,6 +72,9 @@ passed for implementation commit `c8889c1`, including the Linux HA job.
 
 - [ ] Confirm IP, stock firmware version and LAN mode on the printer display.
 - [ ] Check the Mac's route/VLAN/VPN/firewall if port 8898 still times out.
+- [ ] If away from home, verify an existing Tailscale subnet route or WiFiman
+  Teleport connection, or an already-authorized HA-host terminal; remote HA UI
+  access by itself does not establish a Mac-to-printer route.
 - [ ] Enter serial/check code locally and read `/detail` once.
 - [ ] Confirm state and basic readings against the printer display.
 - [ ] Record a sanitized compatibility note for the observed firmware.
