@@ -10,6 +10,8 @@ Last reviewed: 2026-10-06. The user is away from home but can access Home Assist
 remotely; printer access may be possible through an existing VPN route or an
 authorized terminal on the HA host. Reported stock firmware: `1.9.9-1.3.0`.
 There is no automatic retry or scheduled printer access.
+The user subsequently confirmed the printer is off and requested that live work
+wait until later. No further printer probes should run until the user resumes.
 
 ## Working boundaries
 
@@ -71,6 +73,8 @@ passed for implementation commit `c8889c1`, including the Linux HA job.
 ### 4. Confirm live LAN access — resume with the printer
 
 - [ ] Confirm IP, stock firmware version and LAN mode on the printer display.
+- [ ] Power on the printer and verify that the responding address belongs to it
+  before entering credentials; an open TCP port does not identify the device.
 - [ ] Check the Mac's route/VLAN/VPN/firewall if port 8898 still times out.
 - [ ] If away from home, verify an existing Tailscale subnet route or WiFiman
   Teleport connection, or an already-authorized HA-host terminal; remote HA UI
@@ -82,6 +86,11 @@ passed for implementation commit `c8889c1`, including the Linux HA job.
 **Complete when:** a valid authenticated status response is observed on the
 user's printer. Earlier reachability timed out; hardware compatibility is unverified.
 Follow [the first-session checklist](first-printer-session.md).
+Remote inspection found HA Core 2026.9.4 on HA OS 18.3 and an existing running
+Terminal & SSH app. A TCP-only check from that terminal found port 8898 open at
+the supplied address, but the user reports the printer is off. Device identity
+and authenticated API behavior remain unverified. Python is not installed in
+that terminal app; select the probe runtime when the user resumes.
 
 ### 5. Complete the monitoring model
 

@@ -3,6 +3,9 @@
 This is an experimental integration, not a validated production release.
 Offline runtime tests cover Home Assistant 2026.9.2; real printer compatibility
 and the user's installed HA version remain unverified.
+The remote About page subsequently confirmed the user's HA Core version is
+2026.9.4 on HA OS 18.3. Runtime tests currently cover 2026.9.2; installation and
+live validation on 2026.9.4 are still pending.
 
 1. Confirm that the standalone read-only probe succeeds first.
 2. Copy the entire `custom_components/creator5` folder into the development Home

@@ -4,7 +4,11 @@ No printer work is scheduled while the user is away. Access can resume locally o
 through a verified remote path. The corrected reported stock firmware is `1.9.9-1.3.0`.
 When access is available:
 
-1. Confirm the printer display's current IP, LAN mode and exact stock firmware version.
+Current pause: the user reports the printer is off and asked to wait until later.
+Do not retry or send credentials until they resume and device identity is verified.
+
+1. Power on the printer and confirm its display's current IP, LAN mode and exact
+   stock firmware version. Verify the supplied address still belongs to this printer.
 2. Make sure the Mac can reach that subnet; the earlier port-8898 connection timed out.
    Check routing, VPN and VLAN/firewall rules before changing printer settings.
 3. Run `Probe printer.command` in macOS Terminal (or `.venv/bin/creator5-probe`
@@ -29,6 +33,10 @@ When access is available:
 
 Inspect existing access first. New subnet routes, firewall permissions, terminal
 installation or changes to production HA need a concrete scope before making changes.
+Remote inspection confirmed HA Core 2026.9.4, HA OS 18.3 and an existing running
+Terminal & SSH app. Python is absent from that app. Its TCP check found a service
+listening on port 8898 at the supplied address, but did not identify the device
+or send authentication. The printer was subsequently reported off.
 Keep code entry local to the trusted client/HA session and restrict output to the
 sanitized status summary. No public printer endpoint is needed.
 
