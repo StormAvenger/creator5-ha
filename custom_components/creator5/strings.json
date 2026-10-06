@@ -1,0 +1,26 @@
+{
+  "config": {
+    "step": {
+      "reauth_confirm": {
+        "title": "Update LAN check code",
+        "description": "Enter the current LAN check code shown on your printer.",
+        "data": {"check_code": "LAN check code"}
+      },
+      "user": {
+        "title": "Connect to your Creator 5",
+        "description": "Enable LAN mode and enter the private IPv4 address, serial number and LAN check code from your printer. This integration only reads status.",
+        "data": {
+          "host": "Printer LAN IPv4 address",
+          "serial_number": "Serial number",
+          "check_code": "LAN check code"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not read printer status. Check address, firmware and network access.",
+      "invalid_auth": "Check serial number, LAN check code and LAN mode.",
+      "invalid_config": "Enter a private IPv4 address and nonempty credentials."
+    },
+    "abort": {"already_configured": "This printer is already configured."}
+  }
+}
