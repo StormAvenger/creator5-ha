@@ -1,4 +1,5 @@
 include .env.example .gitignore
+include requirements-ha-test.txt
 recursive-include docs *.md
 recursive-include custom_components *.py *.json *.typed
 recursive-include tests *.py

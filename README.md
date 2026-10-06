@@ -1,9 +1,14 @@
 # Creator 5 Home Assistant project
 
 Experimental read-only FlashForge Creator 5 / Creator 5 Pro LAN integration.
+This is an unofficial project and is not endorsed by FlashForge.
 Built on macOS; the same Python package and commands work on Ubuntu.
 No printer commands, uploads, heaters, motion, or print-job controls are implemented.
 Hardware compatibility is **not yet verified** on the user's stock 1.9.9-330 firmware.
+
+Follow the [project completion guide](docs/project-guide.md) for the ordered plan,
+current status, offline work and the next printer session. Development follows the
+[scope and provenance rules](docs/legal-and-sources.md).
 
 ## Start on macOS or Ubuntu
 
@@ -64,9 +69,11 @@ Build it using `.venv/bin/python -m build`; do not upload version 0.1.0 to PyPI 
 
 ## Home Assistant scaffold
 
-See [installation and limitations](docs/home-assistant.md). The scaffold is linted,
-but Home Assistant runtime setup has not been tested. Validate it on a development
-HA instance after the live printer probe succeeds. This is not HACS/release-ready.
+See [installation and limitations](docs/home-assistant.md). Nine runtime tests
+exercise Home Assistant 2026.9.2 with synthetic printer data and external network
+sockets disabled. The separate HA CI job uses Python 3.14 and a pinned test framework.
+Validate it on a development HA instance after the live printer probe succeeds.
+This is not HACS/release-ready.
 
 ## GitHub and moving to Ubuntu
 

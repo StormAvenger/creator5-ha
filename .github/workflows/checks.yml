@@ -20,3 +20,13 @@ jobs:
       - run: mypy
       - run: pytest
       - run: python -m build
+  home-assistant:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -r requirements-ha-test.txt
+      - run: python -m pip install -e .
+      - run: pytest tests/ha --disable-socket --allow-unix-socket
