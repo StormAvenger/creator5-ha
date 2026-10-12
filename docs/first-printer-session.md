@@ -1,18 +1,23 @@
 # Resume with the printer
 
-No printer work is scheduled while the user is away. Access can resume locally or
-through a verified remote path. The corrected reported stock firmware is `1.9.9-1.3.0`.
-When access is available:
+On 2026-10-11 the user resumed local access while the printer is printing.
+The supplied API port accepts a TCP connection from the Mac; device identity and
+authenticated status remain unverified. Serial and check code are not saved locally.
+The corrected reported stock firmware is `1.9.9-1.3.0`.
 
-Current pause: the user reports the printer is off and asked to wait until later.
-Do not retry or send credentials until they resume and device identity is verified.
+Protect the current print: no pause, stop, resume, temperature changes, uploads,
+reboots, firmware changes or printer settings changes. Do not install/restart
+production HA or start continuous polling during this print. The first authenticated
+probe remains one status request, without retries. Enter credentials locally only
+after confirming the supplied address belongs to this printer.
 
-1. Power on the printer and confirm its display's current IP, LAN mode and exact
+1. Without changing the current print, confirm the display's current IP, LAN mode and exact
    stock firmware version. Verify the supplied address still belongs to this printer.
-2. Make sure the Mac can reach that subnet; the earlier port-8898 connection timed out.
+2. The latest TCP-only check succeeded; the earlier port-8898 connection timed out.
    Check routing, VPN and VLAN/firewall rules before changing printer settings.
 3. Run `Probe printer.command` in macOS Terminal (or `.venv/bin/creator5-probe`
    from the repository). Enter the serial locally; enter the check code at the hidden prompt.
+   Credentials need not be saved in `.env` to use the probe.
 4. Compare the sanitized state and temperature readings with the display.
 5. Share only the summary and a description of any mismatch. Do not send the check
    code, serial, camera URL, registration tokens or raw response to chat/GitHub.

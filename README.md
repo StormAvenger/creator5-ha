@@ -72,7 +72,7 @@ Build it using `.venv/bin/python -m build`; do not upload version 0.1.0 to PyPI 
 
 ## Home Assistant scaffold
 
-See [installation and limitations](docs/home-assistant.md). Nine runtime tests
+See [installation and limitations](docs/home-assistant.md). Eleven runtime tests
 exercise Home Assistant 2026.9.2 with synthetic printer data and external network
 sockets disabled. The HA tests use Python 3.14 and a pinned framework; run them locally.
 Validate it on a development HA instance after the live printer probe succeeds.

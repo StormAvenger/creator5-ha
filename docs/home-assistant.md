@@ -21,6 +21,15 @@ its sensor platform. Missing numeric fields remain unknown rather than zero.
 
 ## Offline runtime tests
 
+The integration provides cached diagnostics through HA's integration menu. Our
+diagnostics section includes only numeric readings, update success and read-only
+mode. It omits config-entry data, raw responses, free-form status strings, IP,
+serial, filenames, URLs and tokens; requesting it performs no printer I/O.
+If the last update failed, numeric values are stale and update success is false.
+Home Assistant can add its own surrounding system metadata to a downloaded
+diagnostics file; review the whole file before sharing it.
+See [HA diagnostics guidance](https://developers.home-assistant.io/docs/core/integration/diagnostics/).
+
 Use a separate Python 3.14 environment to keep HA's pinned dependencies separate
 from the lightweight standalone client environment. Run locally (Actions is disabled):
 

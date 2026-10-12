@@ -2,16 +2,15 @@
 
 **Goal:** an unofficial, local Home Assistant integration for the user's stock
 Creator 5 Pro, backed by a portable standalone Python client. First release:
-read-only monitoring. macOS development, Ubuntu deployment, GitHub for source and CI.
+read-only monitoring. macOS development, Ubuntu deployment, GitHub for source and review.
 
 This guide carries forward the project and legal boundaries from **TPU Jams
 Troubleshooting**. It is the ordered checklist we update as work progresses.
-Last reviewed: 2026-10-06. The user is away from home but can access Home Assistant
-remotely; printer access may be possible through an existing VPN route or an
-authorized terminal on the HA host. Reported stock firmware: `1.9.9-1.3.0`.
+Last reviewed: 2026-10-11. The user has resumed local LAN access and the printer
+is printing. Do not interrupt or alter the print. Reported stock firmware: `1.9.9-1.3.0`.
 There is no automatic retry or scheduled printer access.
-The user subsequently confirmed the printer is off and requested that live work
-wait until later. No further printer probes should run until the user resumes.
+The Mac's TCP-only API-port check now succeeds. Credentials are missing locally;
+authenticated status, device identity and field semantics remain unverified.
 
 ## Working boundaries
 
@@ -65,6 +64,7 @@ for original offline code and synthetic tests.
 - [x] Test config-entry setup, sensor values and periodic coordinator refreshes.
 - [x] Test missing fields, lost connectivity and recovery.
 - [x] Test changed credentials/reauthentication and platform unload.
+- [x] Add cached, allowlisted diagnostics; prove no extra requests or secret export.
 - [x] Add a separate Linux CI job for actual HA runtime tests.
 - [x] Confirm the new HA job passes on GitHub.
 
@@ -72,13 +72,15 @@ for original offline code and synthetic tests.
 no printer/network credentials, and CI passes. Mocks prove integration behavior,
 not firmware compatibility.
 Evidence: 30 client tests and nine real HA 2026.9.2 runtime tests pass locally.
+On 2026-10-11, 30 client tests and 11 HA runtime tests passed locally, including
+the new diagnostics tests. Lint, formatting and typing checks also passed.
 All five [GitHub CI jobs](https://github.com/StormAvenger/creator5-ha/actions/runs/37501135092)
 passed for implementation commit `c8889c1`, including the Linux HA job.
 
 ### 4. Confirm live LAN access — resume with the printer
 
 - [ ] Confirm IP, stock firmware version and LAN mode on the printer display.
-- [ ] Power on the printer and verify that the responding address belongs to it
+- [ ] Verify that the responding address belongs to the already-printing printer
   before entering credentials; an open TCP port does not identify the device.
 - [ ] Check the Mac's route/VLAN/VPN/firewall if port 8898 still times out.
 - [ ] If away from home, verify an existing Tailscale subnet route or WiFiman
@@ -90,6 +92,8 @@ passed for implementation commit `c8889c1`, including the Linux HA job.
 
 **Complete when:** a valid authenticated status response is observed on the
 user's printer. Earlier reachability timed out; hardware compatibility is unverified.
+On 2026-10-11 a single TCP-only check from the Mac succeeded. No authenticated
+request has been sent because the serial and check code are missing locally.
 Follow [the first-session checklist](first-printer-session.md).
 Remote inspection found HA Core 2026.9.4 on HA OS 18.3 and an existing running
 Terminal & SSH app. A TCP-only check from that terminal found port 8898 open at
@@ -138,6 +142,8 @@ Virtual environments and secret files are recreated, never copied between OSes.
 - [ ] Run hassfest and HACS validation locally if HACS distribution is chosen.
 - [ ] Write installation/troubleshooting/uninstall instructions and release notes.
 - [ ] Review the full repository for secrets and proprietary assets.
+- [ ] Replace personal email in existing commit history before publication;
+  future commits use the verified GitHub noreply identity.
 - [ ] Obtain the owner's decision to publish publicly and create the first release.
 
 **Complete when:** clean installs work, CI/validation passes, and release metadata
