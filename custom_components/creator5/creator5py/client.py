@@ -16,6 +16,20 @@ class AuthenticationError(PrinterError):
     """Printer rejected credentials or LAN mode is disabled."""
 
 
+def private_address(host: str) -> ipaddress.IPv4Address:
+    """Validate a literal private target before any network operation."""
+    try:
+        address = ipaddress.IPv4Address(host)
+    except ipaddress.AddressValueError:
+        raise ValueError("Use the printer's private IPv4 address, without a URL or port") from None
+    if not any(
+        address in ipaddress.IPv4Network(network)
+        for network in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16")
+    ):
+        raise ValueError("Printer address must be an RFC1918 private LAN IPv4 address")
+    return address
+
+
 @dataclass(frozen=True)
 class PrinterStatus:
     """Unknown fields remain available locally; never log raw detail."""
@@ -52,22 +66,7 @@ class Creator5Client:
         port: int = 8898,
         timeout: float = 8,
     ) -> None:
-        try:
-            address = ipaddress.IPv4Address(host)
-        except ipaddress.AddressValueError:
-            raise ValueError(
-                "Use the printer's private IPv4 address, without a URL or port"
-            ) from None
-        private = any(
-            address in network
-            for network in (
-                ipaddress.IPv4Network("10.0.0.0/8"),
-                ipaddress.IPv4Network("172.16.0.0/12"),
-                ipaddress.IPv4Network("192.168.0.0/16"),
-            )
-        )
-        if not private:
-            raise ValueError("Printer address must be an RFC1918 private LAN IPv4 address")
+        address = private_address(host)
         if not serial.strip() or not check_code.strip():
             raise ValueError("Serial number and check code are required")
         if not 1 <= port <= 65535 or not math.isfinite(timeout) or timeout <= 0:

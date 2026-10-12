@@ -2,13 +2,13 @@
 
 On 2026-10-11 the user resumed local access while the printer is printing.
 The supplied API port accepts a TCP connection from the Mac; device identity and
-authenticated status remain unverified. Serial and check code are not saved locally.
+authenticated status initially remained unverified.
 The corrected reported stock firmware is `1.9.9-1.3.0`.
 
 Protect the current print: no pause, stop, resume, temperature changes, uploads,
 reboots, firmware changes or printer settings changes. Do not install/restart
 production HA or start continuous polling during this print. The first authenticated
-probe remains one status request, without retries. Enter credentials locally only
+probe remains one status request, without automatic retries. Enter credentials locally only
 after confirming the supplied address belongs to this printer.
 
 1. Without changing the current print, confirm the display's current IP, LAN mode and exact
@@ -16,8 +16,9 @@ after confirming the supplied address belongs to this printer.
 2. The latest TCP-only check succeeded; the earlier port-8898 connection timed out.
    Check routing, VPN and VLAN/firewall rules before changing printer settings.
 3. Run `Probe printer.command` in macOS Terminal (or `.venv/bin/creator5-probe`
-   from the repository). Enter the serial locally; enter the check code at the hidden prompt.
-   Credentials need not be saved in `.env` to use the probe.
+   from the repository). With `CREATOR5_SERIAL` absent, the CLI sends one targeted
+   discovery packet to that address and uses the validated Creator 5 serial locally.
+   Enter the check code at the hidden prompt. Credentials need not be saved in `.env`.
 4. Compare the sanitized state and temperature readings with the display.
 5. Share only the summary and a description of any mismatch. Do not send the check
    code, serial, camera URL, registration tokens or raw response to chat/GitHub.
@@ -45,6 +46,18 @@ or send authentication. The printer was subsequently reported off.
 Keep code entry local to the trusted client/HA session and restrict output to the
 sanitized status summary. No public printer endpoint is needed.
 
-This session uses only one `POST /detail` status read, with a timeout and no retry.
+Normal CLI invocation uses one `POST /detail` status read, with a timeout and no retry.
 No control/upload endpoint, discovery scan, capture, firmware change or cloud service
 is needed. Later behavior testing should observe a print the user starts normally.
+
+## Latest session evidence — 2026-10-11
+
+One directed UDP packet to the owner-confirmed target on port 48899 returned the
+expected FlashForge vendor, Creator 5 Pro PID 41 and HTTP port 8898. The serial was
+retained privately outside Git. This normal discovery does not send a control command.
+The authenticated status read was rejected; one manual diagnostic read of the same
+endpoint confirmed HTTP 200 with application code 1 and no detail. Both used the
+same supplied credentials; no code variations were tried. A preceding local import
+failure sent no network request. Stop authentication here until the owner verifies
+the exact LAN code; do not guess, reset LAN mode, or alter the running print.
+Firmware and real sensor mappings remain unverified. No raw response or code is committed.

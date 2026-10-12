@@ -21,5 +21,9 @@ On 2026-10-11 the user resumed local LAN access while the printer is printing.
 Do not stop, pause, resume, change temperatures, upload, reboot, update firmware,
 or otherwise alter the print. Use only the one-shot authenticated POST /detail
 status endpoint after credentials and target identity are available locally.
+One directed UDP discovery packet to the supplied target on port 48899 may obtain
+its serial. No broadcast, multicast, subnet scan, guessed codes or authentication bypass.
+Discovery identified the Creator 5 Pro; HTTP status authentication was rejected.
+Do not send more authentication attempts until the owner verifies the exact code.
 Do not install/restart production HA or start continuous polling during this print.
 Follow docs/legal-and-sources.md and docs/project-guide.md.

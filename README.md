@@ -29,6 +29,12 @@ The tests use synthetic responses and never contact a printer. Earlier GitHub CI
 validated macOS/Ubuntu and Python 3.12/3.14; future checks run locally. The former
 workflow is archived under docs/reference and Actions is disabled for the repository.
 
+If `CREATOR5_SERIAL` is absent, the CLI retrieves it with one directed UDP discovery
+packet to the supplied IP on port 48899. It validates the Creator 5 family and HTTP
+port before sending the normal authenticated status request. No network scan,
+broadcast or multicast is used. To skip discovery, supply the serial locally in `.env`.
+An authentication rejection stops the probe; it never tries code variations.
+
 ## First read-only probe
 
 Enable LAN mode on the printer. Have its private IPv4 address, serial number, and

@@ -9,8 +9,10 @@ Troubleshooting**. It is the ordered checklist we update as work progresses.
 Last reviewed: 2026-10-11. The user has resumed local LAN access and the printer
 is printing. Do not interrupt or alter the print. Reported stock firmware: `1.9.9-1.3.0`.
 There is no automatic retry or scheduled printer access.
-The Mac's TCP-only API-port check now succeeds. Credentials are missing locally;
-authenticated status, device identity and field semantics remain unverified.
+The Mac's TCP-only API-port check succeeds. Targeted discovery identified the
+Creator 5 Pro and supplied its serial privately. The provided credential pair was
+rejected by `/detail`; stop authentication until the owner verifies the exact code.
+Authenticated status, firmware and field semantics remain unverified.
 
 ## Working boundaries
 
@@ -82,6 +84,8 @@ passed for implementation commit `c8889c1`, including the Linux HA job.
 - [ ] Confirm IP, stock firmware version and LAN mode on the printer display.
 - [ ] Verify that the responding address belongs to the already-printing printer
   before entering credentials; an open TCP port does not identify the device.
+- [x] Identify the supplied target using one directed discovery packet: vendor,
+  PID 41 (Creator 5 Pro), HTTP port 8898; serial kept private.
 - [ ] Check the Mac's route/VLAN/VPN/firewall if port 8898 still times out.
 - [ ] If away from home, verify an existing Tailscale subnet route or WiFiman
   Teleport connection, or an already-authorized HA-host terminal; remote HA UI
@@ -92,8 +96,9 @@ passed for implementation commit `c8889c1`, including the Linux HA job.
 
 **Complete when:** a valid authenticated status response is observed on the
 user's printer. Earlier reachability timed out; hardware compatibility is unverified.
-On 2026-10-11 a single TCP-only check from the Mac succeeded. No authenticated
-request has been sent because the serial and check code are missing locally.
+On 2026-10-11 a TCP-only check and targeted discovery succeeded. Two read-only
+status attempts with the same credentials were rejected (HTTP 200, code 1).
+No control requests or code variations were sent. Verify the exact code before retrying.
 Follow [the first-session checklist](first-printer-session.md).
 Remote inspection found HA Core 2026.9.4 on HA OS 18.3 and an existing running
 Terminal & SSH app. A TCP-only check from that terminal found port 8898 open at
