@@ -23,7 +23,9 @@ or otherwise alter the print. Use only the one-shot authenticated POST /detail
 status endpoint after credentials and target identity are available locally.
 One directed UDP discovery packet to the supplied target on port 48899 may obtain
 its serial. No broadcast, multicast, subnet scan, guessed codes or authentication bypass.
-Discovery identified the Creator 5 Pro; HTTP status authentication was rejected.
-Do not send more authentication attempts until the owner verifies the exact code.
+Discovery identified the Creator 5 Pro. After the owner corrected code capitalization,
+one authenticated status read succeeded, reporting printing and firmware 1.9.9.
+Keep credentials case-sensitive and private. Do not repeat reads without a concrete
+validation need; use the private cached snapshot for offline development.
 Do not install/restart production HA or start continuous polling during this print.
 Follow docs/legal-and-sources.md and docs/project-guide.md.

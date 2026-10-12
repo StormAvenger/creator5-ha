@@ -43,6 +43,8 @@ async def test_diagnostics_uses_cache_and_excludes_arbitrary_secrets(hass):
                 "bed_c": 60,
                 "chamber_c": None,
                 "remaining_seconds": 120,
+                "tool_temperatures_c": [None, None, None, None],
+                "tool_targets_c": [None, None, None, None],
             },
         }
         assert "PRIVATE" not in json.dumps(report)

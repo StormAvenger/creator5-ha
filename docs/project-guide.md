@@ -10,9 +10,10 @@ Last reviewed: 2026-10-11. The user has resumed local LAN access and the printer
 is printing. Do not interrupt or alter the print. Reported stock firmware: `1.9.9-1.3.0`.
 There is no automatic retry or scheduled printer access.
 The Mac's TCP-only API-port check succeeds. Targeted discovery identified the
-Creator 5 Pro and supplied its serial privately. The provided credential pair was
-rejected by `/detail`; stop authentication until the owner verifies the exact code.
-Authenticated status, firmware and field semantics remain unverified.
+Creator 5 Pro and supplied its serial privately. After the owner corrected the
+code capitalization, one authenticated status read succeeded during printing.
+The API reports firmware 1.9.9; its full build suffix and display comparisons
+remain unverified. No printer controls or production HA changes have been made.
 
 ## Working boundaries
 
@@ -67,6 +68,7 @@ for original offline code and synthetic tests.
 - [x] Test missing fields, lost connectivity and recovery.
 - [x] Test changed credentials/reauthentication and platform unload.
 - [x] Add cached, allowlisted diagnostics; prove no extra requests or secret export.
+- [x] Add four tool temperatures and targets, with malformed/missing-field tests.
 - [x] Add a separate Linux CI job for actual HA runtime tests.
 - [x] Confirm the new HA job passes on GitHub.
 
@@ -76,6 +78,8 @@ not firmware compatibility.
 Evidence: 30 client tests and nine real HA 2026.9.2 runtime tests pass locally.
 On 2026-10-11, 30 client tests and 11 HA runtime tests passed locally, including
 the new diagnostics tests. Lint, formatting and typing checks also passed.
+Latest local validation: 58 client tests and 11 HA runtime tests pass with all
+13 sensors sharing one coordinator request. No external sockets are allowed in HA tests.
 All five [GitHub CI jobs](https://github.com/StormAvenger/creator5-ha/actions/runs/37501135092)
 passed for implementation commit `c8889c1`, including the Linux HA job.
 
@@ -90,7 +94,7 @@ passed for implementation commit `c8889c1`, including the Linux HA job.
 - [ ] If away from home, verify an existing Tailscale subnet route or WiFiman
   Teleport connection, or an already-authorized HA-host terminal; remote HA UI
   access by itself does not establish a Mac-to-printer route.
-- [ ] Enter serial/check code locally and read `/detail` once.
+- [x] Use the discovered serial and owner-corrected code for a successful `/detail` read.
 - [ ] Confirm state and basic readings against the printer display.
 - [ ] Record a sanitized compatibility note for the observed firmware.
 
@@ -98,7 +102,10 @@ passed for implementation commit `c8889c1`, including the Linux HA job.
 user's printer. Earlier reachability timed out; hardware compatibility is unverified.
 On 2026-10-11 a TCP-only check and targeted discovery succeeded. Two read-only
 status attempts with the same credentials were rejected (HTTP 200, code 1).
-No control requests or code variations were sent. Verify the exact code before retrying.
+After the owner supplied the lowercase spelling, one status read succeeded and
+reported printing, Creator 5 Pro, firmware 1.9.9, valid progress and temperatures.
+The client preserved the corrected code exactly; no guessed variants or controls
+were sent. Readings are a snapshot, not continuous monitoring.
 Follow [the first-session checklist](first-printer-session.md).
 Remote inspection found HA Core 2026.9.4 on HA OS 18.3 and an existing running
 Terminal & SSH app. A TCP-only check from that terminal found port 8898 open at
@@ -109,8 +116,11 @@ that terminal app; select the probe runtime when the user resumes.
 ### 5. Complete the monitoring model
 
 - [ ] Validate documented basic fields against real responses.
-- [ ] Add four tool-head temperatures, targets, layers, elapsed/remaining time,
-  door state and material-slot sensors only where field semantics are verified.
+- [x] Add four tool-head temperatures and targets from the documented arrays
+  present in the successful response; test missing arrays and genuine zero targets.
+- [ ] Compare each tool's reading with the printer display; verify ordering physically.
+- [ ] Add layers, elapsed time, door state and material-slot sensors only where
+  field semantics are verified. Remaining time is already provisional.
 - [ ] Distinguish unsupported fields from genuine zero readings.
 - [ ] Keep camera URLs and identifiers out of diagnostic/log output.
 - [ ] Consider a camera entity only after verifying the local stream and privacy behavior.

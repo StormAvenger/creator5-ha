@@ -139,3 +139,27 @@ async def test_cli_output_excludes_identifiers_and_registration_codes(monkeypatc
     assert summary["bed_c"] == 24
     assert "secret" not in str(summary)
     assert "private" not in str(summary).lower()
+
+
+def test_four_tool_readings_and_zero_targets_are_distinct():
+    status = PrinterStatus({"nozzleTemps": [210, 31, 32, 33], "nozzleTargetTemps": [215, 0, 0, 0]})
+    assert [status.nozzle_temperature(i) for i in range(4)] == [210, 31, 32, 33]
+    assert [status.nozzle_temperature(i, target=True) for i in range(4)] == [215, 0, 0, 0]
+
+
+@pytest.mark.parametrize("values", [None, "210", [], [210], [210, 30, 31, 32, 33]])
+def test_invalid_tool_array_remains_unknown(values):
+    assert PrinterStatus({"nozzleTemps": values}).nozzle_temperature(0) is None
+
+
+@pytest.mark.parametrize("value", [True, "210", None, -108, float("nan"), float("inf")])
+def test_invalid_tool_value_does_not_poison_other_tools(value):
+    status = PrinterStatus({"nozzleTemps": [value, 31, 32, 33]})
+    assert status.nozzle_temperature(0) is None
+    assert status.nozzle_temperature(1) == 31
+
+
+@pytest.mark.parametrize("index", [-1, 4, True])
+def test_invalid_tool_index_is_rejected(index):
+    with pytest.raises(ValueError):
+        PrinterStatus({}).nozzle_temperature(index)

@@ -22,6 +22,8 @@ async def test_sensor_values_connection_loss_recovery_and_unload(hass, freezer):
             "platTemp": 60,
             "chamberTemp": 35,
             "estimatedTime": 120,
+            "nozzleTemps": [215, 31, 32, 33],
+            "nozzleTargetTemps": [220, 0, 0, 0],
         }
     )
     with patch(
@@ -29,9 +31,23 @@ async def test_sensor_values_connection_loss_recovery_and_unload(hass, freezer):
     ) as read:
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
-        assert read.await_count == 1  # five sensors share one coordinator request
+        assert read.await_count == 1  # all thirteen sensors share one request
         states = {state.name: state for state in hass.states.async_all("sensor")}
-        assert len(states) == 5
+        assert len(states) == 13
+        by_id = {s.entity_id: s for s in states.values()}
+        for suffix, value in {
+            "tool_1_temperature": "215.0",
+            "tool_2_temperature": "31.0",
+            "tool_3_temperature": "32.0",
+            "tool_4_temperature": "33.0",
+            "tool_1_target_temperature": "220.0",
+            "tool_2_target_temperature": "0.0",
+            "tool_3_target_temperature": "0.0",
+            "tool_4_target_temperature": "0.0",
+        }.items():
+            state = next(s for key, s in by_id.items() if key.endswith(suffix))
+            assert state.state == value
+            assert state.attributes["unit_of_measurement"] == "°C"
         progress = next(
             s for s in states.values() if s.attributes.get("unit_of_measurement") == "%"
         )
@@ -53,7 +69,7 @@ async def test_sensor_values_connection_loss_recovery_and_unload(hass, freezer):
         await entry.runtime_data.async_refresh()
         await hass.async_block_till_done()
         values = [s.state for s in hass.states.async_all("sensor")]
-        assert values.count("unknown") == 4
+        assert values.count("unknown") == 12
         assert "ready" in values
         coordinator = entry.runtime_data
         assert await hass.config_entries.async_unload(entry.entry_id)

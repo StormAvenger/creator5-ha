@@ -52,6 +52,18 @@ class PrinterStatus:
         value = self.number("printProgress")
         return value * 100 if value is not None and 0 <= value <= 1 else None
 
+    def nozzle_temperature(self, index: int, *, target: bool = False) -> float | None:
+        """Read one of four ordered tools; reject malformed arrays and values."""
+        if isinstance(index, bool) or not 0 <= index < 4:
+            raise ValueError("Tool index must be between 0 and 3")
+        values = self.detail.get("nozzleTargetTemps" if target else "nozzleTemps")
+        if not isinstance(values, list) or len(values) != 4:
+            return None
+        value = values[index]
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            return None
+        return float(value) if math.isfinite(value) and value >= 0 else None
+
 
 class Creator5Client:
     """Use an externally managed session and a specific private IPv4 address."""

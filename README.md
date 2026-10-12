@@ -3,8 +3,10 @@
 Experimental read-only FlashForge Creator 5 / Creator 5 Pro LAN integration.
 This is an unofficial project and is not endorsed by FlashForge.
 Built on macOS; the same Python package and commands work on Ubuntu.
-No printer commands, uploads, heaters, motion, or print-job controls are implemented.
-Hardware compatibility is **not yet verified** on the user's reported stock firmware `1.9.9-1.3.0`.
+No printer controls, uploads, heater changes, motion, or print-job controls are implemented.
+One authenticated status read succeeded on a Creator 5 Pro during printing; its API
+reports firmware `1.9.9`. The reported full build `1.9.9-1.3.0`, display accuracy and
+live HA installation remain unverified.
 
 Follow the [project completion guide](docs/project-guide.md) for the ordered plan,
 current status, offline work and the next printer session. Development follows the

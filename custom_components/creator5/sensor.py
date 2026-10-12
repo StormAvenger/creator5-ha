@@ -8,6 +8,11 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import CONF_SERIAL, DOMAIN
 
 # Unknown or absent fields return None, not a fabricated zero.
+TOOL_SENSORS = {
+    f"tool_{index + 1}_{kind}": (index, target)
+    for index in range(4)
+    for kind, target in (("temperature", False), ("target_temperature", True))
+}
 SENSORS = (
     ("status", "State", None, None),
     ("printProgress", "Print progress", PERCENTAGE, None),
@@ -19,6 +24,14 @@ SENSORS = (
         SensorDeviceClass.TEMPERATURE,
     ),
     ("estimatedTime", "Remaining time", UnitOfTime.SECONDS, SensorDeviceClass.DURATION),
+) + tuple(
+    (
+        key,
+        f"Tool {index + 1} {'target temperature' if target else 'temperature'}",
+        UnitOfTemperature.CELSIUS,
+        SensorDeviceClass.TEMPERATURE,
+    )
+    for key, (index, target) in TOOL_SENSORS.items()
 )
 
 
@@ -53,4 +66,7 @@ class Creator5Sensor(CoordinatorEntity, SensorEntity):
             return status.state
         if self._key == "printProgress":
             return status.progress_percent
+        if self._key in TOOL_SENSORS:
+            index, target = TOOL_SENSORS[self._key]
+            return status.nozzle_temperature(index, target=target)
         return status.number(self._key)

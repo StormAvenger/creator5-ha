@@ -61,3 +61,10 @@ same supplied credentials; no code variations were tried. A preceding local impo
 failure sent no network request. Stop authentication here until the owner verifies
 the exact LAN code; do not guess, reset LAN mode, or alter the running print.
 Firmware and real sensor mappings remain unverified. No raw response or code is committed.
+
+The owner subsequently corrected the code capitalization. One authenticated
+read succeeded: model Creator 5 Pro, firmwareVersion 1.9.9 and status printing.
+Basic fields and both four-tool temperature arrays are present. The longer
+firmware build suffix, display comparisons and live HA acceptance remain pending.
+No further printer reads are needed to work on the saved private snapshot.
+The code was used transiently; it is not stored in source or the project's `.env`.

@@ -56,6 +56,21 @@ rejected. The diagnostic read returned HTTP 200, code 1, without detail. The pai
 needs verification; no code variants, controls or authentication bypasses were used.
 Actual readings and firmware mapping remain pending. Source fixtures are synthetic.
 
+### Authenticated status — verified 2026-10-11
+
+After the owner corrected capitalization, one POST /detail succeeded without
+retry. It reported model Creator 5 Pro, firmwareVersion 1.9.9 and status printing.
+Observed keys include printProgress (ratio), platTemp, chamberTemp, estimatedTime,
+printDuration, printLayer, platTargetTemp, chamberTargetTemp, nozzleTemps[4] and
+nozzleTargetTemps[4]. This is evidence of API fields, not display-verified accuracy
+or confirmation of the reported full firmware build string.
+
+The client exposes the documented tool-array ordering as tools 1–4; physical
+display comparison remains pending. Zero tool targets are valid readings. Missing,
+wrong-size, nonnumeric, negative and nonfinite tool readings remain unknown.
+Both scalar and array fields come from one shared HA status request. Raw data,
+serial and code stay private; committed fixtures remain synthetic. No controls were sent.
+
 Initial local check: connecting to the supplied address on TCP 8898 timed out after
 five seconds on 2026-10-06. No authentication request was sent. Verify the address
 on the printer display and that the Mac can reach the printer's VLAN; a VPN or

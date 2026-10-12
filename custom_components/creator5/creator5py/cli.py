@@ -26,6 +26,8 @@ async def probe(host: str, serial: str | None, code: str) -> dict[str, object]:
         "bed_c": status.number("platTemp"),
         "chamber_c": status.number("chamberTemp"),
         "remaining_seconds": status.number("estimatedTime"),
+        "tool_temperatures_c": [status.nozzle_temperature(i) for i in range(4)],
+        "tool_targets_c": [status.nozzle_temperature(i, target=True) for i in range(4)],
     }
 
 
