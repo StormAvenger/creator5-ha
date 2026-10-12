@@ -27,5 +27,9 @@ Discovery identified the Creator 5 Pro. After the owner corrected code capitaliz
 one authenticated status read succeeded, reporting printing and firmware 1.9.9.
 Keep credentials case-sensitive and private. Do not repeat reads without a concrete
 validation need; use the private cached snapshot for offline development.
-Do not install/restart production HA or start continuous polling during this print.
+The user subsequently authorized continuing the next Home Assistant installation
+steps while the print runs, provided it is not cancelled or otherwise altered.
+An isolated creator5 component may be staged and read-only monitoring configured;
+verify existing HA state first and preserve existing configuration. Normal status
+polling is allowed for live monitoring; print-control requests remain prohibited.
 Follow docs/legal-and-sources.md and docs/project-guide.md.

@@ -6,8 +6,8 @@ authenticated status initially remained unverified.
 The corrected reported stock firmware is `1.9.9-1.3.0`.
 
 Protect the current print: no pause, stop, resume, temperature changes, uploads,
-reboots, firmware changes or printer settings changes. Do not install/restart
-production HA or start continuous polling during this print. The first authenticated
+reboots, firmware changes or printer settings changes. The owner subsequently
+authorized HA installation and read-only monitoring during the print. The first authenticated
 probe remains one status request, without automatic retries. Enter credentials locally only
 after confirming the supplied address belongs to this printer.
 
@@ -58,9 +58,9 @@ retained privately outside Git. This normal discovery does not send a control co
 The authenticated status read was rejected; one manual diagnostic read of the same
 endpoint confirmed HTTP 200 with application code 1 and no detail. Both used the
 same supplied credentials; no code variations were tried. A preceding local import
-failure sent no network request. Stop authentication here until the owner verifies
-the exact LAN code; do not guess, reset LAN mode, or alter the running print.
-Firmware and real sensor mappings remain unverified. No raw response or code is committed.
+failure sent no network request. At that point authentication was held until the
+owner verified the exact LAN code; no variants or resets were attempted.
+No raw response or code is committed.
 
 The owner subsequently corrected the code capitalization. One authenticated
 read succeeded: model Creator 5 Pro, firmwareVersion 1.9.9 and status printing.
@@ -68,3 +68,7 @@ Basic fields and both four-tool temperature arrays are present. The longer
 firmware build suffix, display comparisons and live HA acceptance remain pending.
 No further printer reads are needed to work on the saved private snapshot.
 The code was used transiently; it is not stored in source or the project's `.env`.
+
+The latest HA About page shows Core 2026.10.0 on HA OS 18.3. All 13 component files
+are staged and the basic configuration check passed. Activation is pending; this
+staging result does not yet validate live HA polling.

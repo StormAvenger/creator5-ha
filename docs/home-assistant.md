@@ -1,12 +1,16 @@
 # Home Assistant development installation
 
 This is an experimental integration, not a validated production release.
-Offline runtime tests cover Home Assistant 2026.9.2. One authenticated status read
+Offline runtime tests cover Home Assistant 2026.10.0. One authenticated status read
 succeeded on the user's Creator 5 Pro while printing (API firmware 1.9.9).
-Integration behavior on the user's HA host remains unverified.
-The remote About page subsequently confirmed the user's HA Core version is
-2026.9.4 on HA OS 18.3. Runtime tests currently cover 2026.9.2; installation and
-live validation on 2026.9.4 are still pending.
+The latest signed-in About page confirmed HA Core 2026.10.0, Supervisor 2026.09.3,
+HA OS 18.3 and frontend 20260930.2. All 11 runtime tests passed against that exact
+Core version with external sockets disabled.
+
+All 13 component files are staged in an isolated `/homeassistant/custom_components/creator5`
+directory. HA's basic configuration check passed. This checks YAML startup validity;
+it does not establish successful loading or live sensor behavior. Activation and
+credential storage await the specific browser confirmation. No HA upgrade is needed.
 
 1. Confirm that the standalone read-only probe succeeds first.
 2. Copy the entire `custom_components/creator5` folder into the development Home
@@ -23,7 +27,9 @@ The 13 sensors include state, progress, bed/chamber temperature, remaining time,
 and current/target temperatures for tools 1–4. Each four-element tool array is
 validated; real zero targets remain zero, not unknown. Tool numbering follows
 the documented array order and still needs comparison with the physical display.
-Do not restart production HA or start polling while the current print is running.
+The owner authorized installing read-only monitoring while the print runs. Never
+send print controls or change printer settings. Activation stores credentials in
+HA and starts the shared status poll; keep configuration and backups private.
 
 ## Offline runtime tests
 

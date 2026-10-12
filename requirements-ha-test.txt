@@ -1,2 +1,2 @@
-# Framework pins Home Assistant 2026.9.2; requires Python 3.14.
-pytest-homeassistant-custom-component==0.13.365
+# Framework pins Home Assistant 2026.10.0; requires Python 3.14.
+pytest-homeassistant-custom-component==0.13.371

@@ -8,12 +8,14 @@ This guide carries forward the project and legal boundaries from **TPU Jams
 Troubleshooting**. It is the ordered checklist we update as work progresses.
 Last reviewed: 2026-10-11. The user has resumed local LAN access and the printer
 is printing. Do not interrupt or alter the print. Reported stock firmware: `1.9.9-1.3.0`.
-There is no automatic retry or scheduled printer access.
+The standalone probe has no automatic retry. The owner has authorized HA status
+polling; activation will use one shared request every 30 seconds.
 The Mac's TCP-only API-port check succeeds. Targeted discovery identified the
 Creator 5 Pro and supplied its serial privately. After the owner corrected the
 code capitalization, one authenticated status read succeeded during printing.
 The API reports firmware 1.9.9; its full build suffix and display comparisons
-remain unverified. No printer controls or production HA changes have been made.
+remain unverified. No printer controls have been sent. The 13 component files are
+staged in HA, with activation and credential storage pending.
 
 ## Working boundaries
 
@@ -79,7 +81,8 @@ Evidence: 30 client tests and nine real HA 2026.9.2 runtime tests pass locally.
 On 2026-10-11, 30 client tests and 11 HA runtime tests passed locally, including
 the new diagnostics tests. Lint, formatting and typing checks also passed.
 Latest local validation: 58 client tests and 11 HA runtime tests pass with all
-13 sensors sharing one coordinator request. No external sockets are allowed in HA tests.
+13 sensors sharing one coordinator request. The latest 11 HA tests pass against
+the exact installed Core version, 2026.10.0. No external sockets are allowed in HA tests.
 All five [GitHub CI jobs](https://github.com/StormAvenger/creator5-ha/actions/runs/37501135092)
 passed for implementation commit `c8889c1`, including the Linux HA job.
 
@@ -107,11 +110,9 @@ reported printing, Creator 5 Pro, firmware 1.9.9, valid progress and temperature
 The client preserved the corrected code exactly; no guessed variants or controls
 were sent. Readings are a snapshot, not continuous monitoring.
 Follow [the first-session checklist](first-printer-session.md).
-Remote inspection found HA Core 2026.9.4 on HA OS 18.3 and an existing running
-Terminal & SSH app. A TCP-only check from that terminal found port 8898 open at
-the supplied address, but the user reports the printer is off. Device identity
-and authenticated API behavior remain unverified. Python is not installed in
-that terminal app; select the probe runtime when the user resumes.
+Earlier remote inspection found HA Core 2026.9.4 and a reachable API port while
+the printer was subsequently off. The latest local session identifies the printer
+and authenticates successfully; HA now reports Core 2026.10.0 on HA OS 18.3.
 
 ### 5. Complete the monitoring model
 
@@ -130,6 +131,10 @@ missing-field behavior; the real printer UI agrees with readings across states.
 Do not infer capabilities from older printer models or an API success response.
 
 ### 6. Validate a development HA installation
+
+Current evidence: all 13 files staged on the owner-authorized HA 2026.10.0 host;
+basic configuration validation passed. Activation and live sensor verification
+remain pending. Offline tests do not replace these checks.
 
 - [ ] Install into a development HA instance; record its version.
 - [ ] Confirm add/remove/restart, unavailable/recovery and credential changes.
