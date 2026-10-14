@@ -42,9 +42,16 @@ without a concrete need while HA is already polling. No live disconnect, credent
 change, unload or full-print test is yet recorded. Follow docs/live-acceptance.md.
 
 The owner subsequently requested additional monitoring, device-specific Celsius,
-and chamber light as the sole control. Version 0.2.0 is prepared locally and tested;
-it is not live yet. The narrow set_light(bool) method is authorized development
+and chamber light as the sole control. Version 0.2.0 was subsequently approved and installed after natural completion.
+It is live with 30 entities. The narrow set_light(bool) method is authorized development
 scope; all print, heater, fan, motion, upload and material writes remain prohibited.
 Before browser activation of the custom update, obtain specific action-time
 approval. Do not send live light commands as part of setup or ordinary polling.
 Physical comparisons must not involve opening doors or disrupting a running print.
+
+The approved 0.2.0 HA Core restart/recovery succeeded. One LED-only off/on cycle
+was verified through status readback while ready, restoring the initial on state.
+All twelve temperatures are Celsius. Do not repeat the light test without a new
+validation need. Printing → completed → ready was observed naturally; remaining
+time is unknown outside active/paused states because a stale value was observed
+on completion. Physical comparisons and printer-network recovery remain pending.

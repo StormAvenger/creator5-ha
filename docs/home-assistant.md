@@ -1,9 +1,10 @@
 # Home Assistant development installation
 
 This is an experimental integration, not a validated production release.
-The installed 0.1.0 build remains read-only. Version 0.2.0 is tested locally and
-awaits activation; it adds extra monitoring, Celsius defaults and chamber-light
-on/off only. See [upgrade scope](extended-monitoring.md).
+Version 0.2.0 is installed and live-verified on HA 2026.10.1: 30 entities, Celsius
+defaults and chamber-light on/off only. The approved upgrade occurred after natural
+print completion. HA restarted and the light's reported off/on state was verified,
+restoring its original on state. See [upgrade scope](extended-monitoring.md).
 
 Offline runtime tests cover Home Assistant 2026.10.1. One authenticated status read
 previously succeeded on the user's Creator 5 Pro while printing (API firmware 1.9.9).
@@ -12,11 +13,11 @@ On 2026-10-14, the signed-in About page confirmed HA Core 2026.10.1, Supervisor
 that exact Core version with external sockets disabled; the earlier 2026.10.0
 baseline also passed.
 
-All 13 component files are installed in an isolated
+All 16 component files are installed in an isolated
 `/homeassistant/custom_components/creator5` directory. HA's basic configuration
 check previously passed. The owner authorized continuing activation and credential
 storage. HA already recognized the component, so no HA restart or upgrade was
-performed in this session. Setup succeeded: one device and 13 available sensors.
+performed in this session. Initial setup succeeded with 13 sensors; the approved 0.2.0 upgrade now has 30 entities.
 Scheduled updates advanced print progress while the printer continued reporting
 printing. See [live acceptance evidence](live-acceptance.md) for scope and limitations.
 
@@ -34,7 +35,7 @@ The flow validates one status read. The coordinator polls every 30 seconds and
 shares one response among the sensors. Failed updates make entities unavailable.
 Authentication failure requests a new check code. Removing the integration unloads
 its sensor platform. Missing numeric fields remain unknown rather than zero.
-The installed 0.1.0 build's 13 sensors include state, progress, bed/chamber temperature, remaining time,
+The original 0.1.0 build's 13 sensors include state, progress, bed/chamber temperature, remaining time,
 and current/target temperatures for tools 1–4. Each four-element tool array is
 validated; real zero targets remain zero, not unknown. Tool numbering follows
 the documented array order and still needs comparison with the physical display.

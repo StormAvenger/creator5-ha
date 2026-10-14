@@ -4,14 +4,15 @@ Experimental FlashForge Creator 5 / Creator 5 Pro LAN monitoring and chamber lig
 This is an unofficial project and is not endorsed by FlashForge.
 Built on macOS; the same Python package and commands work on Ubuntu.
 Version 0.2.0 adds only chamber-light on/off control; no uploads, heater changes,
-fan controls, motion or print-job controls are implemented. This version is tested
-locally and awaiting live installation; HA currently runs the read-only 0.1.0 build.
+fan controls, motion or print-job controls are implemented. It is installed on the
+owner-authorized HA 2026.10.1 host with 30 entities and Celsius temperatures.
 See [extended monitoring and Celsius](docs/extended-monitoring.md).
 One authenticated status read succeeded on a Creator 5 Pro during printing; its API
 reports firmware `1.9.9`. The reported full build `1.9.9-1.3.0` and display
 comparisons remain unverified. On 2026-10-14, the integration was added to
-the owner's HA Core 2026.10.1: one device, 13 available sensors and scheduled
-status refreshes during printing. See [live acceptance evidence](docs/live-acceptance.md).
+the owner's HA Core 2026.10.1: scheduled reads during printing, natural completion
+and idle were observed. The later 0.2.0 upgrade exposes 30 entities and its LED
+off/on command was verified through status readback, restoring the original on state. See [live acceptance evidence](docs/live-acceptance.md).
 
 Follow the [project completion guide](docs/project-guide.md) for the ordered plan,
 current status, offline work and the next printer session. Development follows the

@@ -8,7 +8,7 @@
       },
       "user": {
         "title": "Connect to your Creator 5",
-        "description": "Enable LAN mode and enter the private IPv4 address, serial number and LAN check code from your printer. This integration only reads status.",
+        "description": "Enable LAN mode and enter the private IPv4 address, serial number and LAN check code from your printer. This integration reads status and can switch the chamber light. No print controls are provided.",
         "data": {
           "host": "Printer LAN IPv4 address",
           "serial_number": "Serial number",

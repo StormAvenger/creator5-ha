@@ -95,6 +95,8 @@ class Creator5Sensor(Creator5Entity, SensorEntity):
         if self._key in TOOL_SENSORS:
             index, target = TOOL_SENSORS[self._key]
             return status.nozzle_temperature(index, target=target)
+        if self._key == "estimatedTime" and status.state not in ("printing", "paused", "pause"):
+            return None
         maximum = 100 if self._key in ("chamberFanSpeed", "coolingFanSpeed") else None
         value = status.nonnegative(self._key, maximum=maximum)
         if (

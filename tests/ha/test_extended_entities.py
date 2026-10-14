@@ -95,6 +95,14 @@ async def test_shared_entities_celsius_on_imperial_host_and_light_only_services(
         await entry.runtime_data.async_refresh()
         await hass.async_block_till_done()
         assert hass.states.get("binary_sensor.creator_5_door_or_lid").state == "on"
+        read.return_value = PrinterStatus(
+            {**DETAIL, "status": "completed", "estimatedTime": 2021, "printProgress": 0}
+        )
+        await entry.runtime_data.async_refresh()
+        await hass.async_block_till_done()
+        assert hass.states.get("sensor.creator_5_remaining_time").state == "unknown"
+        assert hass.states.get("sensor.creator_5_print_progress").state == "0.0"
+        assert hass.states.get("sensor.creator_5_state").state == "completed"
         coordinator = entry.runtime_data
         assert await hass.config_entries.async_unload(entry.entry_id)
         await hass.async_block_till_done()

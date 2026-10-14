@@ -14,8 +14,8 @@ The Mac's TCP-only API-port check succeeds. Targeted discovery identified the
 Creator 5 Pro and supplied its serial privately. After the owner corrected the
 code capitalization, one authenticated status read succeeded during printing.
 The API reports firmware 1.9.9; its full build suffix and display comparisons
-remain unverified. No printer controls have been sent. The 13 component files are
-installed and active in HA Core 2026.10.1, with one device and 13 available sensors.
+remain unverified. No printer controls have been sent. The 16 component files are
+installed and active in HA Core 2026.10.1, with one device and 30 available entities.
 Scheduled updates were observed while the printer continued reporting printing.
 
 ## Working boundaries
@@ -140,9 +140,11 @@ No HA restart was needed. Downloaded diagnostics exclude the supplied serial,
 LAN code and printer IP. See [live acceptance evidence](live-acceptance.md).
 
 - [x] Install into the owner-authorized HA instance; record its version.
-- [ ] Confirm add/remove/restart, unavailable/recovery and credential changes.
+- [x] Confirm HA Core restart/recovery with 0.2.0.
+- [ ] Confirm live remove/unload, printer-network recovery and credential changes.
 - [x] Observe a user-started print without controlling it; scheduled readings update.
-- [ ] Observe idle and completion of a full ordinary print.
+- [x] Observe natural completion and idle from an already-running print.
+- [ ] Observe a full ordinary print from its start.
 - [x] Confirm one device, 13 sensors and successful scheduled updates.
 - [ ] Measure polling load without invasive instrumentation.
 - [x] Confirm exported diagnostics omit the supplied serial, LAN code and printer IP.
@@ -179,9 +181,9 @@ accurately describes support and limitations. Keep the repository private until 
 ### 9. Chamber-light control and extra sensors — prepared
 
 The owner selected chamber light as the sole control and requested Celsius for
-this device. Version 0.2.0 is implemented locally: 24 sensors, five Pro binary
-sensors and one on/off light. Its 83 client and 14 HA tests pass. This version is
-not installed yet; see [scope, unit behavior and activation checks](extended-monitoring.md).
+this device. Version 0.2.0 is installed: 24 sensors, five Pro binary sensors and one
+on/off light. Its 83 client and 14 HA tests pass. The HA Core restart/recovery and
+reported light off/on test succeeded; see [scope and evidence](extended-monitoring.md).
 All ten installed temperature entities were set to Celsius through HA's normal
 per-entity settings; household units were preserved.
 
@@ -189,8 +191,9 @@ per-entity settings; household units were preserved.
 - [x] Add elapsed/layer/temperature-target readings from observed fields.
 - [x] Implement LED-only writes with strict boolean input and status readback.
 - [x] Test Celsius defaults/migration on a Fahrenheit host, preserving unrelated devices.
-- [ ] Approve and activate the prepared version on HA; verify the Pro's 30 entities.
-- [ ] Observe physical light actuation and restore its original state.
+- [x] Approve and activate 0.2.0 on HA; verify the Pro's 30 entities.
+- [x] Verify one LED-only off/on cycle by reported state and restore its initial on state.
+- [ ] Independently observe physical illumination.
 - [ ] Compare new fields to the device display; retain unsupported signals as unknown.
 
 Print, motion, heater, fan, firmware and material-control commands remain outside

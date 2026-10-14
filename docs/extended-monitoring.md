@@ -1,9 +1,11 @@
 # Extended monitoring and chamber light — version 0.2.0
 
-Status: implemented and tested locally; not installed on the live HA host yet.
-The host still runs 0.1.0 with 13 read-only sensors. Its ten temperature entities
-were individually changed to Celsius on 2026-10-14 without changing household units.
-No light command has been sent to the owner's printer by this project.
+Status: installed on the owner-authorized HA 2026.10.1 host on 2026-10-14 after
+specific approval and natural print completion. HA Core was restarted; the printer
+was not restarted. One device with all 30 entities returned successfully. Twelve
+temperature entities show Celsius without changing household units. One LED-only
+off/on cycle was verified through reported state, restoring the initial on state.
+Physical illumination and display comparisons still require an eyes-on check.
 
 ## Prepared entities
 
@@ -32,7 +34,8 @@ readings, given the model-specific fixed-value caveats in the community referenc
 Protocol references: [Creator 5 series](https://github.com/Parallel-7/flashforge-api-docs/wiki/Creator-5-Series)
 and [HTTP fields/light command](https://github.com/Parallel-7/flashforge-api-docs/wiki/HTTP-REST-API).
 These are community observations; cached owner data confirms the fields exist but
-has not established display accuracy or physical light actuation on this firmware.
+has not established display accuracy or physical light actuation. The live light
+command and reported-state readback now succeed on the owner's printer.
 Implementation and synthetic tests are original; no source/schema was copied.
 
 ## Celsius behavior
@@ -65,16 +68,29 @@ this describes capability, not a record of commands being sent.
 
 ## Activation and acceptance
 
-1. Obtain action-time approval to install/run this custom version and restart HA Core.
-2. Preserve a rollback copy of 0.1.0, then replace only this component's files.
-3. Load the new code and verify the Pro's 30 entities, Celsius units and status updates.
-4. With the user's approval, observe the light, toggle it off/on once and restore
-   the original state. Check both status readback and physical illumination.
+1. Completed: owner approved installing/running this version and restarting HA Core.
+2. Completed: preserved a private 0.1.0 source archive and saved only component files.
+3. Completed: HA reconnected with 30 entities, all 12 temperatures in Celsius and
+   successful scheduled updates.
+4. Reported-state test completed: one off/on cycle succeeded while state remained
+   ready, restoring on. Physical illumination is not yet independently observed.
 5. Compare door/lid state and slot metadata with the printer display. Do not open
    doors, change power/network settings or manufacture faults during a running print.
 6. Keep print completion and natural reconnect acceptance separate from simulated tests.
+
+The live 0.1.0 monitor observed printing → completed with the active tool target
+returning to zero. On completion the API reset progress to zero and returned a
+nonzero remaining time. Version 0.2.0 therefore makes remaining time unknown
+outside printing/paused states; it does not invent 100% progress. This regression
+is covered in the real HA entity test.
 
 Local verification: 83 client tests and 14 real HA 2026.10.1 tests pass with no
 external sockets in the HA suite. Tests cover request boundaries, ACK-without-effect,
 unknown fields, slot parsing, shared polling, Celsius and LED-only HA services.
 Lint, formatting, typing and source/wheel builds pass. Hosted Actions remains disabled.
+
+Post-upgrade cached diagnostics confirm integration_manifest.version=0.2.0,
+last_update_success=true and chamber_light_only control scope. The entire download
+omits the supplied serial, code and printer IP. HA logs filtered to creator5 show
+no issues at inspection time. HA Core restart/recovery is live-verified; loss of
+the printer's own network connection remains a separate, unperformed test.
