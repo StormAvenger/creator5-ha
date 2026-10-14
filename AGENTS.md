@@ -33,3 +33,10 @@ An isolated creator5 component may be staged and read-only monitoring configured
 verify existing HA state first and preserve existing configuration. Normal status
 polling is allowed for live monitoring; print-control requests remain prohibited.
 Follow docs/legal-and-sources.md and docs/project-guide.md.
+
+On 2026-10-14 the owner requested continuation of the prepared activation step.
+The component was added successfully to HA Core 2026.10.1 without restarting HA.
+Credentials are stored in HA's private config entry; one device and 13 sensors
+refresh through the read-only coordinator. Do not repeat the standalone probe
+without a concrete need while HA is already polling. No live disconnect, credential
+change, unload or full-print test is yet recorded. Follow docs/live-acceptance.md.

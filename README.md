@@ -5,8 +5,10 @@ This is an unofficial project and is not endorsed by FlashForge.
 Built on macOS; the same Python package and commands work on Ubuntu.
 No printer controls, uploads, heater changes, motion, or print-job controls are implemented.
 One authenticated status read succeeded on a Creator 5 Pro during printing; its API
-reports firmware `1.9.9`. The reported full build `1.9.9-1.3.0`, display accuracy and
-live HA installation remain unverified.
+reports firmware `1.9.9`. The reported full build `1.9.9-1.3.0` and display
+comparisons remain unverified. On 2026-10-14, the integration was added to
+the owner's HA Core 2026.10.1: one device, 13 available sensors and scheduled
+status refreshes during printing. See [live acceptance evidence](docs/live-acceptance.md).
 
 Follow the [project completion guide](docs/project-guide.md) for the ordered plan,
 current status, offline work and the next printer session. Development follows the
@@ -81,7 +83,7 @@ Build it using `.venv/bin/python -m build`; do not upload version 0.1.0 to PyPI 
 ## Home Assistant scaffold
 
 See [installation and limitations](docs/home-assistant.md). Eleven runtime tests
-exercise Home Assistant 2026.10.0 with synthetic printer data and external network
+exercise Home Assistant 2026.10.1 with synthetic printer data and external network
 sockets disabled. The HA tests use Python 3.14 and a pinned framework; run them locally.
 Validate it on a development HA instance after the live printer probe succeeds.
 This is not HACS/release-ready.

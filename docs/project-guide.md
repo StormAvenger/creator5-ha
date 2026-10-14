@@ -6,16 +6,17 @@ read-only monitoring. macOS development, Ubuntu deployment, GitHub for source an
 
 This guide carries forward the project and legal boundaries from **TPU Jams
 Troubleshooting**. It is the ordered checklist we update as work progresses.
-Last reviewed: 2026-10-11. The user has resumed local LAN access and the printer
+Last reviewed: 2026-10-14. The user has resumed local LAN access and the printer
 is printing. Do not interrupt or alter the print. Reported stock firmware: `1.9.9-1.3.0`.
 The standalone probe has no automatic retry. The owner has authorized HA status
-polling; activation will use one shared request every 30 seconds.
+polling; the active coordinator uses one shared request every 30 seconds.
 The Mac's TCP-only API-port check succeeds. Targeted discovery identified the
 Creator 5 Pro and supplied its serial privately. After the owner corrected the
 code capitalization, one authenticated status read succeeded during printing.
 The API reports firmware 1.9.9; its full build suffix and display comparisons
 remain unverified. No printer controls have been sent. The 13 component files are
-staged in HA, with activation and credential storage pending.
+installed and active in HA Core 2026.10.1, with one device and 13 available sensors.
+Scheduled updates were observed while the printer continued reporting printing.
 
 ## Working boundaries
 
@@ -82,7 +83,8 @@ On 2026-10-11, 30 client tests and 11 HA runtime tests passed locally, including
 the new diagnostics tests. Lint, formatting and typing checks also passed.
 Latest local validation: 58 client tests and 11 HA runtime tests pass with all
 13 sensors sharing one coordinator request. The latest 11 HA tests pass against
-the exact installed Core version, 2026.10.0. No external sockets are allowed in HA tests.
+the exact installed Core version, 2026.10.1 (and the earlier 2026.10.0 baseline).
+No external sockets are allowed in HA tests.
 All five [GitHub CI jobs](https://github.com/StormAvenger/creator5-ha/actions/runs/37501135092)
 passed for implementation commit `c8889c1`, including the Linux HA job.
 
@@ -112,7 +114,7 @@ were sent. Readings are a snapshot, not continuous monitoring.
 Follow [the first-session checklist](first-printer-session.md).
 Earlier remote inspection found HA Core 2026.9.4 and a reachable API port while
 the printer was subsequently off. The latest local session identifies the printer
-and authenticates successfully; HA now reports Core 2026.10.0 on HA OS 18.3.
+and authenticates successfully; HA now reports Core 2026.10.1 on HA OS 18.3.
 
 ### 5. Complete the monitoring model
 
@@ -132,15 +134,20 @@ Do not infer capabilities from older printer models or an API success response.
 
 ### 6. Validate a development HA installation
 
-Current evidence: all 13 files staged on the owner-authorized HA 2026.10.0 host;
-basic configuration validation passed. Activation and live sensor verification
-remain pending. Offline tests do not replace these checks.
+Current evidence: installed on the owner-authorized HA 2026.10.1 host on 2026-10-14;
+one device, 13 available sensors and scheduled refreshes during an existing print.
+No HA restart was needed. Downloaded diagnostics exclude the supplied serial,
+LAN code and printer IP. See [live acceptance evidence](live-acceptance.md).
 
-- [ ] Install into a development HA instance; record its version.
+- [x] Install into the owner-authorized HA instance; record its version.
 - [ ] Confirm add/remove/restart, unavailable/recovery and credential changes.
-- [ ] Observe idle and an ordinary user-started print without controlling it.
-- [ ] Check polling load and entity/device naming for one printer.
-- [ ] Confirm secrets stay out of logs, attributes and exported diagnostics.
+- [x] Observe a user-started print without controlling it; scheduled readings update.
+- [ ] Observe idle and completion of a full ordinary print.
+- [x] Confirm one device, 13 sensors and successful scheduled updates.
+- [ ] Measure polling load without invasive instrumentation.
+- [x] Confirm exported diagnostics omit the supplied serial, LAN code and printer IP.
+- [x] Review all 13 live entity attributes and filtered component logs for privacy;
+  no supplied credentials/identifiers or raw payloads exposed.
 
 **Complete when:** monitoring works through a full normal print and reconnect cycle.
 Tests can be authored offline; live acceptance depends on hardware access.

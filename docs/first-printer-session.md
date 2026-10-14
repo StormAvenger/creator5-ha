@@ -72,3 +72,13 @@ The code was used transiently; it is not stored in source or the project's `.env
 The latest HA About page shows Core 2026.10.0 on HA OS 18.3. All 13 component files
 are staged and the basic configuration check passed. Activation is pending; this
 staging result does not yet validate live HA polling.
+
+## HA activation — 2026-10-14
+
+The owner requested continuation of the prepared activation. HA Core 2026.10.1
+already recognized the installed component; no HA restart or upgrade was needed.
+The normal config flow authenticated successfully and saved credentials in HA's
+private config entry. One device and all 13 sensors appeared. Scheduled updates
+advanced progress while state remained printing. Downloaded cached diagnostics
+exclude the supplied code, serial and IP. Full-print, idle and live reconnect
+acceptance remain pending; see [live acceptance evidence](live-acceptance.md).
