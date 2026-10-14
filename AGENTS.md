@@ -40,3 +40,11 @@ Credentials are stored in HA's private config entry; one device and 13 sensors
 refresh through the read-only coordinator. Do not repeat the standalone probe
 without a concrete need while HA is already polling. No live disconnect, credential
 change, unload or full-print test is yet recorded. Follow docs/live-acceptance.md.
+
+The owner subsequently requested additional monitoring, device-specific Celsius,
+and chamber light as the sole control. Version 0.2.0 is prepared locally and tested;
+it is not live yet. The narrow set_light(bool) method is authorized development
+scope; all print, heater, fan, motion, upload and material writes remain prohibited.
+Before browser activation of the custom update, obtain specific action-time
+approval. Do not send live light commands as part of setup or ordinary polling.
+Physical comparisons must not involve opening doors or disrupting a running print.

@@ -1,10 +1,14 @@
 # Home Assistant development installation
 
 This is an experimental integration, not a validated production release.
+The installed 0.1.0 build remains read-only. Version 0.2.0 is tested locally and
+awaits activation; it adds extra monitoring, Celsius defaults and chamber-light
+on/off only. See [upgrade scope](extended-monitoring.md).
+
 Offline runtime tests cover Home Assistant 2026.10.1. One authenticated status read
 previously succeeded on the user's Creator 5 Pro while printing (API firmware 1.9.9).
 On 2026-10-14, the signed-in About page confirmed HA Core 2026.10.1, Supervisor
-2026.09.3, HA OS 18.3 and frontend 20260930.3. All 11 runtime tests passed against
+2026.09.3, HA OS 18.3 and frontend 20260930.3. All 14 runtime tests passed against
 that exact Core version with external sockets disabled; the earlier 2026.10.0
 baseline also passed.
 
@@ -30,7 +34,7 @@ The flow validates one status read. The coordinator polls every 30 seconds and
 shares one response among the sensors. Failed updates make entities unavailable.
 Authentication failure requests a new check code. Removing the integration unloads
 its sensor platform. Missing numeric fields remain unknown rather than zero.
-The 13 sensors include state, progress, bed/chamber temperature, remaining time,
+The installed 0.1.0 build's 13 sensors include state, progress, bed/chamber temperature, remaining time,
 and current/target temperatures for tools 1–4. Each four-element tool array is
 validated; real zero targets remain zero, not unknown. Tool numbering follows
 the documented array order and still needs comparison with the physical display.
@@ -41,8 +45,7 @@ HA and starts the shared status poll; keep configuration and backups private.
 ## Offline runtime tests
 
 The integration provides cached diagnostics through HA's integration menu. Our
-diagnostics section includes only numeric readings, update success and read-only
-mode. It omits config-entry data, raw responses, free-form status strings, IP,
+diagnostics section includes only numeric readings, update success and control capability. It omits config-entry data, raw responses, free-form status strings, IP,
 serial, filenames, URLs and tokens; requesting it performs no printer I/O.
 If the last update failed, numeric values are stale and update success is false.
 Home Assistant can add its own surrounding system metadata to a downloaded
@@ -59,7 +62,7 @@ python -m pytest tests/ha --disable-socket --allow-unix-socket
 ```
 
 The fixture runs real HA config-entry/coordinator/entity code, replacing only
-printer I/O. Eleven tests cover user setup, rejected credentials, unreachable and
+printer I/O. Fourteen tests cover user setup, rejected credentials, unreachable and
 invalid targets, duplicates, reauthentication, sensor values, scheduled polling,
 missing values, disconnect/recovery, first-refresh failures and unload.
 After unload, HA may keep unavailable entity-registry placeholders; polling stops.
@@ -89,7 +92,8 @@ is tested offline, but live removal during the current print has not been attemp
 If removing the source files too, first unload the integration and retain a local
 copy; remove only `custom_components/creator5`, preserving all other components.
 
-HA presents temperatures using its configured units. In Fahrenheit, a printer
-reported target of 0 °C becomes 32 °F; that is a converted zero target, not a command
-to heat a tool. No entity can write a target. Tool numbers still need comparison
-with the physical printer display, and remaining time remains provisional.
+On 2026-10-14 all ten installed temperature entities were explicitly set to Celsius
+without changing HA's household units. The prepared 0.2.0 build supplies Celsius
+defaults for all 12 temperature entities, including the two added targets. Owners
+can still override individual units. No entity can write a heater target. Tool
+numbers still need physical comparison and remaining time remains provisional.

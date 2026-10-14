@@ -13,7 +13,8 @@ async def async_get_config_entry_diagnostics(
     coordinator = getattr(entry, "runtime_data", None)
     status = coordinator.data if coordinator is not None else None
     return {
-        "read_only": True,
+        "read_only": False,
+        "control_scope": "chamber_light_only",
         "last_update_success": (
             coordinator.last_update_success if coordinator is not None else None
         ),

@@ -31,9 +31,9 @@ async def test_sensor_values_connection_loss_recovery_and_unload(hass, freezer):
     ) as read:
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
-        assert read.await_count == 1  # all thirteen sensors share one request
+        assert read.await_count == 1  # all twenty-four sensors share one request
         states = {state.name: state for state in hass.states.async_all("sensor")}
-        assert len(states) == 13
+        assert len(states) == 24
         by_id = {s.entity_id: s for s in states.values()}
         for suffix, value in {
             "tool_1_temperature": "215.0",
@@ -69,7 +69,7 @@ async def test_sensor_values_connection_loss_recovery_and_unload(hass, freezer):
         await entry.runtime_data.async_refresh()
         await hass.async_block_till_done()
         values = [s.state for s in hass.states.async_all("sensor")]
-        assert values.count("unknown") == 12
+        assert values.count("unknown") == 23
         assert "ready" in values
         coordinator = entry.runtime_data
         assert await hass.config_entries.async_unload(entry.entry_id)

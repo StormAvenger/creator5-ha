@@ -163,3 +163,112 @@ def test_invalid_tool_value_does_not_poison_other_tools(value):
 def test_invalid_tool_index_is_rejected(index):
     with pytest.raises(ValueError):
         PrinterStatus({}).nozzle_temperature(index)
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [("open", True), ("close", False), ("opened", None), (True, None), (None, None)],
+)
+def test_open_close_fields_are_strict(value, expected):
+    assert PrinterStatus({"doorStatus": value}).open_state("doorStatus") is expected
+
+
+def test_material_slots_are_selected_by_id_and_sanitized():
+    status = PrinterStatus(
+        {
+            "matlStationInfo": {
+                "slotInfos": [
+                    {
+                        "slotId": 4,
+                        "materialName": "TPU",
+                        "materialColor": "#ABCDEF",
+                        "hasFilament": False,
+                        "token": "PRIVATE",
+                    },
+                    {"slotId": 1, "materialName": "PETG", "materialColor": "bad", "hasFilament": 1},
+                ]
+            }
+        }
+    )
+    assert status.material_slot(4) == {"material": "TPU", "color": "#ABCDEF", "has_filament": False}
+    assert status.material_slot(1) == {"material": "PETG", "color": None, "has_filament": None}
+    assert status.material_slot(2) is None
+    assert "PRIVATE" not in str(status.material_slot(4))
+
+
+@pytest.mark.parametrize(
+    "slots",
+    [None, "invalid", [None], [{"slotId": True}], [{"slotId": 1}, {"slotId": 1}], [{"slotId": 5}]],
+)
+def test_bad_material_station_is_unknown(slots):
+    assert PrinterStatus({"matlStationInfo": {"slotInfos": slots}}).material_slot(1) is None
+
+
+@pytest.mark.parametrize("value", [-108, True, "42", float("nan"), float("inf"), 101])
+def test_fan_percentages_reject_invalid_and_sentinel_values(value):
+    assert (
+        PrinterStatus({"chamberFanSpeed": value}).nonnegative("chamberFanSpeed", maximum=100)
+        is None
+    )
+
+
+class SequenceSession(Session):
+    def __init__(self, payloads):
+        self.responses = iter(Response(payload) for payload in payloads)
+        self.calls = []
+
+    def post(self, url, **kwargs):
+        self.calls.append((url, kwargs))
+        return next(self.responses)
+
+
+@pytest.mark.parametrize("on", [True, False])
+async def test_light_has_only_the_documented_led_payload_and_verifies_readback(on):
+    session = SequenceSession(
+        [
+            {"code": 0},
+            {"code": 0, "detail": {"status": "printing", "lightStatus": "open" if on else "close"}},
+        ]
+    )
+    result = await client(session).set_light(on)
+    assert result.state == "printing"
+    assert result.open_state("lightStatus") is on
+    assert len(session.calls) == 2
+    url, kwargs = session.calls[0]
+    assert url == "http://10.0.0.42:8898/control"
+    assert kwargs["json"] == {
+        "serialNumber": "TEST-SN",
+        "checkCode": "secret",
+        "payload": {"cmd": "lightControl_cmd", "args": {"status": "open" if on else "close"}},
+    }
+    assert all(call[1]["allow_redirects"] is False for call in session.calls)
+    assert session.calls[1][0].endswith("/detail")
+    assert session.calls[1][1]["json"] == {"serialNumber": "TEST-SN", "checkCode": "secret"}
+
+
+@pytest.mark.parametrize("reported", ["close", "unknown", None])
+async def test_light_success_ack_without_matching_state_is_a_failure(reported):
+    session = SequenceSession(
+        [
+            {"code": 0},
+            {"code": 0, "detail": {"status": "printing", "lightStatus": reported}},
+        ]
+    )
+    with pytest.raises(PrinterError, match="did not confirm"):
+        await client(session).set_light(True)
+    assert len(session.calls) == 2
+
+
+async def test_invalid_light_input_never_sends_a_command():
+    session = Session(None)
+    with pytest.raises(ValueError):
+        await client(session).set_light("open")
+    assert not session.calls
+
+
+async def test_light_authentication_failure_is_not_retried_or_echoed():
+    session = Session({"code": 1, "message": "secret TEST-SN"})
+    with pytest.raises(AuthenticationError) as error:
+        await client(session).set_light(True)
+    assert "secret" not in str(error.value)
+    assert len(session.calls) == 1

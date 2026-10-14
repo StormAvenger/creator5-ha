@@ -12,6 +12,7 @@ from .creator5py import AuthenticationError, Creator5Client, PrinterError
 
 class Creator5ConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
+    MINOR_VERSION = 2
 
     async def async_step_reauth(self, entry_data):
         return await self.async_step_reauth_confirm()

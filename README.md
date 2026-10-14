@@ -1,9 +1,12 @@
 # Creator 5 Home Assistant project
 
-Experimental read-only FlashForge Creator 5 / Creator 5 Pro LAN integration.
+Experimental FlashForge Creator 5 / Creator 5 Pro LAN monitoring and chamber light.
 This is an unofficial project and is not endorsed by FlashForge.
 Built on macOS; the same Python package and commands work on Ubuntu.
-No printer controls, uploads, heater changes, motion, or print-job controls are implemented.
+Version 0.2.0 adds only chamber-light on/off control; no uploads, heater changes,
+fan controls, motion or print-job controls are implemented. This version is tested
+locally and awaiting live installation; HA currently runs the read-only 0.1.0 build.
+See [extended monitoring and Celsius](docs/extended-monitoring.md).
 One authenticated status read succeeded on a Creator 5 Pro during printing; its API
 reports firmware `1.9.9`. The reported full build `1.9.9-1.3.0` and display
 comparisons remain unverified. On 2026-10-14, the integration was added to
@@ -78,11 +81,11 @@ The wheel exports `creator5py` as a top-level Python package from this canonical
 directory. Home Assistant imports the same code relatively. This avoids two copies
 and an unpublished PyPI dependency during initial development. The client can later
 be published separately and the integration switched to a pinned manifest requirement.
-Build it using `.venv/bin/python -m build`; do not upload version 0.1.0 to PyPI yet.
+Build it using `.venv/bin/python -m build`; do not upload development packages to PyPI yet.
 
-## Home Assistant scaffold
+## Home Assistant integration
 
-See [installation and limitations](docs/home-assistant.md). Eleven runtime tests
+See [installation and limitations](docs/home-assistant.md). Fourteen runtime tests
 exercise Home Assistant 2026.10.1 with synthetic printer data and external network
 sockets disabled. The HA tests use Python 3.14 and a pinned framework; run them locally.
 Validate it on a development HA instance after the live printer probe succeeds.

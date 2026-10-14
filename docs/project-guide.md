@@ -1,8 +1,8 @@
 # Project completion guide
 
 **Goal:** an unofficial, local Home Assistant integration for the user's stock
-Creator 5 Pro, backed by a portable standalone Python client. First release:
-read-only monitoring. macOS development, Ubuntu deployment, GitHub for source and review.
+Creator 5 Pro, backed by a portable standalone Python client. Initial milestone:
+read-only monitoring. The owner has now requested extra sensors and light-only control. macOS development, Ubuntu deployment, GitHub for source and review.
 
 This guide carries forward the project and legal boundaries from **TPU Jams
 Troubleshooting**. It is the ordered checklist we update as work progresses.
@@ -176,12 +176,25 @@ Virtual environments and secret files are recreated, never copied between OSes.
 **Complete when:** clean installs work, CI/validation passes, and release metadata
 accurately describes support and limitations. Keep the repository private until then.
 
-### 9. Optional follow-up scope — after monitoring is stable
+### 9. Chamber-light control and extra sensors — prepared
 
-Controls such as light, pause/resume/cancel or temperatures are separate future
-work, requiring explicit feature selection, verified protocol semantics and
-appropriate user confirmation. Motion, unsupported material operations, firmware
-changes and cloud experiments are not assumed parts of this integration.
+The owner selected chamber light as the sole control and requested Celsius for
+this device. Version 0.2.0 is implemented locally: 24 sensors, five Pro binary
+sensors and one on/off light. Its 83 client and 14 HA tests pass. This version is
+not installed yet; see [scope, unit behavior and activation checks](extended-monitoring.md).
+All ten installed temperature entities were set to Celsius through HA's normal
+per-entity settings; household units were preserved.
+
+- [x] Parse bounded material slots, combined Pro door/lid state and fan reports.
+- [x] Add elapsed/layer/temperature-target readings from observed fields.
+- [x] Implement LED-only writes with strict boolean input and status readback.
+- [x] Test Celsius defaults/migration on a Fahrenheit host, preserving unrelated devices.
+- [ ] Approve and activate the prepared version on HA; verify the Pro's 30 entities.
+- [ ] Observe physical light actuation and restore its original state.
+- [ ] Compare new fields to the device display; retain unsupported signals as unknown.
+
+Print, motion, heater, fan, firmware and material-control commands remain outside
+scope. Completion and reconnect checks must not interrupt a running job.
 
 ## How we continue each session
 

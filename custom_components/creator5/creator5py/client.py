@@ -1,7 +1,8 @@
-"""Read-only HTTP transport. No command, upload, or arbitrary-endpoint API."""
+"""Status reads and one narrowly scoped chamber-light command."""
 
 import ipaddress
 import math
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -41,6 +42,56 @@ class PrinterStatus:
         if isinstance(value, bool) or not isinstance(value, (float, int)):
             return None
         return float(value) if math.isfinite(value) else None
+
+    def nonnegative(self, key: str, *, maximum: float | None = None) -> float | None:
+        value = self.number(key)
+        return (
+            value
+            if value is not None and 0 <= value and (maximum is None or value <= maximum)
+            else None
+        )
+
+    def open_state(self, key: str) -> bool | None:
+        value = self.detail.get(key)
+        return {"open": True, "close": False}.get(value) if isinstance(value, str) else None
+
+    @property
+    def is_pro(self) -> bool:
+        return self.detail.get("model") == "Creator 5 Pro"
+
+    def material_slot(self, slot: int) -> dict[str, Any] | None:
+        """Return only validated slot metadata, never the raw station object."""
+        if type(slot) is not int or not 1 <= slot <= 4:
+            raise ValueError("Material slot must be between 1 and 4")
+        station = self.detail.get("matlStationInfo")
+        slots = station.get("slotInfos") if isinstance(station, dict) else None
+        if not isinstance(slots, list) or len(slots) > 4:
+            return None
+        seen = set()
+        selected = None
+        for item in slots:
+            if not isinstance(item, dict):
+                return None
+            slot_id = item.get("slotId")
+            if type(slot_id) is not int or not 1 <= slot_id <= 4 or slot_id in seen:
+                return None
+            seen.add(slot_id)
+            if slot_id == slot:
+                selected = item
+        if selected is None:
+            return None
+        material, color, present = (
+            selected.get(k) for k in ("materialName", "materialColor", "hasFilament")
+        )
+        return {
+            "material": material
+            if isinstance(material, str) and re.fullmatch(r"[A-Za-z0-9 +_.-]{1,32}", material)
+            else None,
+            "color": color
+            if isinstance(color, str) and re.fullmatch(r"#[0-9A-Fa-f]{6}", color)
+            else None,
+            "has_filament": present if type(present) is bool else None,
+        }
 
     @property
     def state(self) -> str | None:
@@ -84,16 +135,36 @@ class Creator5Client:
         if not 1 <= port <= 65535 or not math.isfinite(timeout) or timeout <= 0:
             raise ValueError("Invalid port or timeout")
         self._session = session
-        self._url = f"http://{address}:{port}/detail"
+        self._url = f"http://{address}:{port}"
         self._auth = {"serialNumber": serial.strip(), "checkCode": check_code.strip()}
         self._timeout = aiohttp.ClientTimeout(total=timeout)
 
     async def get_status(self) -> PrinterStatus:
         """Send one status request; never follow redirects or retry automatically."""
+        payload = await self._request("/detail", {})
+        detail = payload.get("detail")
+        if not isinstance(detail, dict) or not isinstance(detail.get("status"), str):
+            raise PrinterError("Printer returned missing or invalid status detail")
+        return PrinterStatus(detail)
+
+    async def set_light(self, on: bool) -> PrinterStatus:
+        """Set only the chamber LED, then verify using one status read."""
+        if type(on) is not bool:
+            raise ValueError("Light state must be a boolean")
+        await self._request(
+            "/control",
+            {"payload": {"cmd": "lightControl_cmd", "args": {"status": "open" if on else "close"}}},
+        )
+        status = await self.get_status()
+        if status.open_state("lightStatus") is not on:
+            raise PrinterError("Printer did not confirm the requested light state")
+        return status
+
+    async def _request(self, endpoint: str, body: dict[str, Any]) -> dict[str, Any]:
         try:
             async with self._session.post(
-                self._url,
-                json=self._auth,
+                self._url + endpoint,
+                json={**self._auth, **body},
                 timeout=self._timeout,
                 allow_redirects=False,
             ) as response:
@@ -114,7 +185,4 @@ class Creator5Client:
             raise AuthenticationError("Check serial number, check code, and LAN mode")
         if code != 0:
             raise PrinterError(f"Printer API returned error code {code}")
-        detail = payload.get("detail")
-        if not isinstance(detail, dict) or not isinstance(detail.get("status"), str):
-            raise PrinterError("Printer returned missing or invalid status detail")
-        return PrinterStatus(detail)
+        return payload
