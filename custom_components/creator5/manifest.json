@@ -1,13 +1,17 @@
 {
   "domain": "creator5",
   "name": "FlashForge Creator 5 (experimental)",
-  "version": "0.3.1",
+  "codeowners": [
+    "@StormAvenger"
+  ],
   "config_flow": true,
+  "dependencies": [
+    "http"
+  ],
   "documentation": "https://github.com/StormAvenger/creator5-ha",
-  "issue_tracker": "https://github.com/StormAvenger/creator5-ha/issues",
   "integration_type": "device",
   "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/StormAvenger/creator5-ha/issues",
   "requirements": [],
-  "dependencies": ["http"],
-  "codeowners": ["@StormAvenger"]
+  "version": "0.3.2"
 }

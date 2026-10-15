@@ -1,108 +1,75 @@
-# Home Assistant development installation
+# Home Assistant development and validation
 
-This is an experimental integration, not a validated production release.
-Version 0.3.1 is installed and live-checked on the owner-authorized HA host; see
-[camera and monitoring](camera-and-monitoring.md) for the earlier monitoring scope,
-10-second default, camera privacy and manual material assignments.
+For normal installation, use the [no-YAML installation guide](install.md).
+The 0.3.2 candidate adds HACS metadata/local artwork and an IP/LAN-code setup form.
+The user's existing 0.3.1 installation has already validated shared status polling,
+camera viewing, slot swatches and the grouped material dashboard on HA 2026.10.1.
+Do not confuse that live evidence with candidate or base-model acceptance.
 
-The earlier 0.2.0 update was live-verified on HA 2026.10.1: 30 entities, Celsius
-defaults and chamber-light on/off only. The approved upgrade occurred after natural
-print completion. HA restarted and the light's reported off/on state was verified,
-restoring its original on state. See [upgrade scope](extended-monitoring.md).
+## Runtime checks
 
-Offline runtime tests cover Home Assistant 2026.10.1. One authenticated status read
-previously succeeded on the user's Creator 5 Pro while printing (API firmware 1.9.9).
-On 2026-10-14, the signed-in About page confirmed HA Core 2026.10.1, Supervisor
-2026.09.3, HA OS 18.3 and frontend 20260930.3. All 33 runtime tests passed against
-that exact Core version with external sockets disabled; the earlier 2026.10.0
-baseline also passed.
-
-All 16 component files are installed in an isolated
-`/homeassistant/custom_components/creator5` directory. HA's basic configuration
-check previously passed. The owner authorized continuing activation and credential
-storage. HA already recognized the component, so no HA restart or upgrade was
-performed in this session. Initial setup succeeded with 13 sensors; the approved 0.2.0 upgrade now has 30 entities.
-Scheduled updates advanced print progress while the printer continued reporting
-printing. See [live acceptance evidence](live-acceptance.md) for scope and limitations.
-
-1. Confirm that the standalone read-only probe succeeds first.
-2. Copy the entire `custom_components/creator5` folder into the development Home
-   Assistant configuration's `custom_components` folder.
-3. Restart Home Assistant if it has not yet discovered the new component, then add
-   **FlashForge Creator 5 (experimental)** under
-   Settings → Devices & services.
-4. Enter the printer's private IPv4, serial number and LAN check code.
-5. Confirm one device, 13 available sensors and subsequent scheduled refreshes.
-   Do not change printer settings or control a running job to test this integration.
-
-The flow validates one status read. The coordinator polls every 30 seconds and
-shares one response among the sensors. Failed updates make entities unavailable.
-Authentication failure requests a new check code. Removing the integration unloads
-its sensor platform. Missing numeric fields remain unknown rather than zero.
-The original 0.1.0 build's 13 sensors include state, progress, bed/chamber temperature, remaining time,
-and current/target temperatures for tools 1–4. Each four-element tool array is
-validated; real zero targets remain zero, not unknown. Tool numbering follows
-the documented array order and still needs comparison with the physical display.
-The owner authorized installing read-only monitoring while the print runs. Never
-send print controls or change printer settings. Activation stores credentials in
-HA and starts the shared status poll; keep configuration and backups private.
-
-## Offline runtime tests
-
-The integration provides cached diagnostics through HA's integration menu. Our
-diagnostics section includes only numeric readings, update success and control capability. It omits config-entry data, raw responses, free-form status strings, IP,
-serial, filenames, URLs and tokens; requesting it performs no printer I/O.
-If the last update failed, numeric values are stale and update success is false.
-Home Assistant can add its own surrounding system metadata to a downloaded
-diagnostics file; review the whole file before sharing it.
-See [HA diagnostics guidance](https://developers.home-assistant.io/docs/core/integration/diagnostics/).
-
-Use a separate Python 3.14 environment to keep HA's pinned dependencies separate
-from the lightweight standalone client environment. Run locally (Actions is disabled):
+Use a separate Python 3.14 environment for HA's pinned dependencies, apart from
+the standalone client environment. Install requirements-ha-test.txt and the
+repository locally, then run:
 
 ```sh
-python -m pip install -r requirements-ha-test.txt
-python -m pip install -e .
 python -m pytest tests/ha --disable-socket --allow-unix-socket
 ```
 
-The fixture runs real HA config-entry/coordinator/entity code, replacing only
-printer I/O. Thirty-three tests cover user setup, rejected credentials, unreachable and
-invalid targets, duplicates, reauthentication, sensor values, scheduled polling,
-missing values, disconnect/recovery, first-refresh failures and unload.
-After unload, HA may keep unavailable entity-registry placeholders; polling stops.
-The ordinary client suite skips the HA tests when the optional framework is absent.
+Tests run actual HA config-entry, entity, coordinator, template and option code
+with synthetic printer I/O. Unix sockets are allowed only for the event loop;
+external sockets are blocked. The current suite covers two-field setup, targeted
+identity lookup, both supported model IDs, model conflicts, credential rejection,
+no discovery for invalid addresses/empty codes, duplicates, reauthentication,
+Pro-only capability filtering, Celsius/mm, shared 10-second polling, updates,
+connection loss/recovery, on-demand camera, exact local PNG colors and cleanup.
+No hardware support claim should be inferred from a synthetic fixture alone.
 
-Home Assistant stores credentials in its config entry under `.storage`. Treat the
-configuration directory and backups as private; password masking is not encryption.
-The integration's diagnostics are allowlisted; raw-response attributes are not exposed.
+Tests also run from a clean temporary source directory with a fresh mock config
+entry and no owner's credentials. That verifies source setup/packaging boundaries,
+not a new physical HA OS appliance. A real base Creator 5 has not been tested.
 
-Developer references:
-- [Config flow](https://developers.home-assistant.io/docs/core/integration/config_flow/)
-- [Shared polling coordinator](https://developers.home-assistant.io/docs/integration_fetching_data/)
-- [Integration manifest](https://developers.home-assistant.io/docs/creating_integration_manifest/)
+## Existing entries and privacy
 
-Before distribution: run HA runtime tests against the user's target HA release, add more
-sensor mappings from sanitized observations, choose a license with the owner,
-validate packaging with hassfest/HACS locally as applicable. Historical CI tested the
-client across OSes and the pinned HA baseline; it does not establish
-physical-printer compatibility or support for untested HA versions.
+Existing config entries keep their saved serial, LAN code, mappings and explicit
+entity enable/disable choices. No serial migration or re-entry is needed. New
+setup obtains serial automatically from one directed UDP request to the entered
+private IPv4 address; no subnet scan, broadcast or multicast is used. Credentials
+are sent only after supported discovery identification and checked against normal
+status. Model identity must agree between discovery and authenticated status.
+
+Diagnostics are built from cached numeric readings, update success/timestamp and
+control capability. They omit config-entry data, raw responses, printer IP, serial,
+LAN code, filenames, free-form strings and source URLs. Requests do not contact
+the printer. HA can add surrounding system metadata; review the whole download
+before sharing. Credentials and backups stored by HA must remain private.
+
+## Distribution and limitations
+
+HACS metadata and local original brand images are supplied. All runtime code is
+inside custom_components/creator5, with no unpublished external client dependency.
+The standalone creator5py package is exported from the same canonical client code.
+Release checks run locally; do not enable hosted Actions or other paid services.
+HACS download acceptance requires a public repo and a validated release/default
+branch, and is separate from local packaging validation. Keep visibility private
+until the owner's explicit publication decision.
+
+The Pro has 53 registered entities, 52 enabled by default. Base/unknown model
+setups omit door/lid, chamber temperature/target and chamber-fan entities; base has
+49 registered/48 enabled by default when camera is enabled. Unknown/conflicting
+models cannot be newly added. No guessed zero represents missing data. The only
+write method is chamber-light on/off; no print, heater, fan, motion, firmware,
+upload or material controls are implemented.
+
+The optional slot dashboard remains separate from ordinary integration setup.
+HACS does not install it automatically. See [slot display](slot-display.md) for
+examples and live 0.3.1 evidence. Physical display comparisons, idle-only printer
+network recovery and earlier brief camera availability transitions remain open.
 
 ## Unload and rollback
 
-To stop this integration's polling, remove its config entry under Settings →
-Devices & services → FlashForge Creator 5 (experimental). Its platform unload
-stops the coordinator; do not turn off the printer or reset LAN mode. This behavior
-is tested offline, but live removal during the current print has not been attempted.
-If removing the source files too, first unload the integration and retain a local
-copy; remove only `custom_components/creator5`, preserving all other components.
-
-On 2026-10-14 all ten installed temperature entities were explicitly set to Celsius
-without changing HA's household units. The prepared 0.2.0 build supplies Celsius
-defaults for all 12 temperature entities, including the two added targets. Owners
-can still override individual units. No entity can write a heater target. Tool
-numbers still need physical comparison and remaining time remains provisional.
-
-Version 0.3.1 adds four local color swatches and native grouped slot cards; see
-[slot presentation](slot-display.md). There are 53 registered Pro entities, with
-the optional success timestamp disabled by default (52 active by default).
+Remove this printer's config entry in Devices & services to stop its coordinator
+and unload its entities. Tests verify polling stops after unload. Do not shut down
+or alter a printing device to test removal. A private source rollback archive is
+retained outside the repository for the owner's installed version. Do not change
+other components or expose the HA configuration directory.

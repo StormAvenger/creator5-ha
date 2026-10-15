@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "creator5py"
-version = "0.3.1"
+version = "0.3.2"
 description = "FlashForge Creator 5 LAN status and chamber-light client"
 readme = "README.md"
 license = "GPL-3.0-only"

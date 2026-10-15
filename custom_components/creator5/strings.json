@@ -10,10 +10,9 @@
       },
       "user": {
         "title": "Connect to your Creator 5",
-        "description": "Enable LAN mode and enter the private IPv4 address, serial number and LAN check code from your printer. This integration reads status and can switch the chamber light. No print controls are provided.",
+        "description": "Enable LAN mode, then enter the printer IP and LAN code. Setup checks only that address and identifies the model automatically. Creator 5 Pro is live-tested; base Creator 5 support is unverified. Chamber light is the only control.",
         "data": {
           "host": "Printer LAN IPv4 address",
-          "serial_number": "Serial number",
           "check_code": "LAN check code"
         }
       }
@@ -21,7 +20,10 @@
     "error": {
       "cannot_connect": "Could not read printer status. Check address, firmware and network access.",
       "invalid_auth": "Check serial number, LAN check code and LAN mode.",
-      "invalid_config": "Enter a private IPv4 address and nonempty credentials."
+      "invalid_config": "Enter a private IPv4 address and a nonempty LAN code.",
+      "discovery_failed": "Could not identify the printer at that address. Check its IP, LAN mode and access to UDP port 48899. No other addresses were searched.",
+      "unsupported_model": "This device is not a supported Creator 5 or Creator 5 Pro.",
+      "model_mismatch": "Discovery and authenticated status did not identify the same Creator 5 model. Setup was not saved."
     },
     "abort": {
       "already_configured": "This printer is already configured."

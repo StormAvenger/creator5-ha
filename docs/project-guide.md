@@ -241,3 +241,16 @@ controls require another scope decision from the owner.
 - [ ] Publish only after explicit owner approval.
 
 See [slot presentation](slot-display.md) and [license](../LICENSE).
+
+## 0.3.2 HACS and two-field setup
+
+- [x] Normal setup asks only for IP and LAN code, discovering serial at that IP.
+- [x] Cross-check supported discovery ID against authenticated status model.
+- [x] Omit Pro-only chamber and door/lid entities for base/unknown models.
+- [x] Add HACS metadata and original local icon assets; document no-YAML setup.
+- [x] Official hassfest passes; clean component-archive setup and all 147 tests pass.
+- [ ] Approve/activate the candidate on the owner's idle HA host.
+- [ ] Publish a validated release/default branch only after owner publication approval.
+- [ ] Verify public HACS custom-repository download end to end after publication.
+
+Pro is hardware-tested; base support is experimental/synthetic-test coverage only.

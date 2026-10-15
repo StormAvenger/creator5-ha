@@ -13,6 +13,7 @@ from .const import CONF_SERIAL
 from .entity import Creator5Entity
 
 # Unknown or absent fields return None, not a fabricated zero.
+PRO_ONLY_SENSORS = {"chamberTemp", "chamberTargetTemp", "chamberFanSpeed"}
 TOOL_SENSORS = {
     f"tool_{index + 1}_{kind}": (index, target)
     for index in range(4)
@@ -59,7 +60,11 @@ SENSORS = (
 
 async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities(
-        [Creator5Sensor(entry.runtime_data, entry.data[CONF_SERIAL], spec) for spec in SENSORS]
+        [
+            Creator5Sensor(entry.runtime_data, entry.data[CONF_SERIAL], spec)
+            for spec in SENSORS
+            if spec[0] not in PRO_ONLY_SENSORS or entry.runtime_data.data.is_pro
+        ]
         + [
             Creator5Material(entry.runtime_data, entry.data[CONF_SERIAL], slot)
             for slot in range(1, 5)

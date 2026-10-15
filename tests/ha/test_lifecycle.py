@@ -18,6 +18,7 @@ async def test_sensor_values_connection_loss_recovery_and_unload(hass, freezer):
     status = PrinterStatus(
         {
             "status": "printing",
+            "model": "Creator 5 Pro",
             "printProgress": 0.5,
             "platTemp": 60,
             "chamberTemp": 35,
@@ -69,11 +70,11 @@ async def test_sensor_values_connection_loss_recovery_and_unload(hass, freezer):
         )
 
         read.side_effect = None
-        read.return_value = PrinterStatus({"status": "ready"})
+        read.return_value = PrinterStatus({"status": "ready", "model": "Creator 5 Pro"})
         await entry.runtime_data.async_refresh()
         await hass.async_block_till_done()
         values = [s.state for s in hass.states.async_all("sensor")]
-        assert values.count("unknown") == 38
+        assert values.count("unknown") == 37
         assert "ready" in values
         coordinator = entry.runtime_data
         assert await hass.config_entries.async_unload(entry.entry_id)

@@ -109,16 +109,25 @@ async def test_shared_entities_celsius_on_imperial_host_and_light_only_services(
         assert not list(coordinator.async_contexts())
 
 
-async def test_door_is_not_exposed_for_base_creator5(hass):
+@pytest.mark.parametrize("model", ["Creator 5", None, "Unrecognized model"])
+async def test_pro_hardware_is_not_exposed_without_positive_pro_identification(hass, model):
     entry = MockConfigEntry(domain=DOMAIN, data=DATA, minor_version=2)
     entry.add_to_hass(hass)
     with patch(
         "custom_components.creator5.Creator5Client.get_status",
-        new=AsyncMock(return_value=PrinterStatus({**DETAIL, "model": "Creator 5"})),
+        new=AsyncMock(return_value=PrinterStatus({**DETAIL, "model": model})),
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
         assert hass.states.get("binary_sensor.creator_5_door_or_lid") is None
+        for entity_id in (
+            "sensor.creator_5_chamber_temperature",
+            "sensor.creator_5_chamber_target_temperature",
+            "sensor.creator_5_reported_chamber_fan",
+        ):
+            assert hass.states.get(entity_id) is None
+        assert hass.states.get("sensor.creator_5_bed_temperature") is not None
+        assert hass.states.get("sensor.creator_5_reported_cooling_fan") is not None
         assert await hass.config_entries.async_unload(entry.entry_id)
 
 

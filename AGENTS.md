@@ -100,3 +100,12 @@ GitHub objects/caches and other copies are not proven erased; do not claim that.
 successful polling. Four native swatches and the Creator 5 slot dashboard are live.
 The existing disabled timestamp preference and manual material mappings remain.
 No print-affecting or light commands were sent. Repository remains private.
+
+The owner requested HACS installation plus IP/LAN-code-only setup and model
+detection. 0.3.2 is prepared: targeted discovery obtains serial; PID and status
+model must agree. Pro-only chamber/door entities are omitted for base/unknown
+models. Base support is documented as hardware-unverified. HACS metadata, original
+local icons and component GPL text are included. 147 tests, clean component-archive
+HA setup and official 2026.10.1 hassfest pass locally. Live 0.3.2 activation and
+public HACS download acceptance are pending; the live host is still on 0.3.1.
+Keep the repo private until separate publication approval. No hosted Actions.

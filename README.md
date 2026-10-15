@@ -3,13 +3,34 @@
 Experimental FlashForge Creator 5 / Creator 5 Pro LAN monitoring and chamber light.
 This is an unofficial project and is not endorsed by FlashForge.
 Built on macOS; the same Python package and commands work on Ubuntu.
-Version 0.3.1 is installed on the owner-authorized HA 2026.10.1 host with a camera, 10-second default polling,
-connection health, model/firmware/error readings, nozzle diameters, visible slot
-colors and configurable tool/slot mappings: 53 registered entities, 52 enabled by
-default, with live camera viewing and 10-second polling verified. Four native
-color swatches and a grouped material-slot dashboard are installed; see
-[slot presentation](docs/slot-display.md). See
-[camera and monitoring scope](docs/camera-and-monitoring.md).
+The current development candidate is 0.3.2: HACS packaging and a two-field setup
+form (printer IP and LAN code), with automatic serial/model identification.
+Creator 5 Pro on API firmware 1.9.9 is live-tested; base Creator 5 support is
+experimental and not hardware-tested. Pro-only door/lid and chamber readings are
+omitted for the base model. Existing 0.3.1 monitoring and slot dashboard are live.
+
+## Install in Home Assistant — no YAML configuration
+
+After public release, with HACS already installed:
+
+1. In HACS, open **⋮ → Custom repositories**, add this repository's URL and choose
+   **Integration**. Download **Creator 5 LAN (experimental)**.
+2. Restart Home Assistant.
+3. Open **Settings → Devices & services → Add integration** and search **Creator 5**.
+4. Enter the printer's **IP address** and **LAN code**, then select **Submit**.
+5. HA identifies the serial and model and adds the device, sensors, camera and light.
+
+No serial entry, terminal or YAML file is needed for normal integration setup.
+Setup sends one identification packet only to the entered address, then checks
+normal authenticated status; it never scans the network. Only chamber-light control
+is provided. Optional material/tool assignments are edited in HA's Configure form.
+See [the installation guide](docs/install.md) for prerequisites and troubleshooting.
+
+**Publication status:** the repository is still private. HACS requires a public
+repository, so the above public download path awaits publication approval and a
+validated release/default branch. This is not yet a HACS catalog listing.
+The grouped slot dashboard is an optional separate example; HACS does not install
+that dashboard automatically. See [slot presentation](docs/slot-display.md).
 
 The integration implements only chamber-light on/off control; no uploads, heater changes,
 fan controls, motion or print-job controls are implemented. All twelve temperatures default to Celsius for this device.
@@ -93,11 +114,11 @@ Build it using `.venv/bin/python -m build`; do not upload development packages t
 
 ## Home Assistant integration
 
-See [installation and limitations](docs/home-assistant.md). Thirty-three runtime tests
+See [installation and limitations](docs/home-assistant.md). Runtime tests
 exercise Home Assistant 2026.10.1 with synthetic printer data and external network
 sockets disabled. The HA tests use Python 3.14 and a pinned framework; run them locally.
 Validate it on a development HA instance after the live printer probe succeeds.
-This is not HACS/release-ready.
+The HACS candidate is validated locally; public HACS download acceptance is pending.
 
 ## GitHub and moving to Ubuntu
 
