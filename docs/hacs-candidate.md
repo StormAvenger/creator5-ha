@@ -1,6 +1,6 @@
 # 0.3.2 HACS installation candidate
 
-Prepared on 2026-10-14. This is a private development candidate, not a published
+Prepared on 2026-10-14. Version 0.3.2 is the owner-approved first public candidate, not a catalog-listed
 HACS download or a claim of default-catalog inclusion. Normal connection setup is
 IP address + LAN code, with no serial entry or YAML configuration.
 
@@ -37,7 +37,7 @@ IP address + LAN code, with no serial entry or YAML configuration.
 
 ## Before public download
 
-The owner must approve publication separately. Review repository description/topics,
+The owner has approved public publication and HACS installation. Review repository description/topics,
 merge a reviewed candidate into the default branch or publish its tested release,
 and verify HACS custom-repository download after the repository becomes public.
 Do not claim the private repo is already downloadable through HACS. Public/catalog

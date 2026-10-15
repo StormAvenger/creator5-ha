@@ -12,7 +12,7 @@ and duplicate protection verified. Monitoring and the slot dashboard are preserv
 
 ## Install in Home Assistant — no YAML configuration
 
-After public release, with HACS already installed:
+With HACS already installed:
 
 1. In HACS, open **⋮ → Custom repositories**, add this repository's URL and choose
    **Integration**. Download **Creator 5 LAN (experimental)**.
@@ -27,9 +27,9 @@ normal authenticated status; it never scans the network. Only chamber-light cont
 is provided. Optional material/tool assignments are edited in HA's Configure form.
 See [the installation guide](docs/install.md) for prerequisites and troubleshooting.
 
-**Publication status:** the repository is still private. HACS requires a public
-repository, so the above public download path awaits publication approval and a
-validated release/default branch. This is not yet a HACS catalog listing.
+**Distribution:** install this repository through HACS custom repositories.
+It is not listed in the default HACS catalog. Version 0.3.2 is the first public
+candidate; end-to-end HACS acceptance is being checked.
 The grouped slot dashboard is an optional separate example; HACS does not install
 that dashboard automatically. See [slot presentation](docs/slot-display.md).
 
@@ -123,7 +123,7 @@ The HACS candidate is validated locally; public HACS download acceptance is pend
 
 ## GitHub and moving to Ubuntu
 
-The private project repository is [StormAvenger/creator5-ha](https://github.com/StormAvenger/creator5-ha),
+The project repository is [StormAvenger/creator5-ha](https://github.com/StormAvenger/creator5-ha),
 with default branch `main`. The GitHub connector installation is limited to this
 repository. The local `origin` points to that repository.
 

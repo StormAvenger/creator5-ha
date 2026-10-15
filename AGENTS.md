@@ -119,3 +119,9 @@ device and 53 entities; 10-second successful polling, disabled timestamp, slot
 mappings/high-flow note and clean component logs were checked. Normal OS file
 picker uploads installed icons/license; browser security settings were untouched.
 No light or print-affecting commands were sent. Keep repository private.
+
+The owner now explicitly authorizes public publication and a real HACS install
+test after deleting the integration. This supersedes the earlier keep-private
+release gate. Promote the tested 0.3.2 code to the default branch before download.
+Keep Actions disabled, protect credentials and preserve the print protections.
+Record actual HACS download and fresh setup results without overstating evidence.

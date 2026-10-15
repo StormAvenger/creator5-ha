@@ -1,9 +1,9 @@
 # Install Creator 5 in Home Assistant
 
-Normal setup uses forms, not YAML. The public HACS download path below becomes
-available only after this repository is public and the release/default branch
-contains the tested candidate. It is currently private; it is not a HACS default
-listing. HACS itself must already be installed.
+Normal setup uses forms, not YAML. Add this project as a HACS custom repository;
+it is not a HACS default listing. HACS itself must already be installed.
+Version 0.3.2 is the first public candidate. End-to-end HACS acceptance is being
+checked; see [validation evidence](hacs-candidate.md).
 
 ## Before starting
 

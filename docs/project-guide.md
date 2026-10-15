@@ -56,7 +56,7 @@ Evidence: initial four CI jobs passed on GitHub.
 - [x] Recheck the statute and published FlashForge terms; record limitations.
 - [x] Identify independent code and reference-only community sources.
 - [ ] Identify the terms included with the user's actual firmware/Flash Studio installation.
-- [ ] Choose an outbound license with the owner before public distribution.
+- [x] Choose an outbound license with the owner: GPL-3.0-only.
 
 **Complete when:** development scope and source provenance are documented; any
 reuse has its license and required notices. No blanket legal clearance is claimed.
@@ -171,7 +171,7 @@ Virtual environments and secret files are recreated, never copied between OSes.
 - [ ] Run hassfest and HACS validation locally if HACS distribution is chosen.
 - [ ] Write installation/troubleshooting/uninstall instructions and release notes.
 - [ ] Review the full repository for secrets and proprietary assets.
-- [ ] Replace personal email in existing commit history before publication;
+- [x] Replace personal email in existing commit history before publication;
   future commits use the verified GitHub noreply identity.
 - [ ] Obtain the owner's decision to publish publicly and create the first release.
 
@@ -250,7 +250,7 @@ See [slot presentation](slot-display.md) and [license](../LICENSE).
 - [x] Add HACS metadata and original local icon assets; document no-YAML setup.
 - [x] Official hassfest passes; clean component-archive setup and all 147 tests pass.
 - [x] Approve/activate 0.3.2 while ready; verify two-field form and duplicate protection.
-- [ ] Publish a validated release/default branch only after owner publication approval.
+- [x] Obtain owner publication approval; promote the validated default branch.
 - [ ] Verify public HACS custom-repository download end to end after publication.
 
 Pro is hardware-tested; base support is experimental/synthetic-test coverage only.
