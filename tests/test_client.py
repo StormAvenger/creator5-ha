@@ -272,3 +272,42 @@ async def test_light_authentication_failure_is_not_retried_or_echoed():
         await client(session).set_light(True)
     assert "secret" not in str(error.value)
     assert len(session.calls) == 1
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        ("0.6mm;0.4mm;0.4mm;0.4mm", [0.6, 0.4, 0.4, 0.4]),
+        ("0.4mm", None),
+        ("secret", None),
+        (None, None),
+        ("0mm;0.4mm;0.4mm;0.4mm", None),
+        ("9mm;0.4mm;0.4mm;0.4mm", None),
+    ],
+)
+def test_reported_nozzle_diameters_have_exactly_four_bounded_values(value, expected):
+    result = [PrinterStatus({"nozzleModel": value}).nozzle_diameter(i) for i in range(4)]
+    assert result == (expected if expected else [None] * 4)
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        ("", "none"),
+        ("E0162", "E0162"),
+        ("E9999", "E9999"),
+        ("arbitrary secret", None),
+        (123, None),
+        (None, None),
+    ],
+)
+def test_error_codes_are_format_validated_without_invented_descriptions(value, expected):
+    assert PrinterStatus({"errorCode": value}).error_code == expected
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [("1.9.9", "1.9.9"), ("1.9.9-1.3.0", "1.9.9-1.3.0"), ("private-url", None), ([], None)],
+)
+def test_firmware_text_is_bounded_and_validated(value, expected):
+    assert PrinterStatus({"firmwareVersion": value}).firmware_version == expected

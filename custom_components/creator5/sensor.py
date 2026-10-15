@@ -1,7 +1,13 @@
 """A small set of provisional status sensors; no printer controls."""
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
-from homeassistant.const import PERCENTAGE, UnitOfTemperature, UnitOfTime
+from homeassistant.const import (
+    PERCENTAGE,
+    EntityCategory,
+    UnitOfLength,
+    UnitOfTemperature,
+    UnitOfTime,
+)
 
 from .const import CONF_SERIAL
 from .entity import Creator5Entity
@@ -58,6 +64,24 @@ async def async_setup_entry(hass, entry, async_add_entities):
             Creator5Material(entry.runtime_data, entry.data[CONF_SERIAL], slot)
             for slot in range(1, 5)
         ]
+        + [
+            Creator5SlotColor(entry.runtime_data, entry.data[CONF_SERIAL], slot)
+            for slot in range(1, 5)
+        ]
+        + [Creator5Nozzle(entry.runtime_data, entry.data[CONF_SERIAL], index) for index in range(4)]
+        + [
+            Creator5ToolMaterial(entry.runtime_data, entry.data[CONF_SERIAL], tool)
+            for tool in range(1, 5)
+        ]
+        + [
+            Creator5Info(entry.runtime_data, entry.data[CONF_SERIAL], key, name)
+            for key, name in (
+                ("model", "Model"),
+                ("firmware_version", "Firmware version"),
+                ("error_code", "Error code"),
+            )
+        ]
+        + [Creator5LastUpdate(entry.runtime_data, entry.data[CONF_SERIAL])]
     )
 
 
@@ -122,3 +146,92 @@ class Creator5Material(Creator5Entity, SensorEntity):
     def extra_state_attributes(self):
         slot = self.coordinator.data.material_slot(self._slot)
         return {"color": slot["color"]} if slot is not None and slot["color"] is not None else {}
+
+
+class Creator5SlotColor(Creator5Entity, SensorEntity):
+    def __init__(self, coordinator, serial, slot):
+        super().__init__(coordinator, serial, f"slot_{slot}_color", f"Slot {slot} color")
+        self._slot = slot
+
+    @property
+    def native_value(self):
+        slot = self.coordinator.data.material_slot(self._slot)
+        return slot["color"] if slot else None
+
+
+class Creator5Nozzle(Creator5Entity, SensorEntity):
+    _attr_native_unit_of_measurement = UnitOfLength.MILLIMETERS
+    _attr_suggested_unit_of_measurement = UnitOfLength.MILLIMETERS
+    _attr_device_class = SensorDeviceClass.DISTANCE
+    _attr_suggested_display_precision = 2
+
+    def __init__(self, coordinator, serial, index):
+        super().__init__(
+            coordinator, serial, f"tool_{index + 1}_diameter", f"Tool {index + 1} nozzle diameter"
+        )
+        self._index = index
+
+    @property
+    def native_value(self):
+        return self.coordinator.data.nozzle_diameter(self._index)
+
+
+class Creator5ToolMaterial(Creator5Entity, SensorEntity):
+    def __init__(self, coordinator, serial, tool):
+        super().__init__(
+            coordinator,
+            serial,
+            f"tool_{tool}_material",
+            f"Tool {tool} material (configured mapping)",
+        )
+        self._tool = tool
+
+    def _slot(self):
+        return self.coordinator.options[f"tool_{self._tool}_slot"]
+
+    @property
+    def native_value(self):
+        slot = self._slot()
+        material = self.coordinator.data.material_slot(slot) if slot else None
+        return material["material"] if material else None
+
+    @property
+    def extra_state_attributes(self):
+        slot_id = self._slot()
+        material = self.coordinator.data.material_slot(slot_id) if slot_id else None
+        return {
+            "configured_slot": slot_id or None,
+            "mapping_source": "user_configured" if slot_id else "unassigned",
+            "color": material["color"] if material else None,
+            "user_note": self.coordinator.options[f"tool_{self._tool}_note"],
+        }
+
+
+class Creator5Info(Creator5Entity, SensorEntity):
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator, serial, key, name):
+        super().__init__(coordinator, serial, key, name)
+        self._key = key
+
+    @property
+    def native_value(self):
+        return getattr(self.coordinator.data, self._key)
+
+
+class Creator5LastUpdate(Creator5Entity, SensorEntity):
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+
+    def __init__(self, coordinator, serial):
+        super().__init__(
+            coordinator, serial, "last_successful_update", "Last successful status update"
+        )
+
+    @property
+    def available(self):
+        return True
+
+    @property
+    def native_value(self):
+        return self.coordinator.last_successful_update

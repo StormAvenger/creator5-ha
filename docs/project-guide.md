@@ -206,3 +206,23 @@ hardware items pending while offline. For each change, record what was verified,
 update this guide, run relevant checks locally and publish a reviewable development branch/PR.
 The user supplies hardware observations and decisions; Codex handles code, tests,
 docs and local validation. Never mark a hardware milestone complete from synthetic tests alone.
+
+## Next approved feature scope — version 0.3.0
+
+The owner requested 10-second default/configurable polling, a camera entity,
+connection health/last success, model/firmware/error reporting, nozzle sizes,
+visible slot colors and user-configured tool/slot material assignments. No other
+reporting or controls are assumed. See [implementation and acceptance plan](camera-and-monitoring.md).
+
+- [x] Implement 49 Pro entities with a shared 10-second status poll.
+- [x] Add editable HA-only mappings/notes, with unassigned defaults for new users.
+- [x] Validate one bounded camera read on the Mac; keep the frame private.
+- [x] Test shared on-demand media, URL restrictions, cleanup and retry.
+- [x] Test interval cadence/options reload, health/recovery and metadata parsing.
+- [ ] Approve/load the custom 0.3.0 update and verify live HA camera/49 entities.
+- [ ] Enter the owner's confirmed current mappings in HA, not source code.
+- [ ] Compare physical nozzle order and display readings.
+
+Local evidence: 102 client/framing and 33 HA tests pass. No hosted workflows run.
+Lifetime counters, job-name/thumbnail reporting, notifications, bed mesh and more
+controls require another scope decision from the owner.

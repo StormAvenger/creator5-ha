@@ -55,3 +55,13 @@ All twelve temperatures are Celsius. Do not repeat the light test without a new
 validation need. Printing → completed → ready was observed naturally; remaining
 time is unknown outside active/paused states because a stale value was observed
 on completion. Physical comparisons and printer-network recovery remain pending.
+
+The latest owner-approved development scope is version 0.3.0: 10-second default
+and configurable polling, camera viewing, API health/last success, model/firmware/
+validated error codes, slot colors, nozzle sizes and user-configured material-slot
+assignments. The owner confirmed a current mapping privately; configure it in HA,
+never hardcode it for all installations. Do not add other reporting/controls without
+asking. Camera requests are read-only, bounded to the same configured printer;
+never send camera-control commands, follow redirects, expose URLs or credentials,
+record footage or create paid/cloud services. Obtain action-time approval before
+browser installation/activation of the custom update and its new camera access.

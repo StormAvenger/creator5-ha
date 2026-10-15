@@ -39,11 +39,13 @@ async def test_diagnostics_uses_cache_and_excludes_arbitrary_secrets(hass):
             "read_only": False,
             "control_scope": "chamber_light_only",
             "last_update_success": True,
+            "poll_seconds": 10,
+            "last_successful_update": entry.runtime_data.last_successful_update.isoformat(),
             "cached_readings": {
                 "progress_percent": 25,
                 "bed_c": 60,
                 "chamber_c": None,
-                "remaining_seconds": 120,
+                "remaining_seconds": None,
                 "tool_temperatures_c": [None, None, None, None],
                 "tool_targets_c": [None, None, None, None],
             },
@@ -69,5 +71,7 @@ async def test_diagnostics_before_setup_has_no_readings(hass):
         "read_only": False,
         "control_scope": "chamber_light_only",
         "last_update_success": None,
+        "poll_seconds": None,
+        "last_successful_update": None,
         "cached_readings": None,
     }

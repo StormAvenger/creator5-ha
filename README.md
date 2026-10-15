@@ -3,7 +3,12 @@
 Experimental FlashForge Creator 5 / Creator 5 Pro LAN monitoring and chamber light.
 This is an unofficial project and is not endorsed by FlashForge.
 Built on macOS; the same Python package and commands work on Ubuntu.
-Version 0.2.0 adds only chamber-light on/off control; no uploads, heater changes,
+Version 0.3.0 is prepared locally with a camera, 10-second default polling,
+connection health, model/firmware/error readings, nozzle diameters, visible slot
+colors and configurable tool/slot mappings. It awaits live installation. See
+[camera and monitoring scope](docs/camera-and-monitoring.md).
+
+The installed 0.2.0 build adds only chamber-light on/off control; no uploads, heater changes,
 fan controls, motion or print-job controls are implemented. It is installed on the
 owner-authorized HA 2026.10.1 host with 30 entities and Celsius temperatures.
 See [extended monitoring and Celsius](docs/extended-monitoring.md).
@@ -86,7 +91,7 @@ Build it using `.venv/bin/python -m build`; do not upload development packages t
 
 ## Home Assistant integration
 
-See [installation and limitations](docs/home-assistant.md). Fourteen runtime tests
+See [installation and limitations](docs/home-assistant.md). Thirty-three runtime tests
 exercise Home Assistant 2026.10.1 with synthetic printer data and external network
 sockets disabled. The HA tests use Python 3.14 and a pinned framework; run them locally.
 Validate it on a development HA instance after the live printer probe succeeds.

@@ -1,6 +1,10 @@
 # Home Assistant development installation
 
 This is an experimental integration, not a validated production release.
+Version 0.3.0 is prepared locally and awaits activation; see
+[camera and monitoring](camera-and-monitoring.md) for the 49-entity scope,
+10-second default, camera privacy and manual material assignments.
+
 Version 0.2.0 is installed and live-verified on HA 2026.10.1: 30 entities, Celsius
 defaults and chamber-light on/off only. The approved upgrade occurred after natural
 print completion. HA restarted and the light's reported off/on state was verified,
@@ -9,7 +13,7 @@ restoring its original on state. See [upgrade scope](extended-monitoring.md).
 Offline runtime tests cover Home Assistant 2026.10.1. One authenticated status read
 previously succeeded on the user's Creator 5 Pro while printing (API firmware 1.9.9).
 On 2026-10-14, the signed-in About page confirmed HA Core 2026.10.1, Supervisor
-2026.09.3, HA OS 18.3 and frontend 20260930.3. All 14 runtime tests passed against
+2026.09.3, HA OS 18.3 and frontend 20260930.3. All 33 runtime tests passed against
 that exact Core version with external sockets disabled; the earlier 2026.10.0
 baseline also passed.
 
@@ -63,7 +67,7 @@ python -m pytest tests/ha --disable-socket --allow-unix-socket
 ```
 
 The fixture runs real HA config-entry/coordinator/entity code, replacing only
-printer I/O. Fourteen tests cover user setup, rejected credentials, unreachable and
+printer I/O. Thirty-three tests cover user setup, rejected credentials, unreachable and
 invalid targets, duplicates, reauthentication, sensor values, scheduled polling,
 missing values, disconnect/recovery, first-refresh failures and unload.
 After unload, HA may keep unavailable entity-registry placeholders; polling stops.

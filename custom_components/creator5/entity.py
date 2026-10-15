@@ -14,5 +14,9 @@ class Creator5Entity(CoordinatorEntity):
         self._attr_name = name
         self._attr_unique_id = f"{serial}_{key}"
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, serial)}, manufacturer="FlashForge", name="Creator 5"
+            identifiers={(DOMAIN, serial)},
+            manufacturer="FlashForge",
+            name="Creator 5",
+            model=coordinator.data.model,
+            sw_version=coordinator.data.firmware_version,
         )

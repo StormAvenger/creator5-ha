@@ -103,6 +103,43 @@ class PrinterStatus:
         value = self.number("printProgress")
         return value * 100 if value is not None and 0 <= value <= 1 else None
 
+    @property
+    def model(self) -> str | None:
+        value = self.detail.get("model")
+        return value if value in ("Creator 5", "Creator 5 Pro") else None
+
+    @property
+    def firmware_version(self) -> str | None:
+        value = self.detail.get("firmwareVersion")
+        if (
+            isinstance(value, str)
+            and len(value) <= 32
+            and re.fullmatch(r"v?\d+(?:\.\d+){1,3}(?:-[A-Za-z0-9.]+)?", value)
+        ):
+            return value
+        return None
+
+    @property
+    def error_code(self) -> str | None:
+        value = self.detail.get("errorCode")
+        if value == "":
+            return "none"
+        return value if isinstance(value, str) and re.fullmatch(r"E[0-9]{4}", value) else None
+
+    def nozzle_diameter(self, index: int) -> float | None:
+        """Parse the reported ordered diameters; never infer the physical tool mapping."""
+        if type(index) is not int or not 0 <= index < 4:
+            raise ValueError("Tool index must be between 0 and 3")
+        value = self.detail.get("nozzleModel")
+        if (
+            not isinstance(value, str)
+            or len(value) > 128
+            or not re.fullmatch(r"[0-9]+(?:\.[0-9]+)?mm(?:;[0-9]+(?:\.[0-9]+)?mm){3}", value)
+        ):
+            return None
+        values = [float(part[:-2]) for part in value.split(";")]
+        return values[index] if all(0 < number <= 5 for number in values) else None
+
     def nozzle_temperature(self, index: int, *, target: bool = False) -> float | None:
         """Read one of four ordered tools; reject malformed arrays and values."""
         if isinstance(index, bool) or not 0 <= index < 4:
