@@ -74,3 +74,30 @@ async def test_fresh_install_swatches_follow_color_only_and_cleanup(hass):
         assert await hass.config_entries.async_unload(entry.entry_id)
         await hass.async_block_till_done()
         assert not list(coordinator.async_contexts())
+
+
+async def test_grouped_card_renders_the_configured_tool_not_an_assumed_slot(hass):
+    from pathlib import Path
+
+    import yaml
+    from homeassistant.helpers.template import Template
+
+    card = yaml.safe_load(Path("dashboards/material-slots.yaml").read_text())
+    assert card["columns"] == 2
+    assert len(card["cards"]) == 4
+    first_slot = card["cards"][0]["cards"]
+    assert first_slot[0]["entity"] == "image.creator_5_slot_1_color_swatch"
+    hass.states.async_set("sensor.creator_5_slot_1_material", "PETG")
+    hass.states.async_set("binary_sensor.creator_5_slot_1_filament_present", "on")
+    hass.states.async_set(
+        "sensor.creator_5_tool_3_material_configured_mapping",
+        "PETG",
+        {"configured_slot": 1, "user_note": "High-flow material"},
+    )
+    hass.states.async_set("sensor.creator_5_tool_3_nozzle_diameter", "0.4")
+    rendered = Template(first_slot[1]["content"], hass).async_render()
+    assert "PETG" in rendered
+    assert "Filament loaded" in rendered
+    assert "Tool 3 · 0.4 mm" in rendered
+    assert "High-flow material" in rendered
+    assert "Tool 1 ·" not in rendered

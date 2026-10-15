@@ -79,3 +79,14 @@ The owner requested quiet Activity on 2026-10-14. The separate last-success time
 entity is disabled in HA; preserve that preference. The coordinator and cached
 diagnostic timestamp still update every 10 seconds. Host Recorder/logbook exclude
 that entity as well. Do not purge old history or re-enable the entity automatically.
+
+On 2026-10-14 the owner deferred choosing an open-source license until they
+understand the choices. Keep the repository private and unlicensed; do not add a
+license or publish based on the earlier general open-source intention. Version
+0.3.1 slot swatches/cards are prepared with 102 client and 35 HA tests passing,
+including a clean source setup. Live upgrade/dashboard approval is pending.
+Privacy cleanup rewrote local main/development commit identities with identical
+trees/messages/dates and a private recovery bundle. Auto-review rejected remote
+force-push without exact branch approval; an explicit user approval question is
+pending for main and offline-validation-guide. Do not retry remote history changes
+until the human answers. Remote branches currently retain their old identities.

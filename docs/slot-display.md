@@ -25,10 +25,10 @@ This dashboard contains no control actions. Swatch taps are disabled, and materi
 cards are display-only. The camera and light remain separate existing entities.
 Licensing and public publication remain deferred at the owner's request.
 
-Validation: 102 client tests and 34 real HA 2026.10.1 tests pass locally with external
+Validation: 102 client tests and 35 real HA 2026.10.1 tests pass locally with external
 HA sockets blocked. The new fresh-entry test checks exact decoded PNG pixels,
 invalid/missing colors, unchanged-color timestamps, no extra status reads,
-disabled-by-default timestamp registration and unload cleanup. The same 34 tests also pass from a clean temporary source directory with no
+disabled-by-default timestamp registration and unload cleanup. The same 35 tests also pass from a clean temporary source directory with no
 existing HA config entry or owner credentials. This validates clean source setup
 against the installed HA test environment, not a fresh HA OS appliance. Live
 upgrade and dashboard acceptance are pending.
