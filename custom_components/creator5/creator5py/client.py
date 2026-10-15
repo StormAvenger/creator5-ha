@@ -37,6 +37,33 @@ class PrinterStatus:
 
     detail: dict[str, Any] = field(repr=False)
 
+    @property
+    def current_filename(self) -> str | None:
+        """A bounded job name, never stale idle metadata or a filesystem path."""
+        value = self.detail.get("printFileName")
+        if self.state not in ("printing", "paused", "pause") or not isinstance(value, str):
+            return None
+        if (
+            not value.strip()
+            or len(value) > 255
+            or any(ord(c) < 32 or ord(c) == 127 for c in value)
+        ):
+            return None
+        if "/" in value or "\\" in value:
+            return None
+        return value
+
+    @property
+    def lifetime_print_hours(self) -> float | None:
+        """Creator 5 community-observed minutes converted to hours."""
+        minutes = self.nonnegative("cumulativePrintTime", maximum=100_000_000)
+        return minutes / 60 if minutes is not None else None
+
+    @property
+    def free_storage_gb(self) -> float | None:
+        """Creator 5 community-observed GB, without assuming a byte conversion."""
+        return self.nonnegative("remainingDiskSpace", maximum=1_000_000)
+
     def number(self, key: str) -> float | None:
         value = self.detail.get(key)
         if isinstance(value, bool) or not isinstance(value, (float, int)):
@@ -183,6 +210,33 @@ class Creator5Client:
         if not isinstance(detail, dict) or not isinstance(detail.get("status"), str):
             raise PrinterError("Printer returned missing or invalid status detail")
         return PrinterStatus(detail)
+
+    async def get_current_thumbnail(self) -> tuple[bytes, str]:
+        """Read the fixed LAN current-job image, never a reported URL or camera."""
+        maximum = 2 * 1024 * 1024
+        try:
+            async with self._session.get(
+                self._url + "/getThum",
+                timeout=self._timeout,
+                allow_redirects=False,
+            ) as response:
+                if response.status != 200:
+                    raise PrinterError("Printer thumbnail unavailable")
+                data = bytearray()
+                async for chunk in response.content.iter_chunked(65536):
+                    if len(data) + len(chunk) > maximum:
+                        raise PrinterError("Printer thumbnail exceeds size limit")
+                    data.extend(chunk)
+        except (TimeoutError, aiohttp.ClientError):
+            raise PrinterError("Printer thumbnail request failed") from None
+        content = bytes(data)
+        if content.startswith(b"\x89PNG\r\n\x1a\n") and len(content) >= 33:
+            content_type = "image/png"
+        elif content.startswith(b"\xff\xd8") and content.endswith(b"\xff\xd9"):
+            content_type = "image/jpeg"
+        else:
+            raise PrinterError("Printer thumbnail is not a supported image")
+        return content, content_type
 
     async def set_light(self, on: bool) -> PrinterStatus:
         """Set only the chamber LED, then verify using one status read."""

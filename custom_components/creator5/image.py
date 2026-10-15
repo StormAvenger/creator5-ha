@@ -1,7 +1,9 @@
 """Local PNG color swatches from the shared, validated material snapshot."""
 
+import asyncio
 import struct
 import zlib
+from datetime import timedelta
 from functools import lru_cache
 
 from homeassistant.components.image import ImageEntity
@@ -9,6 +11,7 @@ from homeassistant.core import callback
 from homeassistant.util import dt as dt_util
 
 from .const import CONF_SERIAL
+from .creator5py import PrinterError
 from .entity import Creator5Entity
 
 
@@ -41,6 +44,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
             Creator5SlotSwatch(entry.runtime_data, entry.data[CONF_SERIAL], slot)
             for slot in range(1, 5)
         ]
+        + [Creator5JobThumbnail(entry.runtime_data, entry.data[CONF_SERIAL])]
     )
 
 
@@ -76,3 +80,63 @@ class Creator5SlotSwatch(Creator5Entity, ImageEntity):
     async def async_image(self):
         # No printer request, URL, camera read or file is involved.
         return color_png(self._color) if self.available else None
+
+
+class Creator5JobThumbnail(Creator5Entity, ImageEntity):
+    """On-demand fixed-endpoint image with one bounded in-memory cache."""
+
+    def __init__(self, coordinator, serial):
+        ImageEntity.__init__(self, coordinator.hass)
+        Creator5Entity.__init__(
+            self, coordinator, serial, "job_thumbnail", "Current print thumbnail"
+        )
+        self._job = coordinator.data.current_filename
+        self._image = None
+        self._attempted_at = None
+        self._lock = asyncio.Lock()
+        self._removed = False
+        self._generation = 0
+        if self._job:
+            self._attr_image_last_updated = dt_util.utcnow()
+
+    @property
+    def available(self):
+        return super().available and self._job is not None and not self._removed
+
+    @callback
+    def _handle_coordinator_update(self):
+        job = self.coordinator.data.current_filename
+        if job != self._job:
+            self._generation += 1
+            self._job = job
+            self._image = None
+            self._attempted_at = None
+            self._attr_image_last_updated = dt_util.utcnow() if job else None
+        super()._handle_coordinator_update()
+
+    async def async_image(self):
+        if not self.available:
+            return None
+        async with self._lock:
+            if not self.available:
+                return None
+            now = dt_util.utcnow()
+            if self._attempted_at and now - self._attempted_at < timedelta(seconds=60):
+                return self._image
+            self._attempted_at = now
+            generation = self._generation
+            try:
+                content, content_type = await self.coordinator.client.get_current_thumbnail()
+            except PrinterError:
+                self._image = None
+                return None
+            if generation != self._generation or not self.available:
+                return None
+            self._image = content
+            self._attr_content_type = content_type
+            return content
+
+    async def async_will_remove_from_hass(self):
+        self._removed = True
+        self._image = None
+        await super().async_will_remove_from_hass()

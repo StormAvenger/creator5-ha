@@ -1,9 +1,10 @@
 """A small set of provisional status sensors; no printer controls."""
 
-from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
 from homeassistant.const import (
     PERCENTAGE,
     EntityCategory,
+    UnitOfInformation,
     UnitOfLength,
     UnitOfTemperature,
     UnitOfTime,
@@ -87,6 +88,10 @@ async def async_setup_entry(hass, entry, async_add_entities):
             )
         ]
         + [Creator5LastUpdate(entry.runtime_data, entry.data[CONF_SERIAL])]
+        + [
+            Creator5JobSensor(entry.runtime_data, entry.data[CONF_SERIAL], key)
+            for key in ("filename", "completion", "lifetime", "storage")
+        ]
     )
 
 
@@ -243,3 +248,40 @@ class Creator5LastUpdate(Creator5Entity, SensorEntity):
     @property
     def native_value(self):
         return self.coordinator.last_successful_update
+
+
+class Creator5JobSensor(Creator5Entity, SensorEntity):
+    def __init__(self, coordinator, serial, key):
+        names = {
+            "filename": "Current print filename",
+            "completion": "Estimated finish time",
+            "lifetime": "Reported lifetime printing time",
+            "storage": "Reported free storage",
+        }
+        super().__init__(coordinator, serial, f"job_{key}", names[key])
+        self._key = key
+        if key == "completion":
+            self._attr_device_class = SensorDeviceClass.TIMESTAMP
+        elif key == "lifetime":
+            self._attr_device_class = SensorDeviceClass.DURATION
+            self._attr_native_unit_of_measurement = UnitOfTime.HOURS
+            self._attr_suggested_display_precision = 1
+            self._attr_state_class = SensorStateClass.TOTAL_INCREASING
+            self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        elif key == "storage":
+            self._attr_device_class = SensorDeviceClass.DATA_SIZE
+            self._attr_native_unit_of_measurement = UnitOfInformation.GIGABYTES
+            self._attr_suggested_display_precision = 2
+            self._attr_state_class = SensorStateClass.MEASUREMENT
+            self._attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    @property
+    def native_value(self):
+        status = self.coordinator.data
+        if self._key == "filename":
+            return status.current_filename
+        if self._key == "completion":
+            return self.coordinator.estimated_completion
+        if self._key == "lifetime":
+            return status.lifetime_print_hours
+        return status.free_storage_gb

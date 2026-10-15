@@ -53,6 +53,9 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
     def __init__(self, hass, entry, client):
         self.options = validated_options(entry.options, entry.data[CONF_HOST])
         self.last_successful_update = None
+        self.estimated_completion = None
+        self._eta_job = None
+        self._eta_marker = None
         super().__init__(
             hass,
             logging.getLogger(__name__),
@@ -66,16 +69,33 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
         try:
             status = await self.client.get_status()
             self.last_successful_update = dt_util.utcnow()
+            self._update_completion(status)
             return status
         except AuthenticationError as err:
+            self.estimated_completion = None
             raise ConfigEntryAuthFailed(str(err)) from err
         except PrinterError as err:
+            self.estimated_completion = None
             raise UpdateFailed(str(err)) from err
+
+    def _update_completion(self, status):
+        remaining = status.nonnegative("estimatedTime", maximum=366 * 86400)
+        job = status.current_filename
+        marker = (remaining, status.progress_percent, status.nonnegative("printLayer"))
+        if status.state != "printing" or job is None or remaining is None:
+            self.estimated_completion = None
+        elif (
+            self.estimated_completion is None or job != self._eta_job or marker != self._eta_marker
+        ):
+            self.estimated_completion = self.last_successful_update + timedelta(seconds=remaining)
+        # Frozen printer estimates do not slide forward on every identical poll.
+        self._eta_job, self._eta_marker = job, marker
 
     async def async_set_light(self, on):
         # The client verifies the light state before publishing the shared snapshot.
         status = await self.client.set_light(on)
         self.last_successful_update = dt_util.utcnow()
+        self._update_completion(status)
         self.async_set_updated_data(status)
 
 

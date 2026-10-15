@@ -1,0 +1,22 @@
+type: vertical-stack
+cards:
+  - type: picture-entity
+    entity: image.creator_5_current_print_thumbnail
+    name: Current print
+    show_name: true
+    show_state: false
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+  - type: entities
+    title: Print information
+    show_header_toggle: false
+    entities:
+      - sensor.creator_5_current_print_filename
+      - sensor.creator_5_state
+      - sensor.creator_5_print_progress
+      - sensor.creator_5_remaining_time
+      - sensor.creator_5_estimated_finish_time
+      - sensor.creator_5_reported_lifetime_printing_time
+      - sensor.creator_5_reported_free_storage

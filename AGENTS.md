@@ -141,3 +141,13 @@ publication does not authorize a new HA restart or unrelated feature work.
 Privacy audit covers tracked files and reachable branch history; distinguish
 synthetic IP test values from real owner data and retain the old GitHub metadata
 caveat. No raw diagnostics, MACs, known credentials or owner LAN/HA address were found.
+
+The owner approved the recommended job-monitoring scope: filename, current model
+thumbnail, estimated finish time, reported lifetime runtime and free storage.
+Version 0.3.4 is prepared with offline tests and a fixed, bounded GET /getThum
+reader. Automatic approval review rejected the live thumbnail request under the
+older status-only printer-access rule. Do not retry live thumbnail reads or
+install/restart HA until specific owner activation approval arrives. No new
+printer controls are authorized. Keep filenames/images out of diagnostics and
+owner identifiers out of public fixtures. Existing unrelated untracked files
+with duplicate " 2" names are not part of this change; do not edit or stage them.

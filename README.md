@@ -17,7 +17,8 @@ are very welcome. This project is not affiliated with or endorsed by FlashForge.
 
 ## Features
 
-- Printer state, print progress, layers, elapsed time and remaining time.
+- Printer state, current filename, progress, layers, elapsed/remaining time and estimated finish time.
+- On-demand current-model thumbnail and reported lifetime printing time/free storage.
 - Bed and tool temperatures and targets, defaulting to Celsius for this device.
 - Four material slots with material names, filament presence and color swatches.
 - Reported nozzle diameters and optional manual tool-to-slot assignments and notes.
@@ -86,6 +87,10 @@ is an optional separate addition using built-in Home Assistant cards.
 - [Material-slot card example](dashboards/material-slots.yaml)
 - [Dashboard setup and entity details](docs/slot-display.md)
 
+A separate [job-information card example](dashboards/job-overview.yaml) displays
+the current model preview, filename, finish estimate and usage/storage readings.
+See [job-monitoring limitations and privacy](docs/job-monitoring.md).
+
 Configure tool-to-slot assignments first. Adjust the examples' entity IDs if your
 HA device has a different name. Dashboard examples are not automatically installed
 or replaced by HACS updates.
@@ -145,8 +150,9 @@ python3 -m venv .venv
 ```
 
 HA runtime tests use a separate Python 3.14 environment pinned to HA 2026.10.1.
-The preceding candidate passed 102 standalone tests, 45 HA runtime tests and official
-hassfest validation. Public HACS download and fresh authenticated Pro setup were
+Version 0.3.4 passed 124 standalone tests, 49 HA runtime tests and official
+hassfest validation. Its new thumbnail and unit/display checks remain pending
+on physical hardware. Public HACS download and fresh authenticated Pro setup were
 also verified. This does not establish compatibility with every printer or HA version.
 Tests use synthetic data and do not contact a printer. Tests and builds run locally;
 repository Actions remains disabled.
