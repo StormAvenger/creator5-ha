@@ -132,3 +132,12 @@ authenticated setup created a new Pro entry with 53 entities. Diagnostics confir
 successful 10-second polling. Keep the optional timestamp disabled. No print or
 light controls were sent. The repository is public; previous private-only gates
 are historical. Retained older PR-linked commit metadata is not claimed erased.
+
+The owner requests the next patch release and a concise public README with a
+prominent experimental/use-at-your-own-risk warning, AI-assisted development
+transparency, Pro-only hardware testing and contribution guidance. Current 0.3.2
+advances to 0.3.3. This release changes documentation/version metadata only;
+publication does not authorize a new HA restart or unrelated feature work.
+Privacy audit covers tracked files and reachable branch history; distinguish
+synthetic IP test values from real owner data and retain the old GitHub metadata
+caveat. No raw diagnostics, MACs, known credentials or owner LAN/HA address were found.
