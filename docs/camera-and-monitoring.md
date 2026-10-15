@@ -115,3 +115,25 @@ References (framework/protocol facts only; original implementation):
 - [HA MJPEG integration](https://www.home-assistant.io/integrations/mjpeg/)
 - [HA options flow](https://developers.home-assistant.io/docs/core/integration/options_flow/)
 - [Creator 5 protocol](https://github.com/Parallel-7/flashforge-api-docs/wiki/Creator-5-Series)
+
+## Quiet activity history
+
+The owner does not want successful-poll messages in Activity. On 2026-10-14 the
+separate Last successful status update entity was disabled through its HA entity
+settings. This preference survives component updates. Do not re-enable it without
+the owner's request. The 10-second coordinator, connection-health entity and cached
+last-success timestamp in downloaded diagnostics continue to work. Other printer
+entities stay enabled. Existing historical entries were not purged.
+
+HA 2026.10.1's device/entity Activity requests bypass the general logbook filter,
+and its live targeted stream can show even Recorder-excluded entities. For a quiet
+live device feed, disabling this optional timestamp entity is the reliable choice.
+The host also has exclusions for this entity in logbook and recorder; they prevent
+new stored timestamp history if the entity is later re-enabled, but do not alone
+silence the targeted live view. Existing recorder retention/settings were preserved.
+
+For another installation, open this entity's settings, switch Enabled off and save.
+Re-enable it only if a separate live timestamp entity is specifically wanted.
+The integration's diagnostic download still includes last_successful_update.
+See [HA Activity filters](https://www.home-assistant.io/integrations/logbook/#configure-filter)
+for the separate general-Activity filtering options.

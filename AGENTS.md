@@ -74,3 +74,8 @@ reported. Two brief camera unavailable entries occurred around initial viewing/
 closing and recovered on the next status poll; sustained later viewing worked.
 Keep that observation in the acceptance guide until its cause is established.
 No print controls or light test were sent during this activation.
+
+The owner requested quiet Activity on 2026-10-14. The separate last-success timestamp
+entity is disabled in HA; preserve that preference. The coordinator and cached
+diagnostic timestamp still update every 10 seconds. Host Recorder/logbook exclude
+that entity as well. Do not purge old history or re-enable the entity automatically.
