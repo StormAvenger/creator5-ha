@@ -249,7 +249,7 @@ See [slot presentation](slot-display.md) and [license](../LICENSE).
 - [x] Omit Pro-only chamber and door/lid entities for base/unknown models.
 - [x] Add HACS metadata and original local icon assets; document no-YAML setup.
 - [x] Official hassfest passes; clean component-archive setup and all 147 tests pass.
-- [ ] Approve/activate the candidate on the owner's idle HA host.
+- [x] Approve/activate 0.3.2 while ready; verify two-field form and duplicate protection.
 - [ ] Publish a validated release/default branch only after owner publication approval.
 - [ ] Verify public HACS custom-repository download end to end after publication.
 

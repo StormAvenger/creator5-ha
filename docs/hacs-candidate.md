@@ -45,6 +45,32 @@ submission is not part of the packaging work. Camera-transition investigation,
 physical comparisons and idle-only printer-network recovery remain in the wider
 release acceptance checklist.
 
-Live 0.3.2 activation/restart and setup-form verification are pending separate
-owner approval under the project's standing activation rule. The live 0.3.1
-installation continues to work and has not been changed by this candidate work.
+## Approved live acceptance
+
+On 2026-10-14 the owner specifically approved 0.3.2 installation, an idle-only HA
+Core restart and a setup-form check without removing the existing printer. A
+private 0.3.1 source rollback archive was retained outside the repository.
+Five changed source/translation/manifest files, the GPL text and both local PNG
+icons were saved. The normal file picker completed uploads; no extension file-URL
+permission or other browser security setting was changed.
+
+HA configuration validation passed. The printer reported ready and connected
+immediately before restart; HA reported no running automations/scripts. After
+restart, the integration page reports 0.3.2, one device and 53 registered entities.
+Diagnostics confirm successful 10-second polling and contain none of the actual
+printer IP, serial or LAN code. The optional timestamp remains disabled, all four
+slot groups and the high-flow material note still render, and filtered creator5
+logs show no issues.
+
+The live Add device form shows exactly IP address and password-masked LAN code,
+with no serial field. Entering the existing printer's two values returned "This
+printer is already configured." This validates targeted identity lookup and
+serial-based duplicate protection without removing, replacing or modifying the
+existing entry. Because duplicate protection stops before a fresh authenticated
+setup, this was not a live clean-entry authentication test; synthetic clean setup
+and model cross-check coverage remains the local test evidence. The form was
+closed after the check. No light or print-affecting commands were sent.
+
+Public HACS download and a physical base-model test remain pending. Repository
+visibility remains private; no release, catalog submission or paid services were
+activated.

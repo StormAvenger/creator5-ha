@@ -2,8 +2,9 @@
 
 For normal installation, use the [no-YAML installation guide](install.md).
 The 0.3.2 candidate adds HACS metadata/local artwork and an IP/LAN-code setup form.
-The user's existing 0.3.1 installation has already validated shared status polling,
-camera viewing, slot swatches and the grouped material dashboard on HA 2026.10.1.
+The owner's installation is now on 0.3.2: its two-field form and duplicate
+protection were checked live, preserving existing monitoring, camera, swatches
+and slot mappings on HA 2026.10.1. See [candidate acceptance](hacs-candidate.md).
 Do not confuse that live evidence with candidate or base-model acceptance.
 
 ## Runtime checks

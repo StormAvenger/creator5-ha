@@ -109,3 +109,13 @@ local icons and component GPL text are included. 147 tests, clean component-arch
 HA setup and official 2026.10.1 hassfest pass locally. Live 0.3.2 activation and
 public HACS download acceptance are pending; the live host is still on 0.3.1.
 Keep the repo private until separate publication approval. No hosted Actions.
+
+The owner specifically approved 0.3.2 installation/restart/form checking. It is now
+installed after ready/connected and no running HA scripts were verified. The live
+form has only IP and LAN code; the existing printer returned already_configured
+after targeted identity lookup, without altering its config entry. This checks
+discovery/duplicates, not a fresh live authenticated setup. HA reports 0.3.2, one
+device and 53 entities; 10-second successful polling, disabled timestamp, slot
+mappings/high-flow note and clean component logs were checked. Normal OS file
+picker uploads installed icons/license; browser security settings were untouched.
+No light or print-affecting commands were sent. Keep repository private.

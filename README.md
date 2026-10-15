@@ -7,7 +7,8 @@ The current development candidate is 0.3.2: HACS packaging and a two-field setup
 form (printer IP and LAN code), with automatic serial/model identification.
 Creator 5 Pro on API firmware 1.9.9 is live-tested; base Creator 5 support is
 experimental and not hardware-tested. Pro-only door/lid and chamber readings are
-omitted for the base model. Existing 0.3.1 monitoring and slot dashboard are live.
+omitted for the base model. Version 0.3.2 is live on the owner-authorized HA host, with the two-field form
+and duplicate protection verified. Monitoring and the slot dashboard are preserved.
 
 ## Install in Home Assistant — no YAML configuration
 
