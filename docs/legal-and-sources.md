@@ -49,6 +49,8 @@ choosing a distribution format.
 | [Home Assistant developer docs](https://developers.home-assistant.io/docs/creating_integration_manifest/) | Integration interfaces and lifecycle | Framework usage; original implementation |
 | [HA custom-component test framework](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component) | Offline runtime testing | Test dependency; no vendored source |
 
-The user chooses this project's outbound license before public distribution.
+On 2026-10-14 the owner selected GPL version 3 only (`GPL-3.0-only`). The
+unmodified GNU text is in LICENSE; standalone package metadata includes it. This
+does not change third-party dependency licenses or the protocol-source ledger.
 Keep this ledger current if reuse is introduced. The prior chat's characterization
 of any project's license is not a substitute for checking its actual license at reuse time.

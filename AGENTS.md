@@ -80,13 +80,14 @@ entity is disabled in HA; preserve that preference. The coordinator and cached
 diagnostic timestamp still update every 10 seconds. Host Recorder/logbook exclude
 that entity as well. Do not purge old history or re-enable the entity automatically.
 
-On 2026-10-14 the owner deferred choosing an open-source license until they
-understand the choices. Keep the repository private and unlicensed; do not add a
-license or publish based on the earlier general open-source intention. Version
-0.3.1 slot swatches/cards are prepared with 102 client and 35 HA tests passing,
-including a clean source setup. Live upgrade/dashboard approval is pending.
-Privacy cleanup rewrote local main/development commit identities with identical
-trees/messages/dates and a private recovery bundle. Auto-review rejected remote
-force-push without exact branch approval; an explicit user approval question is
-pending for main and offline-validation-guide. Do not retry remote history changes
-until the human answers. Remote branches currently retain their old identities.
+On 2026-10-14 the owner explicitly approved installing 0.3.1, an idle-only HA
+Core restart and a grouped slot dashboard. Preserve the active print protections.
+The owner selected GPLv3: use GPL-3.0-only, with the unmodified GNU text in LICENSE.
+Keep repository visibility private until a separate publication decision.
+
+The owner also explicitly approved replacing remote history on both main and
+offline-validation-guide with privacy-cleaned commits, understanding that commit
+IDs change and other clones need resynchronization. This answers the auto-review
+rejection's requested exact branch approval. The local rewrite preserved all
+original commit trees/messages/dates and a private recovery bundle. Use exact
+force-with-lease values recorded privately; do not overwrite unexpected remote work.

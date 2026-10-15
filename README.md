@@ -109,3 +109,11 @@ between operating systems. Supply credentials locally on the new machine. Keep C
 offline; the printer must be reached from a machine with access to its LAN.
 
 See [API research](docs/api-research.md) for sources and firmware-specific assumptions.
+
+## License
+
+Copyright (C) 2026 StormAvenger. This project is licensed under the
+[GNU General Public License, version 3 only](LICENSE) (`GPL-3.0-only`).
+You may redistribute and modify it under those terms. It is provided without
+warranty; see the license for the full terms. Third-party dependencies retain
+their own licenses.

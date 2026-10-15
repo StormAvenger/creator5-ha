@@ -23,7 +23,7 @@ unassigned tools are not given a fabricated nozzle size.
 
 This dashboard contains no control actions. Swatch taps are disabled, and material
 cards are display-only. The camera and light remain separate existing entities.
-Licensing and public publication remain deferred at the owner's request.
+The owner selected GPLv3 (GPL-3.0-only); public publication remains deferred.
 
 Validation: 102 client tests and 35 real HA 2026.10.1 tests pass locally with external
 HA sockets blocked. The new fresh-entry test checks exact decoded PNG pixels,
