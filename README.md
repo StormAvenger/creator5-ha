@@ -3,14 +3,14 @@
 Experimental FlashForge Creator 5 / Creator 5 Pro LAN monitoring and chamber light.
 This is an unofficial project and is not endorsed by FlashForge.
 Built on macOS; the same Python package and commands work on Ubuntu.
-Version 0.3.0 is prepared locally with a camera, 10-second default polling,
+Version 0.3.0 is installed on the owner-authorized HA 2026.10.1 host with a camera, 10-second default polling,
 connection health, model/firmware/error readings, nozzle diameters, visible slot
-colors and configurable tool/slot mappings. It awaits live installation. See
+colors and configurable tool/slot mappings: 49 entities, with live camera viewing
+and 10-second status timestamps verified. See
 [camera and monitoring scope](docs/camera-and-monitoring.md).
 
-The installed 0.2.0 build adds only chamber-light on/off control; no uploads, heater changes,
-fan controls, motion or print-job controls are implemented. It is installed on the
-owner-authorized HA 2026.10.1 host with 30 entities and Celsius temperatures.
+The integration implements only chamber-light on/off control; no uploads, heater changes,
+fan controls, motion or print-job controls are implemented. All twelve temperatures default to Celsius for this device.
 See [extended monitoring and Celsius](docs/extended-monitoring.md).
 One authenticated status read succeeded on a Creator 5 Pro during printing; its API
 reports firmware `1.9.9`. The reported full build `1.9.9-1.3.0` and display

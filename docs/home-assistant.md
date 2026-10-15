@@ -1,11 +1,11 @@
 # Home Assistant development installation
 
 This is an experimental integration, not a validated production release.
-Version 0.3.0 is prepared locally and awaits activation; see
+Version 0.3.0 is installed and live-checked on the owner-authorized HA host; see
 [camera and monitoring](camera-and-monitoring.md) for the 49-entity scope,
 10-second default, camera privacy and manual material assignments.
 
-Version 0.2.0 is installed and live-verified on HA 2026.10.1: 30 entities, Celsius
+The earlier 0.2.0 update was live-verified on HA 2026.10.1: 30 entities, Celsius
 defaults and chamber-light on/off only. The approved upgrade occurred after natural
 print completion. HA restarted and the light's reported off/on state was verified,
 restoring its original on state. See [upgrade scope](extended-monitoring.md).

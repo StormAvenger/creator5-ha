@@ -69,10 +69,10 @@ After activation, use Settings → Devices & services → Creator 5 → Configur
 Keep the camera URL empty to use the validated printer report. Set tool-slot
 assignments only after physical confirmation; they do not command or reconfigure
 anything on the printer. The owner has confirmed the current tool/slot assignments
-privately, so those will be entered in HA rather than hardcoded into this project.
+privately, and those were entered in HA rather than hardcoded into this project.
 The high-flow distinction is a user note because the API reports PETG generically.
 
-## Validation and pending acceptance
+## Validation and live acceptance
 
 Local evidence: 102 standalone client/framing tests and 33 real HA 2026.10.1 tests
 pass, with external sockets disabled in the HA suite. Coverage includes the
@@ -82,12 +82,33 @@ Celsius/mm on imperial hosts, shared on-demand media, bounded frame parsing,
 media failure/retry, proxy output and cleanup. Lint, format, typing and builds
 are checked locally; hosted Actions remains disabled.
 
-Pending live checks: approve the custom update and HA restart; verify all 49 Pro
-entities, manual mappings, 10-second timestamps, camera viewing/closing/reopening,
-no credential/URL leakage in diagnostics and component log health. Confirm physical
-nozzle order and camera illumination separately. No print is interrupted to test
-these features. Lifetime counters, notifications, job-name/thumbnail reporting,
-bed mesh and additional controls remain outside this update.
+Live acceptance on 2026-10-14: the owner specifically approved installation,
+an idle-only HA Core restart, camera access through existing HA permissions and
+manual mappings. HA reported ready immediately before restart. All 49 Pro entities
+loaded on HA Core 2026.10.1; the version page and downloaded diagnostics show 0.3.0.
+Status-success timestamps were repeatedly 10 seconds apart. All twelve temperatures
+remained Celsius, and nozzle diameters read 0.60, 0.40, 0.40, 0.40 mm.
+
+The four user-confirmed tool/slot assignments were saved in HA. Tool material
+states match their assigned slots. High-flow PETG is a user-supplied material note,
+not a distinct nozzle type or an automatically detected high-flow classification.
+Camera viewing through authenticated HA displayed the printer interior, closed and
+reopened successfully, and remained visible during a later sustained view. Views
+were closed after validation. Two brief camera unavailable entries were observed
+around the first viewing/closing attempts and recovered on the next status update;
+the cause is not yet established. A later sustained view did not reproduce them.
+Do not describe printer-network recovery or every streaming edge case as proven.
+
+Downloaded diagnostics confirm a successful status update and poll_seconds 10,
+and contain no actual printer serial, LAN address, check code or camera source URL.
+HA's filtered component log view showed no creator5 issues. No print, heater,
+fan, material or light command was sent during this activation. The working 0.2.0
+source is retained privately as a rollback archive.
+
+Remaining acceptance: physical display/nozzle comparisons, deliberate idle-only
+printer-network disconnect/recovery, and investigation of those brief camera
+availability transitions. Lifetime counters, notifications, job-name/thumbnail
+reporting, bed mesh and additional controls remain outside this update.
 
 References (framework/protocol facts only; original implementation):
 - [HA camera entities](https://developers.home-assistant.io/docs/core/entity/camera/)

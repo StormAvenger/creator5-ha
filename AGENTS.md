@@ -65,3 +65,12 @@ asking. Camera requests are read-only, bounded to the same configured printer;
 never send camera-control commands, follow redirects, expose URLs or credentials,
 record footage or create paid/cloud services. Obtain action-time approval before
 browser installation/activation of the custom update and its new camera access.
+
+Version 0.3.0 was specifically approved and installed on 2026-10-14 after ready
+was observed. HA restarted and loaded all 49 entities. Ten-second status updates,
+camera viewing/reopening, diagnostics redaction and manual mappings were checked.
+The high-flow note describes material, not nozzle type; nozzle sizes remain API
+reported. Two brief camera unavailable entries occurred around initial viewing/
+closing and recovered on the next status poll; sustained later viewing worked.
+Keep that observation in the acceptance guide until its cause is established.
+No print controls or light test were sent during this activation.

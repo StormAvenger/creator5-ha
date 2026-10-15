@@ -219,8 +219,10 @@ reporting or controls are assumed. See [implementation and acceptance plan](came
 - [x] Validate one bounded camera read on the Mac; keep the frame private.
 - [x] Test shared on-demand media, URL restrictions, cleanup and retry.
 - [x] Test interval cadence/options reload, health/recovery and metadata parsing.
-- [ ] Approve/load the custom 0.3.0 update and verify live HA camera/49 entities.
-- [ ] Enter the owner's confirmed current mappings in HA, not source code.
+- [x] Approve/load the custom 0.3.0 update and verify live HA camera/49 entities.
+- [x] Enter the owner's confirmed current mappings in HA, not source code.
+- [ ] Investigate brief camera unavailable entries around initial view closing;
+  viewing/reopening and next-poll recovery work, with no component log errors.
 - [ ] Compare physical nozzle order and display readings.
 
 Local evidence: 102 client/framing and 33 HA tests pass. No hosted workflows run.
