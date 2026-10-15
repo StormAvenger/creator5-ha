@@ -16,7 +16,13 @@ from .const import CONF_CHECK_CODE, CONF_SERIAL
 from .creator5py import AuthenticationError, Creator5Client, PrinterError, PrinterStatus
 from .settings import validated_options
 
-PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.LIGHT, Platform.CAMERA]
+PLATFORMS = [
+    Platform.SENSOR,
+    Platform.BINARY_SENSOR,
+    Platform.LIGHT,
+    Platform.CAMERA,
+    Platform.IMAGE,
+]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

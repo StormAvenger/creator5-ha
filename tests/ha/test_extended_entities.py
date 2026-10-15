@@ -58,7 +58,7 @@ async def test_shared_entities_celsius_on_imperial_host_and_light_only_services(
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
         assert read.await_count == 1
-        assert len(hass.states.async_all()) == 49
+        assert len(hass.states.async_all()) == 52
         states = {s.entity_id: s for s in hass.states.async_all()}
         temps = [s for s in states.values() if s.attributes.get("device_class") == "temperature"]
         assert len(temps) == 12

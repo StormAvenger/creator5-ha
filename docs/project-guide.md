@@ -228,3 +228,16 @@ reporting or controls are assumed. See [implementation and acceptance plan](came
 Local evidence: 102 client/framing and 33 HA tests pass. No hosted workflows run.
 Lifetime counters, job-name/thumbnail reporting, notifications, bed mesh and more
 controls require another scope decision from the owner.
+
+## 0.3.1 slot presentation and public-release preparation
+
+- [x] Implement local exact-color image entities and move raw hex details to diagnostics.
+- [x] Supply native grouped slot cards with mapped nozzle/material notes.
+- [x] Default the noisy timestamp entity off for new installations.
+- [x] Run fresh-entry setup, exact-pixel, update and unload tests.
+- [ ] Load 0.3.1 on the owner HA host and verify its grouped dashboard.
+- [ ] Rewrite historical personal commit identities and verify all publication refs.
+- [ ] Choose a license after the owner understands the options; decision deferred.
+- [ ] Publish only after explicit owner approval.
+
+See [slot presentation](slot-display.md). No license has been added.

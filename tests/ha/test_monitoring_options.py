@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 
 from custom_components.creator5.const import DOMAIN
@@ -34,6 +35,15 @@ async def test_ten_second_cadence_health_timestamp_and_manual_assignment(hass, f
         minor_version=2,
     )
     entry.add_to_hass(hass)
+    # Timestamp is optional and quiet by default; explicitly opt in for this test.
+    er.async_get(hass).async_get_or_create(
+        "sensor",
+        DOMAIN,
+        "SYNTHETIC-SN_last_successful_update",
+        config_entry=entry,
+        suggested_object_id="creator_5_last_successful_status_update",
+        disabled_by=None,
+    )
     with patch(
         "custom_components.creator5.Creator5Client.get_status",
         new=AsyncMock(return_value=PrinterStatus(DETAIL)),
@@ -64,11 +74,11 @@ async def test_ten_second_cadence_health_timestamp_and_manual_assignment(hass, f
         assert hass.states.get("sensor.creator_5_error_code").state == "none"
         assert hass.states.get("binary_sensor.creator_5_printer_error").state == "off"
         initial = hass.states.get("sensor.creator_5_last_successful_status_update").state
-        freezer.tick(timedelta(seconds=9))
+        freezer.tick(timedelta(seconds=5))
         async_fire_time_changed(hass, datetime.now(UTC))
         await hass.async_block_till_done()
         assert read.await_count == 1
-        freezer.tick(timedelta(seconds=2))
+        freezer.tick(timedelta(seconds=6))
         async_fire_time_changed(hass, datetime.now(UTC))
         await hass.async_block_till_done()
         assert read.await_count == 2

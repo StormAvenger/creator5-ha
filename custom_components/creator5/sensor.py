@@ -149,6 +149,8 @@ class Creator5Material(Creator5Entity, SensorEntity):
 
 
 class Creator5SlotColor(Creator5Entity, SensorEntity):
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
     def __init__(self, coordinator, serial, slot):
         super().__init__(coordinator, serial, f"slot_{slot}_color", f"Slot {slot} color")
         self._slot = slot
@@ -220,6 +222,7 @@ class Creator5Info(Creator5Entity, SensorEntity):
 
 
 class Creator5LastUpdate(Creator5Entity, SensorEntity):
+    _attr_entity_registry_enabled_default = False
     _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_device_class = SensorDeviceClass.TIMESTAMP
 
