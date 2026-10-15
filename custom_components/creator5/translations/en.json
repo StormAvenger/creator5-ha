@@ -4,14 +4,15 @@
       "reauth_confirm": {
         "title": "Update LAN check code",
         "description": "Enter the current LAN check code shown on your printer.",
-        "data": {"check_code": "LAN check code"}
+        "data": {
+          "check_code": "LAN check code"
+        }
       },
       "user": {
         "title": "Connect to your Creator 5",
-        "description": "Enable LAN mode and enter the private IPv4 address, serial number and LAN check code from your printer. This integration only reads status.",
+        "description": "Enable LAN mode, then enter the printer IP and LAN code. Setup checks only that address and identifies the model automatically. Creator 5 Pro is live-tested; base Creator 5 support is unverified. Chamber light is the only control.",
         "data": {
           "host": "Printer LAN IPv4 address",
-          "serial_number": "Serial number",
           "check_code": "LAN check code"
         }
       }
@@ -19,8 +20,37 @@
     "error": {
       "cannot_connect": "Could not read printer status. Check address, firmware and network access.",
       "invalid_auth": "Check serial number, LAN check code and LAN mode.",
-      "invalid_config": "Enter a private IPv4 address and nonempty credentials."
+      "invalid_config": "Enter a private IPv4 address and a nonempty LAN code.",
+      "discovery_failed": "Could not identify the printer at that address. Check its IP, LAN mode and access to UDP port 48899. No other addresses were searched.",
+      "unsupported_model": "This device is not a supported Creator 5 or Creator 5 Pro.",
+      "model_mismatch": "Discovery and authenticated status did not identify the same Creator 5 model. Setup was not saved."
     },
-    "abort": {"already_configured": "This printer is already configured."}
+    "abort": {
+      "already_configured": "This printer is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Monitoring and material assignments",
+        "description": "These settings only affect Home Assistant. Slot mappings are user configured, not detected; update them when the physical assignment changes. Camera video connects only when requested.",
+        "data": {
+          "poll_seconds": "Status update interval (seconds, 5–300)",
+          "camera_enabled": "Enable printer camera",
+          "camera_stream_url": "Camera MJPEG URL (optional; otherwise use printer report)",
+          "tool_1_slot": "Tool 1: assigned material slot (0 = unassigned)",
+          "tool_1_note": "Tool 1: material note (user supplied, optional)",
+          "tool_2_slot": "Tool 2: assigned material slot (0 = unassigned)",
+          "tool_2_note": "Tool 2: material note (user supplied, optional)",
+          "tool_3_slot": "Tool 3: assigned material slot (0 = unassigned)",
+          "tool_3_note": "Tool 3: material note (user supplied, optional)",
+          "tool_4_slot": "Tool 4: assigned material slot (0 = unassigned)",
+          "tool_4_note": "Tool 4: material note (user supplied, optional)"
+        }
+      }
+    },
+    "error": {
+      "invalid_options": "Use an interval of 5–300 seconds, slot numbers 0–4 and short plain-text notes. Camera URL must use this printer’s IP, port 8080 and /?action=stream."
+    }
   }
 }

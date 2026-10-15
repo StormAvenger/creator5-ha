@@ -25,7 +25,7 @@ Tool head fields and material station data differ from older printers; those sen
 are deferred until a real response is checked. Unknown fields are kept in memory
 and not logged. No capability inference comes from success replies to control commands.
 
-The source covers stock firmware through 1.9.8. The user reports stock 1.9.9-330,
+The source covers stock firmware through 1.9.8. The user reports stock `1.9.9-1.3.0`,
 LAN mode enabled. That firmware remains unverified here. The local target address
 belongs in `.env`, not source or fixtures.
 
@@ -40,6 +40,36 @@ Probe sequence:
    reauthentication and unload in a development instance.
 
 No cloud login, firmware changes, network scans or printer controls are needed for this stage.
+
+### Directed discovery — verified 2026-10-11
+
+The [normal discovery protocol](https://github.com/Parallel-7/flashforge-api-docs/wiki/Discovery-Protocol)
+describes vendor/PID, HTTP port and serial fields in its 276-byte packet.
+An original parser and single-target unicast client now support obtaining the
+serial without a subnet scan. One packet to the owner's supplied address on UDP
+48899 succeeded: vendor 0x2B71, PID 41, HTTP port 8898. This verifies directed
+discovery on this device, not every firmware. The CLI uses it only when the local
+serial is absent; Home Assistant setup continues to require explicit serial input.
+
+Two bounded POST /detail reads using the same owner-provided credential pair were
+rejected. The diagnostic read returned HTTP 200, code 1, without detail. The pair
+needs verification; no code variants, controls or authentication bypasses were used.
+Actual readings and firmware mapping remain pending. Source fixtures are synthetic.
+
+### Authenticated status — verified 2026-10-11
+
+After the owner corrected capitalization, one POST /detail succeeded without
+retry. It reported model Creator 5 Pro, firmwareVersion 1.9.9 and status printing.
+Observed keys include printProgress (ratio), platTemp, chamberTemp, estimatedTime,
+printDuration, printLayer, platTargetTemp, chamberTargetTemp, nozzleTemps[4] and
+nozzleTargetTemps[4]. This is evidence of API fields, not display-verified accuracy
+or confirmation of the reported full firmware build string.
+
+The client exposes the documented tool-array ordering as tools 1–4; physical
+display comparison remains pending. Zero tool targets are valid readings. Missing,
+wrong-size, nonnumeric, negative and nonfinite tool readings remain unknown.
+Both scalar and array fields come from one shared HA status request. Raw data,
+serial and code stay private; committed fixtures remain synthetic. No controls were sent.
 
 Initial local check: connecting to the supplied address on TCP 8898 timed out after
 five seconds on 2026-10-06. No authentication request was sent. Verify the address

@@ -1,5 +1,10 @@
 include .env.example .gitignore
+include requirements-ha-test.txt
+include AGENTS.md hacs.json
 recursive-include docs *.md
-recursive-include custom_components *.py *.json *.typed
+recursive-include dashboards *.yaml
+recursive-include tools *.py
+recursive-include custom_components *.py *.json *.typed *.png LICENSE
 recursive-include tests *.py
 recursive-include .github *.yml
+recursive-include docs/reference *.yml

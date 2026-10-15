@@ -1,0 +1,111 @@
+title: Creator 5
+views:
+  - title: Material slots
+    path: slots
+    type: panel
+    cards:
+      - type: grid
+        title: Material slots
+        columns: 2
+        square: false
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: picture-entity
+                entity: image.creator_5_slot_1_color_swatch
+                name: Slot 1
+                show_state: false
+                aspect_ratio: "4:1"
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+              - type: markdown
+                content: |-
+                  **{{ states('sensor.creator_5_slot_1_material') }}**
+
+                  {% if is_state('binary_sensor.creator_5_slot_1_filament_present', 'on') %}Filament loaded{% elif is_state('binary_sensor.creator_5_slot_1_filament_present', 'off') %}No filament{% else %}Filament status unknown{% endif %}
+
+                  {% for tool in range(1, 5) %}
+                  {% set mapped = 'sensor.creator_5_tool_' ~ tool ~ '_material_configured_mapping' %}
+                  {% if state_attr(mapped, 'configured_slot') == 1 %}
+                  Tool {{ tool }} · {{ states('sensor.creator_5_tool_' ~ tool ~ '_nozzle_diameter') }} mm
+
+                  {{ state_attr(mapped, 'user_note') or '' }}
+                  {% endif %}
+                  {% endfor %}
+          - type: vertical-stack
+            cards:
+              - type: picture-entity
+                entity: image.creator_5_slot_2_color_swatch
+                name: Slot 2
+                show_state: false
+                aspect_ratio: "4:1"
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+              - type: markdown
+                content: |-
+                  **{{ states('sensor.creator_5_slot_2_material') }}**
+
+                  {% if is_state('binary_sensor.creator_5_slot_2_filament_present', 'on') %}Filament loaded{% elif is_state('binary_sensor.creator_5_slot_2_filament_present', 'off') %}No filament{% else %}Filament status unknown{% endif %}
+
+                  {% for tool in range(1, 5) %}
+                  {% set mapped = 'sensor.creator_5_tool_' ~ tool ~ '_material_configured_mapping' %}
+                  {% if state_attr(mapped, 'configured_slot') == 2 %}
+                  Tool {{ tool }} · {{ states('sensor.creator_5_tool_' ~ tool ~ '_nozzle_diameter') }} mm
+
+                  {{ state_attr(mapped, 'user_note') or '' }}
+                  {% endif %}
+                  {% endfor %}
+          - type: vertical-stack
+            cards:
+              - type: picture-entity
+                entity: image.creator_5_slot_3_color_swatch
+                name: Slot 3
+                show_state: false
+                aspect_ratio: "4:1"
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+              - type: markdown
+                content: |-
+                  **{{ states('sensor.creator_5_slot_3_material') }}**
+
+                  {% if is_state('binary_sensor.creator_5_slot_3_filament_present', 'on') %}Filament loaded{% elif is_state('binary_sensor.creator_5_slot_3_filament_present', 'off') %}No filament{% else %}Filament status unknown{% endif %}
+
+                  {% for tool in range(1, 5) %}
+                  {% set mapped = 'sensor.creator_5_tool_' ~ tool ~ '_material_configured_mapping' %}
+                  {% if state_attr(mapped, 'configured_slot') == 3 %}
+                  Tool {{ tool }} · {{ states('sensor.creator_5_tool_' ~ tool ~ '_nozzle_diameter') }} mm
+
+                  {{ state_attr(mapped, 'user_note') or '' }}
+                  {% endif %}
+                  {% endfor %}
+          - type: vertical-stack
+            cards:
+              - type: picture-entity
+                entity: image.creator_5_slot_4_color_swatch
+                name: Slot 4
+                show_state: false
+                aspect_ratio: "4:1"
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+              - type: markdown
+                content: |-
+                  **{{ states('sensor.creator_5_slot_4_material') }}**
+
+                  {% if is_state('binary_sensor.creator_5_slot_4_filament_present', 'on') %}Filament loaded{% elif is_state('binary_sensor.creator_5_slot_4_filament_present', 'off') %}No filament{% else %}Filament status unknown{% endif %}
+
+                  {% for tool in range(1, 5) %}
+                  {% set mapped = 'sensor.creator_5_tool_' ~ tool ~ '_material_configured_mapping' %}
+                  {% if state_attr(mapped, 'configured_slot') == 4 %}
+                  Tool {{ tool }} · {{ states('sensor.creator_5_tool_' ~ tool ~ '_nozzle_diameter') }} mm
+
+                  {{ state_attr(mapped, 'user_note') or '' }}
+                  {% endif %}
+                  {% endfor %}
