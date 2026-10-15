@@ -1,8 +1,8 @@
 # Home Assistant development installation
 
 This is an experimental integration, not a validated production release.
-Version 0.3.0 is installed and live-checked on the owner-authorized HA host; see
-[camera and monitoring](camera-and-monitoring.md) for the 49-entity scope,
+Version 0.3.1 is installed and live-checked on the owner-authorized HA host; see
+[camera and monitoring](camera-and-monitoring.md) for the earlier monitoring scope,
 10-second default, camera privacy and manual material assignments.
 
 The earlier 0.2.0 update was live-verified on HA 2026.10.1: 30 entities, Celsius
@@ -102,3 +102,7 @@ without changing HA's household units. The prepared 0.2.0 build supplies Celsius
 defaults for all 12 temperature entities, including the two added targets. Owners
 can still override individual units. No entity can write a heater target. Tool
 numbers still need physical comparison and remaining time remains provisional.
+
+Version 0.3.1 adds four local color swatches and native grouped slot cards; see
+[slot presentation](slot-display.md). There are 53 registered Pro entities, with
+the optional success timestamp disabled by default (52 active by default).

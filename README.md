@@ -3,10 +3,12 @@
 Experimental FlashForge Creator 5 / Creator 5 Pro LAN monitoring and chamber light.
 This is an unofficial project and is not endorsed by FlashForge.
 Built on macOS; the same Python package and commands work on Ubuntu.
-Version 0.3.0 is installed on the owner-authorized HA 2026.10.1 host with a camera, 10-second default polling,
+Version 0.3.1 is installed on the owner-authorized HA 2026.10.1 host with a camera, 10-second default polling,
 connection health, model/firmware/error readings, nozzle diameters, visible slot
-colors and configurable tool/slot mappings: 49 entities, with live camera viewing
-and 10-second status timestamps verified. See
+colors and configurable tool/slot mappings: 53 registered entities, 52 enabled by
+default, with live camera viewing and 10-second polling verified. Four native
+color swatches and a grouped material-slot dashboard are installed; see
+[slot presentation](docs/slot-display.md). See
 [camera and monitoring scope](docs/camera-and-monitoring.md).
 
 The integration implements only chamber-light on/off control; no uploads, heater changes,

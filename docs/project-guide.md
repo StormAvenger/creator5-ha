@@ -235,9 +235,9 @@ controls require another scope decision from the owner.
 - [x] Supply native grouped slot cards with mapped nozzle/material notes.
 - [x] Default the noisy timestamp entity off for new installations.
 - [x] Run fresh-entry setup, exact-pixel, update and unload tests.
-- [ ] Load 0.3.1 on the owner HA host and verify its grouped dashboard.
-- [ ] Rewrite historical personal commit identities and verify all publication refs.
-- [ ] Choose a license after the owner understands the options; decision deferred.
+- [x] Load 0.3.1 on the owner HA host and verify its grouped dashboard.
+- [x] Rewrite personal author/committer identities on both remote branches; verify noreply identities.
+- [x] Owner selected GPLv3 (GPL-3.0-only); include GNU text and package metadata.
 - [ ] Publish only after explicit owner approval.
 
-See [slot presentation](slot-display.md). No license has been added.
+See [slot presentation](slot-display.md) and [license](../LICENSE).

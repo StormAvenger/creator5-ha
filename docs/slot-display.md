@@ -30,5 +30,16 @@ HA sockets blocked. The new fresh-entry test checks exact decoded PNG pixels,
 invalid/missing colors, unchanged-color timestamps, no extra status reads,
 disabled-by-default timestamp registration and unload cleanup. The same 35 tests also pass from a clean temporary source directory with no
 existing HA config entry or owner credentials. This validates clean source setup
-against the installed HA test environment, not a fresh HA OS appliance. Live
-upgrade and dashboard acceptance are pending.
+against the installed HA test environment, not a fresh HA OS appliance. Live acceptance on 2026-10-14: after the owner specifically approved the update,
+HA configuration validation passed and Core restarted while the printer reported
+ready, with no automations/scripts running. HA loaded 0.3.1 and all four local
+swatches. Diagnostics confirm successful status reads at 10 seconds with no actual
+printer serial, check code or LAN address. The timestamp entity stays disabled.
+Filtered component logs showed no creator5 issues.
+
+A new Creator 5 sidebar dashboard groups four slot cards. It displays black PETG-CF
+with tool 1 / 0.6 mm; black PETG with tool 2 / 0.4 mm; silver PETG with tool 3 /
+0.4 mm and the user-supplied high-flow material note; and black PLA with tool 4 /
+0.4 mm. These are API readings plus configured mappings, not fresh physical checks.
+The reusable full dashboard is [dashboards/creator5.yaml](../dashboards/creator5.yaml).
+No printer controls were sent.

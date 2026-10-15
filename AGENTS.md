@@ -91,3 +91,12 @@ IDs change and other clones need resynchronization. This answers the auto-review
 rejection's requested exact branch approval. The local rewrite preserved all
 original commit trees/messages/dates and a private recovery bundle. Use exact
 force-with-lease values recorded privately; do not overwrite unexpected remote work.
+
+Approved privacy history replacement succeeded atomically on both GitHub branches;
+all reachable branch author/committer emails now use the GitHub noreply identity.
+The original recovery bundle is private and outside the repository. Unreferenced
+GitHub objects/caches and other copies are not proven erased; do not claim that.
+0.3.1 activation succeeded while ready; diagnostics show version 0.3.1 and 10-second
+successful polling. Four native swatches and the Creator 5 slot dashboard are live.
+The existing disabled timestamp preference and manual material mappings remain.
+No print-affecting or light commands were sent. Repository remains private.
