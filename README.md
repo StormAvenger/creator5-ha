@@ -29,7 +29,7 @@ See [the installation guide](docs/install.md) for prerequisites and troubleshoot
 
 **Distribution:** install this repository through HACS custom repositories.
 It is not listed in the default HACS catalog. Version 0.3.2 is the first public
-candidate; end-to-end HACS acceptance is being checked.
+candidate; public HACS download and fresh authenticated setup passed.
 The grouped slot dashboard is an optional separate example; HACS does not install
 that dashboard automatically. See [slot presentation](docs/slot-display.md).
 
@@ -119,7 +119,8 @@ See [installation and limitations](docs/home-assistant.md). Runtime tests
 exercise Home Assistant 2026.10.1 with synthetic printer data and external network
 sockets disabled. The HA tests use Python 3.14 and a pinned framework; run them locally.
 Validate it on a development HA instance after the live printer probe succeeds.
-The HACS candidate is validated locally; public HACS download acceptance is pending.
+Public HACS custom-repository download and fresh two-field authenticated setup
+passed on HA 2026.10.1. See [acceptance evidence](docs/hacs-candidate.md).
 
 ## GitHub and moving to Ubuntu
 

@@ -2,8 +2,7 @@
 
 Normal setup uses forms, not YAML. Add this project as a HACS custom repository;
 it is not a HACS default listing. HACS itself must already be installed.
-Version 0.3.2 is the first public candidate. End-to-end HACS acceptance is being
-checked; see [validation evidence](hacs-candidate.md).
+Version 0.3.2 is the first public candidate. Public HACS download and fresh two-field setup passed on HA 2026.10.1; see [validation evidence](hacs-candidate.md).
 
 ## Before starting
 

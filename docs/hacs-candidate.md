@@ -74,3 +74,27 @@ closed after the check. No light or print-affecting commands were sent.
 Public HACS download and a physical base-model test remain pending. Repository
 visibility remains private; no release, catalog submission or paid services were
 activated.
+
+## Public HACS installation acceptance — 2026-10-14
+
+The owner approved publication, including the retained older commit metadata
+caveat. GitHub reports the repository public. The tested candidate was promoted
+to main, with reachable branch identities using GitHub noreply addresses. GitHub
+created a merge commit with a personal email; its branch identity was replaced,
+but the original PR-linked object and earlier caches are not claimed erased.
+Actions remains disabled; no paid services were enabled.
+
+HACS accepted the custom repository as Integration and downloaded default-branch
+commit `8b69923` into the creator5 component directory. This replaces the prior
+manual component installation; it is not a pristine HAOS instance. The owner
+had deleted the previous config entry, and its old device page reported not found.
+One bounded read-only status request reported ready before the HACS repair flow
+restarted HA Core. No printer controls were sent.
+
+After restart, Add integration exposed the two-field form. Fresh directed identity
+lookup and authenticated status succeeded, creating a new Creator 5 Pro entry,
+one device and 53 entities on version 0.3.2. Device temperatures displayed Celsius,
+API connection was Connected, the success timestamp was disabled by default,
+and private diagnostics reported last_update_success true and poll_seconds 10.
+Optional owner-confirmed mappings were entered separately through Configure.
+A public HACS catalog listing and physical base-model validation remain pending.

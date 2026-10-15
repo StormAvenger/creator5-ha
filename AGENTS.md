@@ -125,3 +125,10 @@ test after deleting the integration. This supersedes the earlier keep-private
 release gate. Promote the tested 0.3.2 code to the default branch before download.
 Keep Actions disabled, protect credentials and preserve the print protections.
 Record actual HACS download and fresh setup results without overstating evidence.
+
+Public HACS acceptance succeeded on 2026-10-14 after owner action-time approval.
+HACS downloaded main commit 8b69923; an idle-only HA restart and fresh two-field
+authenticated setup created a new Pro entry with 53 entities. Diagnostics confirm
+successful 10-second polling. Keep the optional timestamp disabled. No print or
+light controls were sent. The repository is public; previous private-only gates
+are historical. Retained older PR-linked commit metadata is not claimed erased.

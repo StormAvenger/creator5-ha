@@ -251,6 +251,6 @@ See [slot presentation](slot-display.md) and [license](../LICENSE).
 - [x] Official hassfest passes; clean component-archive setup and all 147 tests pass.
 - [x] Approve/activate 0.3.2 while ready; verify two-field form and duplicate protection.
 - [x] Obtain owner publication approval; promote the validated default branch.
-- [ ] Verify public HACS custom-repository download end to end after publication.
+- [x] Verify public HACS download, idle-only HA restart and fresh authenticated setup.
 
 Pro is hardware-tested; base support is experimental/synthetic-test coverage only.
