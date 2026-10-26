@@ -5,6 +5,8 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
+from .settings import CONTROL_GROUPS
+
 
 async def async_get_config_entry_diagnostics(
     hass: HomeAssistant, entry: ConfigEntry
@@ -14,7 +16,11 @@ async def async_get_config_entry_diagnostics(
     status = coordinator.data if coordinator is not None else None
     return {
         "read_only": False,
-        "control_scope": "chamber_light_only",
+        "control_scope": ["chamber_light"]
+        + [group for group in CONTROL_GROUPS if entry.options.get(group) is True],
+        "last_control_failure_stage": (
+            coordinator.last_control_failure_stage if coordinator is not None else None
+        ),
         "last_update_success": (
             coordinator.last_update_success if coordinator is not None else None
         ),

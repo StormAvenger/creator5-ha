@@ -64,3 +64,14 @@ document cumulative runtime in minutes and free space in GB on 1.9.4; the projec
 also describes the fixed current-job /getThum read. These are community-observed
 protocol facts, not copied implementation. Firmware 1.9.9 unit/display and live
 thumbnail verification remain pending.
+
+Optional-control research (0.3.5): Creator 5/HTTP wiki pages above supply named
+commands, field keys and sentinel semantics. The [Creator 5 palette](https://github.com/Parallel-7/flashforge-api-docs/wiki/Creator-5-Filament-Palette)
+supplies fixed protocol names/RGB constants only, not implementation. The
+[manufacturer's product specifications](https://www.flashforge.com/products/flashforge-creator-5-pro)
+provide conservative input ceilings (320 °C nozzle, 120 °C bed, 65 °C chamber).
+The dashboard field observations above describe cumulative filament in metres.
+The installed HA 2026.10.1 source establishes continuous-sensor Activity filtering
+and number-unit conversion behavior. New code/tests were independently written.
+No firmware binaries, decompilation, traffic capture, bypass or third-party code
+reuse was involved. Firmware 2.0.0 control compatibility remains unverified.

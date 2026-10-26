@@ -151,3 +151,16 @@ install/restart HA until specific owner activation approval arrives. No new
 printer controls are authorized. Keep filenames/images out of diagnostics and
 owner identifiers out of public fixtures. Existing unrelated untracked files
 with duplicate " 2" names are not part of this change; do not edit or stage them.
+
+On 2026-10-25 the owner expanded development scope to lifetime filament, speed
+multiplier, Z offset, auto-shutdown and material-station readouts; explicit completion
+acknowledgement, slot material/color edits, auto-shutdown settings, speed override,
+temperature targets and pause/resume. This supersedes historical light-only
+implementation scope, not the prohibition on unsolicited live writes. New controls
+must be opt-in, state-guarded, bounded and verified by readback. Never automatically
+acknowledge completion; expose a button for owner-created automations only. Do not
+add cancel, start, motion, loading, firmware or generic-command controls. Quiet the
+layer/progress Activity stream without deleting history. Firmware 2.0.0 is now
+reported by the owner and HA; status works but light commands time out. Do not
+claim a firmware fix or try guessed commands. Finish offline development and obtain
+specific action-time approval before HA activation or physical control tests.

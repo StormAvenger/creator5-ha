@@ -14,6 +14,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import CONF_CHECK_CODE, CONF_SERIAL
 from .creator5py import AuthenticationError, Creator5Client, PrinterError, PrinterStatus
+from .creator5py.client import ControlError
 from .settings import validated_options
 
 PLATFORMS = [
@@ -22,6 +23,10 @@ PLATFORMS = [
     Platform.LIGHT,
     Platform.CAMERA,
     Platform.IMAGE,
+    Platform.BUTTON,
+    Platform.NUMBER,
+    Platform.SELECT,
+    Platform.SWITCH,
 ]
 
 
@@ -51,6 +56,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
     def __init__(self, hass, entry, client):
+        self.entry = entry
+        self.last_control_failure_stage = None
         self.options = validated_options(entry.options, entry.data[CONF_HOST])
         self.last_successful_update = None
         self.estimated_completion = None
@@ -93,7 +100,32 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
 
     async def async_set_light(self, on):
         # The client verifies the light state before publishing the shared snapshot.
-        status = await self.client.set_light(on)
+        try:
+            status = await self.client.set_light(on)
+        except ControlError as err:
+            self.last_control_failure_stage = err.stage
+            raise
+        self.last_control_failure_stage = None
+        self.last_successful_update = dt_util.utcnow()
+        self._update_completion(status)
+        self.async_set_updated_data(status)
+
+    async def async_control(self, group, action, *args, **kwargs):
+        """Only named controls; permission is checked again at service time."""
+        actions = {
+            "job_controls": {"pause", "resume", "dismiss_completion"},
+            "material_controls": {"set_slot"},
+            "printer_controls": {"set_speed", "set_auto_shutdown"},
+            "temperature_controls": {"set_temperature"},
+        }
+        if action not in actions.get(group, set()) or not self.entry.options.get(group, False):
+            raise PrinterError("Enable this control group in the integration's configuration first")
+        try:
+            status = await getattr(self.client, action)(*args, **kwargs)
+        except ControlError as err:
+            self.last_control_failure_stage = err.stage
+            raise
+        self.last_control_failure_stage = None
         self.last_successful_update = dt_util.utcnow()
         self._update_completion(status)
         self.async_set_updated_data(status)

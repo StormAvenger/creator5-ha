@@ -92,6 +92,17 @@ async def async_setup_entry(hass, entry, async_add_entities):
             Creator5JobSensor(entry.runtime_data, entry.data[CONF_SERIAL], key)
             for key in ("filename", "completion", "lifetime", "storage")
         ]
+        + [
+            Creator5Telemetry(entry.runtime_data, entry.data[CONF_SERIAL], key)
+            for key in (
+                "filament",
+                "speed",
+                "offset",
+                "shutdown_delay",
+                "station_slot",
+                "loading_slot",
+            )
+        ]
     )
 
 
@@ -106,6 +117,10 @@ class Creator5Sensor(Creator5Entity, SensorEntity):
             self._attr_device_class,
         ) = spec
         super().__init__(coordinator, serial, self._key, self._attr_name)
+        if self._key in ("printProgress", "printLayer", "targetPrintLayer"):
+            # HA's Activity filters continuous sensors by state class as well as
+            # units. Recorder history remains available; no host YAML or purge.
+            self._attr_state_class = SensorStateClass.MEASUREMENT
         if self._attr_device_class == SensorDeviceClass.TEMPERATURE:
             self._attr_suggested_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_suggested_display_precision = (
@@ -285,3 +300,65 @@ class Creator5JobSensor(Creator5Entity, SensorEntity):
         if self._key == "lifetime":
             return status.lifetime_print_hours
         return status.free_storage_gb
+
+
+class Creator5Telemetry(Creator5Entity, SensorEntity):
+    """Validate reported values without guessing undocumented station actions."""
+
+    def __init__(self, coordinator, serial, key):
+        names = {
+            "filament": "Reported lifetime filament",
+            "speed": "Print speed multiplier",
+            "offset": "Z offset",
+            "shutdown_delay": "Reported auto shutdown delay",
+            "station_slot": "Reported material station slot",
+            "loading_slot": "Reported material loading slot",
+        }
+        super().__init__(coordinator, serial, f"telemetry_{key}", names[key])
+        self._key = key
+        self._attr_native_unit_of_measurement = {
+            "filament": "m",
+            "speed": "%",
+            "offset": "mm",
+            "shutdown_delay": "min",
+            "station_slot": "slot",
+            "loading_slot": "slot",
+        }[key]
+        if key not in ("station_slot", "loading_slot"):
+            self._attr_state_class = (
+                SensorStateClass.TOTAL_INCREASING
+                if key == "filament"
+                else SensorStateClass.MEASUREMENT
+            )
+        self._attr_suggested_display_precision = 2 if key in ("filament", "offset") else 0
+        if key in ("filament", "shutdown_delay"):
+            self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        if key == "shutdown_delay":
+            self._attr_device_class = SensorDeviceClass.DURATION
+
+    @property
+    def native_value(self):
+        status = self.coordinator.data
+        if self._key == "filament":
+            return status.lifetime_filament_m
+        if self._key == "speed":
+            return status.nonnegative("printSpeedAdjust", maximum=500)
+        if self._key == "offset":
+            value = status.number("zAxisCompensation")
+            return value if value is not None and -5 <= value <= 5 else None
+        if self._key == "shutdown_delay":
+            return status.nonnegative("autoShutdownTime", maximum=1440)
+        return status.station_number(
+            "currentSlot" if self._key == "station_slot" else "currentLoadSlot"
+        )
+
+    @property
+    def extra_state_attributes(self):
+        if self._key not in ("station_slot", "loading_slot"):
+            return None
+        status = self.coordinator.data
+        return {
+            "zero_means": "no_reported_slot",
+            "action_code": status.station_number("stateAction"),
+            "step_code": status.station_number("stateStep"),
+        }

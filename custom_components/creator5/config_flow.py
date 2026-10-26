@@ -11,7 +11,7 @@ from .const import CONF_CHECK_CODE, CONF_SERIAL, DOMAIN
 from .creator5py import AuthenticationError, Creator5Client, PrinterError
 from .creator5py.client import private_address
 from .creator5py.discovery import discover_identity
-from .settings import validated_options
+from .settings import CONTROL_GROUPS, validated_options
 
 
 class Creator5ConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -139,6 +139,8 @@ class Creator5OptionsFlow(OptionsFlow):
             vol.Required("camera_enabled", default=current["camera_enabled"]): bool,
             vol.Optional("camera_stream_url", default=current["camera_stream_url"]): str,
         }
+        for group in CONTROL_GROUPS:
+            schema[vol.Required(group, default=current[group])] = bool
         for tool in range(1, 5):
             schema[vol.Required(f"tool_{tool}_slot", default=str(current[f"tool_{tool}_slot"]))] = (
                 selector.SelectSelector(

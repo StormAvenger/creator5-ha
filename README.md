@@ -3,14 +3,15 @@
 # FlashForge Creator 5 for Home Assistant
 
 An unofficial LAN integration for monitoring a FlashForge Creator 5 printer in
-Home Assistant, with an on-demand camera and chamber-light control.
+Home Assistant, with an on-demand camera and optional, verified printer controls.
 
 **Only the Creator 5 Pro has been tested on real hardware.** The standard Creator 5
 is detected by the integration, but its behavior has not been verified on a
 physical printer. Compatibility is not guaranteed.
 
 I'm currently running this integration on my own Creator 5 Pro, and it is working
-well in my setup. It was developed quickly with substantial AI assistance
+well for monitoring in my setup. Light control currently times out on firmware
+2.0.0; see the compatibility note below. It was developed quickly with substantial AI assistance
 ("vibe-coded"), so expect rough edges and bugs. It is experimental software,
 provided without warranty. Feedback, testing reports, code reviews and contributions
 are very welcome. This project is not affiliated with or endorsed by FlashForge.
@@ -25,12 +26,16 @@ are very welcome. This project is not affiliated with or endorsed by FlashForge.
 - Pro-specific chamber readings and door/lid status.
 - Reported fan readings, firmware/model information, error codes and connection health.
 - On-demand camera viewing through Home Assistant.
-- Chamber-light on/off control.
+- Chamber-light on/off control (firmware 2.0.0 regression under investigation).
+- Reported lifetime filament, speed multiplier, Z offset, auto-shutdown and material-station activity.
+- Optional pause/resume, completion acknowledgement, slot metadata editing, auto-shutdown, speed and temperature-target controls.
 - Shared status polling every 10 seconds by default, configurable from 5–300 seconds.
 
-Chamber light is the only control. Print-job, heater, fan, motion, upload and
-material-change controls are not implemented. Material assignments are configured
-by the user; the integration does not automatically detect which slot feeds each tool.
+New control groups are **off by default** and enabled individually in Configure.
+Completion acknowledgement only runs when its button is pressed or called by your
+own automation. Slot edits change metadata, not filament loading. Material
+assignments remain manual; the integration does not detect which slot feeds each tool.
+See [controls, limits and validation status](docs/controls.md).
 
 ## Requirements and tested setup
 
@@ -38,7 +43,7 @@ by the user; the integration does not automatically detect which slot feeds each
 | --- | --- |
 | Home Assistant | Minimum 2026.10.1; tested with 2026.10.1 |
 | Printer | Creator 5 Pro in LAN mode |
-| Firmware | Printer API reports 1.9.9; full build has not been independently verified |
+| Firmware | Prior LAN/light tests: 1.9.9. Monitoring observed on 2.0.0; light requests time out. New controls need hardware validation |
 | Standard Creator 5 | Experimental detection and synthetic tests only; no hardware validation |
 | HACS | Installed and connected to GitHub |
 | Network | HA must reach the printer: UDP 48899, TCP 8898, and TCP 8080 for camera viewing |
@@ -73,10 +78,12 @@ control commands. Unsupported or conflicting model identification stops setup.
 
 Open the integration's **Configure** form to adjust the polling interval, enable
 camera viewing, assign tools to material slots and enter material notes. Update
-manual assignments when you change the physical setup.
+manual assignments when you change the physical setup. Optional control groups can
+be enabled here too; saving options sends no printer commands.
 
 The separate last-success timestamp entity is disabled by default to avoid noisy
-Activity entries. Connection health remains available.
+Activity entries. Current/total layers and progress are continuous measurements,
+so they retain history without a stream of Activity entries. Connection health remains available.
 
 ## Material-slot dashboard
 
@@ -114,6 +121,8 @@ then remove the repository through HACS and follow its restart instructions.
 | Cannot read status | Printer powered on and reachable from HA on TCP 8898 |
 | Model mismatch | Report model and firmware; setup deliberately stops rather than guessing |
 | No camera picture | Camera viewing enabled and TCP 8080 reachable |
+| Light times out on firmware 2.0.0 | Known owner-reported regression despite working status polling; no verified workaround yet. Do not repeatedly retry commands |
+| Optional control unavailable | Enable its group in Configure and check the allowed printer states in the controls guide |
 | Tool material is unknown | Assign that tool to a material slot in Configure |
 
 See the [installation guide](docs/install.md) for more detail.
@@ -150,9 +159,8 @@ python3 -m venv .venv
 ```
 
 HA runtime tests use a separate Python 3.14 environment pinned to HA 2026.10.1.
-Version 0.3.4 passed 124 standalone tests, 49 HA runtime tests and official
-hassfest validation. Its new thumbnail and unit/display checks remain pending
-on physical hardware. Public HACS download and fresh authenticated Pro setup were
+Version 0.3.5 is an offline-tested candidate; its new controls have not yet been
+validated on a physical printer. See [candidate validation](docs/releases/0.3.5.md). Public HACS download and fresh authenticated Pro setup were
 also verified. This does not establish compatibility with every printer or HA version.
 Tests use synthetic data and do not contact a printer. Tests and builds run locally;
 repository Actions remains disabled.

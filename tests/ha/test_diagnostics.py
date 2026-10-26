@@ -37,7 +37,8 @@ async def test_diagnostics_uses_cache_and_excludes_arbitrary_secrets(hass):
         report = await async_get_config_entry_diagnostics(hass, entry)
         assert report == {
             "read_only": False,
-            "control_scope": "chamber_light_only",
+            "control_scope": ["chamber_light"],
+            "last_control_failure_stage": None,
             "last_update_success": True,
             "poll_seconds": 10,
             "last_successful_update": entry.runtime_data.last_successful_update.isoformat(),
@@ -69,7 +70,8 @@ async def test_diagnostics_before_setup_has_no_readings(hass):
     entry = MockConfigEntry(domain=DOMAIN, data=DATA)
     assert await async_get_config_entry_diagnostics(hass, entry) == {
         "read_only": False,
-        "control_scope": "chamber_light_only",
+        "control_scope": ["chamber_light"],
+        "last_control_failure_stage": None,
         "last_update_success": None,
         "poll_seconds": None,
         "last_successful_update": None,

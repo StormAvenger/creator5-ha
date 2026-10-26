@@ -1,0 +1,55 @@
+"""Creator 5 wire palette; protocol facts, not copied implementation.
+
+Source: https://github.com/Parallel-7/flashforge-api-docs/wiki/Creator-5-Filament-Palette
+Only exact, documented values can be written. Unknown newer materials remain readable.
+"""
+
+MATERIALS = (
+    "PLA",
+    "PETG",
+    "PLA-CF",
+    "PETG-CF",
+    "ABS",
+    "ASA",
+    "SILK",
+    "PET-CF",
+    "PAHT-CF",
+    "S-PAHT",
+    "S-Multi",
+    "PA-CF",
+    "HIPS",
+    "PVA",
+    "TPU-90A",
+    "TPU-95A",
+    "TPU-64D",
+    "PC",
+    "PA",
+    "PC-ABS",
+    "PPS-CF",
+)
+COLORS = {
+    "White": "#FFFFFF",
+    "Yellow": "#FFF245",
+    "Light green": "#DEF578",
+    "Green": "#21CC3D",
+    "Dark green": "#167A4B",
+    "Teal": "#156682",
+    "Cyan": "#24E4A0",
+    "Light blue": "#7BD9F0",
+    "Blue": "#4CAAF8",
+    "Dark blue": "#2E54DD",
+    "Purple": "#48358C",
+    "Violet": "#A341F7",
+    "Magenta": "#F435F6",
+    "Pink": "#D5B4DE",
+    "Coral": "#FA6173",
+    "Red": "#F82D29",
+    "Brown": "#805003",
+    "Orange": "#F9903B",
+    "Cream": "#FCEBD7",
+    "Tan": "#D5C5A1",
+    "Dark brown": "#B17C38",
+    "Gray": "#8C8C89",
+    "Light gray": "#BEBEBE",
+    "Black": "#1B1B1B",
+}

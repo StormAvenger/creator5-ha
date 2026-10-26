@@ -10,7 +10,7 @@
       },
       "user": {
         "title": "Connect to your Creator 5",
-        "description": "Enable LAN mode, then enter the printer IP and LAN code. Setup checks only that address and identifies the model automatically. Creator 5 Pro is live-tested; base Creator 5 support is unverified. Chamber light is the only control.",
+        "description": "Enable LAN mode, then enter the printer IP and LAN code. Setup checks only that address and identifies the model automatically. Creator 5 Pro is live-tested; base Creator 5 support is unverified.",
         "data": {
           "host": "Printer LAN IPv4 address",
           "check_code": "LAN check code"
@@ -32,10 +32,10 @@
   "options": {
     "step": {
       "init": {
-        "title": "Monitoring and material assignments",
-        "description": "These settings only affect Home Assistant. Slot mappings are user configured, not detected; update them when the physical assignment changes. Camera video connects only when requested.",
+        "title": "Monitoring, materials and optional controls",
+        "description": "New controls are off by default. Enable only the groups you want. No command is sent when saving these settings. Completion acknowledgement clears the printer prompt only when explicitly pressed or called by your own automation. Slot assignments are manual; camera connects only when viewed.",
         "data": {
-          "poll_seconds": "Status update interval (seconds, 5–300)",
+          "poll_seconds": "Status update interval (seconds, 5\u2013300)",
           "camera_enabled": "Enable printer camera",
           "camera_stream_url": "Camera MJPEG URL (optional; otherwise use printer report)",
           "tool_1_slot": "Tool 1: assigned material slot (0 = unassigned)",
@@ -45,12 +45,16 @@
           "tool_3_slot": "Tool 3: assigned material slot (0 = unassigned)",
           "tool_3_note": "Tool 3: material note (user supplied, optional)",
           "tool_4_slot": "Tool 4: assigned material slot (0 = unassigned)",
-          "tool_4_note": "Tool 4: material note (user supplied, optional)"
+          "tool_4_note": "Tool 4: material note (user supplied, optional)",
+          "job_controls": "Enable pause, resume and completion acknowledgement",
+          "material_controls": "Enable slot material and color editing (idle only)",
+          "printer_controls": "Enable speed override and auto shutdown settings",
+          "temperature_controls": "Enable temperature targets (Celsius)"
         }
       }
     },
     "error": {
-      "invalid_options": "Use an interval of 5–300 seconds, slot numbers 0–4 and short plain-text notes. Camera URL must use this printer’s IP, port 8080 and /?action=stream."
+      "invalid_options": "Use an interval of 5\u2013300 seconds, slot numbers 0\u20134 and short plain-text notes. Camera URL must use this printer\u2019s IP, port 8080 and /?action=stream."
     }
   }
 }

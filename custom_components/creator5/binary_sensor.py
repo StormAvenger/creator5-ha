@@ -17,6 +17,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entities += [
         Creator5Connection(coordinator, entry.data[CONF_SERIAL]),
         Creator5Problem(coordinator, entry.data[CONF_SERIAL]),
+        Creator5ShutdownStatus(coordinator, entry.data[CONF_SERIAL]),
     ]
     async_add_entities(entities)
 
@@ -72,3 +73,14 @@ class Creator5Problem(Creator5Entity, BinarySensorEntity):
     def is_on(self):
         code = self.coordinator.data.error_code
         return code != "none" if code is not None else None
+
+
+class Creator5ShutdownStatus(Creator5Entity, BinarySensorEntity):
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator, serial):
+        super().__init__(coordinator, serial, "auto_shutdown_status", "Reported auto shutdown")
+
+    @property
+    def is_on(self):
+        return self.coordinator.data.open_state("autoShutdown")

@@ -97,3 +97,14 @@ contains none of the supplied serial, LAN code or printer IP. It remains private
 outside Git. Logs filtered to creator5 show no issues at the time of inspection.
 HA Core restart/recovery is now live-verified. A printer-network disconnect/recovery,
 physical display comparisons and a full print observed from its start remain open.
+
+## Firmware 2.0.0 observation — 2026-10-25
+
+Read-only HA device-page inspection shows firmware 2.0.0, connected status polling
+and an active print. Existing 0.3.4 job-information entities are visible. The owner
+reports that light commands do nothing and HA reports a network timeout. That
+message alone cannot distinguish control-request and status-readback failure.
+No light, print, heater, material, shutdown or other write was sent in this session;
+HA was not restarted. The optional-control 0.3.5 candidate is offline-tested only.
+Its improved failure-stage diagnostics and serialized requests are not a confirmed
+light fix. See [the new controls acceptance plan](controls.md).

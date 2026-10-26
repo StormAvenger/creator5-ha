@@ -6,6 +6,7 @@ from urllib.parse import parse_qs, urlsplit
 from .creator5py.client import private_address
 
 DEFAULT_POLL_SECONDS = 10
+CONTROL_GROUPS = ("job_controls", "material_controls", "printer_controls", "temperature_controls")
 
 
 def camera_source(host, value):
@@ -48,6 +49,11 @@ def validated_options(data, host):
             "Camera URL must be the configured printer's HTTP MJPEG stream on port 8080"
         )
     result = {"poll_seconds": interval, "camera_enabled": enabled, "camera_stream_url": source}
+    for group in CONTROL_GROUPS:
+        enabled_control = data.get(group, False)
+        if type(enabled_control) is not bool:
+            raise ValueError("Control preferences must be boolean")
+        result[group] = enabled_control
     for tool in range(1, 5):
         slot = data.get(f"tool_{tool}_slot", 0)
         note = data.get(f"tool_{tool}_note", "")

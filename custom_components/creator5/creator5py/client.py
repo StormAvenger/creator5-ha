@@ -1,12 +1,16 @@
-"""Status reads and one narrowly scoped chamber-light command."""
+"""Authenticated status and narrowly scoped, readback-verified LAN controls."""
 
+import asyncio
 import ipaddress
 import math
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
 import aiohttp
+
+from .palette import COLORS, MATERIALS
 
 
 class PrinterError(Exception):
@@ -15,6 +19,14 @@ class PrinterError(Exception):
 
 class AuthenticationError(PrinterError):
     """Printer rejected credentials or LAN mode is disabled."""
+
+
+class ControlError(PrinterError):
+    """Known failure stage without command arguments or printer identifiers."""
+
+    def __init__(self, stage: str, message: str) -> None:
+        super().__init__(message)
+        self.stage = stage
 
 
 def private_address(host: str) -> ipaddress.IPv4Address:
@@ -36,6 +48,17 @@ class PrinterStatus:
     """Unknown fields remain available locally; never log raw detail."""
 
     detail: dict[str, Any] = field(repr=False)
+
+    def station_number(self, key: str) -> int | None:
+        """Uninterpreted station codes; slot zero means no reported slot."""
+        station = self.detail.get("matlStationInfo")
+        value = station.get(key) if isinstance(station, dict) else None
+        maximum = 4 if key in ("currentSlot", "currentLoadSlot") else 65535
+        return value if type(value) is int and 0 <= value <= maximum else None
+
+    @property
+    def lifetime_filament_m(self) -> float | None:
+        return self.nonnegative("cumulativeFilament", maximum=1_000_000_000)
 
     @property
     def current_filename(self) -> str | None:
@@ -202,9 +225,16 @@ class Creator5Client:
         self._url = f"http://{address}:{port}"
         self._auth = {"serialNumber": serial.strip(), "checkCode": check_code.strip()}
         self._timeout = aiohttp.ClientTimeout(total=timeout)
+        # Keep polling from overlapping a command and its readback. This also
+        # prevents concurrent slot/delay edits from restoring stale values.
+        self._operation_lock = asyncio.Lock()
 
     async def get_status(self) -> PrinterStatus:
         """Send one status request; never follow redirects or retry automatically."""
+        async with self._operation_lock:
+            return await self._get_status()
+
+    async def _get_status(self) -> PrinterStatus:
         payload = await self._request("/detail", {})
         detail = payload.get("detail")
         if not isinstance(detail, dict) or not isinstance(detail.get("status"), str):
@@ -242,14 +272,209 @@ class Creator5Client:
         """Set only the chamber LED, then verify using one status read."""
         if type(on) is not bool:
             raise ValueError("Light state must be a boolean")
-        await self._request(
-            "/control",
-            {"payload": {"cmd": "lightControl_cmd", "args": {"status": "open" if on else "close"}}},
+        async with self._operation_lock:
+            await self._send_control("lightControl_cmd", {"status": "open" if on else "close"})
+            status = await self._control_status()
+            if status.open_state("lightStatus") is not on:
+                raise ControlError("mismatch", "Printer did not confirm the requested light state")
+            return status
+
+    async def _send_control(self, command: str, args: dict[str, Any]) -> None:
+        """Never retry writes or substitute speculative firmware commands."""
+        try:
+            await self._request("/control", {"payload": {"cmd": command, "args": args}})
+        except AuthenticationError:
+            raise
+        except PrinterError as err:
+            raise ControlError(
+                "request",
+                "Control request failed; its outcome is unconfirmed. "
+                "Check the printer before retrying. " + str(err),
+            ) from err
+
+    async def _control_status(self) -> PrinterStatus:
+        try:
+            return await self._get_status()
+        except AuthenticationError:
+            raise
+        except PrinterError as err:
+            raise ControlError(
+                "readback",
+                "Control was acknowledged, but status verification failed. "
+                "Its outcome is unconfirmed; check the printer before retrying. " + str(err),
+            ) from err
+
+    async def _verified_control(
+        self,
+        command: str,
+        prepare: Callable[[PrinterStatus], dict[str, Any]],
+        confirmed: Callable[[PrinterStatus], bool],
+        states: tuple[str, ...],
+        *,
+        pro_only: bool = False,
+    ) -> PrinterStatus:
+        async with self._operation_lock:
+            before = await self._get_status()
+            if before.model is None or (pro_only and not before.is_pro):
+                raise PrinterError("Control is unavailable for this printer model")
+            if before.state not in states:
+                raise PrinterError("Control is unavailable in the current printer state")
+            await self._send_control(command, prepare(before))
+            # Acknowledgements alone are not evidence. Allow bounded readback
+            # latency, never resending the command, including after a timeout.
+            for attempt in range(3):
+                if attempt:
+                    await asyncio.sleep(0.5)
+                after = await self._control_status()
+                if confirmed(after):
+                    return after
+            raise ControlError(
+                "mismatch", "Printer did not confirm the requested change; check its display"
+            )
+
+    async def pause(self) -> PrinterStatus:
+        return await self._verified_control(
+            "jobCtl_cmd",
+            lambda _: {"action": "pause", "jobID": ""},
+            lambda s: s.state in ("paused", "pause"),
+            ("printing",),
         )
-        status = await self.get_status()
-        if status.open_state("lightStatus") is not on:
-            raise PrinterError("Printer did not confirm the requested light state")
-        return status
+
+    async def resume(self) -> PrinterStatus:
+        return await self._verified_control(
+            "jobCtl_cmd",
+            lambda _: {"action": "continue", "jobID": ""},
+            lambda s: s.state in ("printing", "heating"),
+            ("paused", "pause"),
+        )
+
+    async def dismiss_completion(self) -> PrinterStatus:
+        """Explicit acknowledgement only; never scheduled by this client."""
+        return await self._verified_control(
+            "stateCtrl_cmd",
+            lambda _: {"action": "setClearPlatform"},
+            lambda s: s.state == "ready",
+            ("completed",),
+        )
+
+    async def set_speed(self, percent: float) -> PrinterStatus:
+        self._integer_range(percent, 50, 150)
+        return await self._verified_control(
+            "printerCtl_cmd",
+            lambda _: {"speed": int(percent)},
+            lambda s: s.number("printSpeedAdjust") == percent,
+            ("printing",),
+        )
+
+    async def set_temperature(self, heater: str, celsius: float) -> PrinterStatus:
+        limits = {"bed": 120, "chamber": 65, **{f"tool_{i}": 320 for i in range(1, 5)}}
+        if heater not in limits:
+            raise ValueError("Unknown heater")
+        self._integer_range(celsius, 0, limits[heater])
+        args: dict[str, Any] = {
+            "platform": -200,
+            "chamber": -200,
+            "nozzles": [-200] * 4,
+        }
+        if heater.startswith("tool_"):
+            index = int(heater[-1]) - 1
+            args["nozzles"][index] = int(celsius)
+        else:
+            key = "platform" if heater == "bed" else "chamber"
+            args[key] = int(celsius) if celsius else -100
+            field_name = "platTargetTemp" if heater == "bed" else "chamberTargetTemp"
+
+        def check(status: PrinterStatus) -> bool:
+            if heater.startswith("tool_"):
+                return status.nozzle_temperature(index, target=True) == celsius
+            return status.number(field_name) == celsius
+
+        return await self._verified_control(
+            "temperatureCtl_cmd",
+            lambda _: args,
+            check,
+            ("ready", "printing", "paused", "pause"),
+            pro_only=heater == "chamber",
+        )
+
+    async def set_auto_shutdown(
+        self,
+        *,
+        enabled: bool | None = None,
+        minutes: float | None = None,
+    ) -> PrinterStatus:
+        if enabled is not None and type(enabled) is not bool:
+            raise ValueError("Shutdown state must be a boolean")
+        if minutes is not None:
+            self._integer_range(minutes, 1, 120)
+        if enabled is None and minutes is None:
+            raise ValueError("Specify shutdown state or delay")
+        desired: dict[str, Any] = {}
+
+        def prepare(status: PrinterStatus) -> dict[str, Any]:
+            on = enabled if enabled is not None else status.open_state("autoShutdown")
+            delay = minutes if minutes is not None else status.number("autoShutdownTime")
+            if on is None or delay is None or not delay.is_integer() or not 1 <= delay <= 120:
+                raise PrinterError("Set a supported shutdown delay before enabling auto shutdown")
+            desired.update(on=on, delay=int(delay))
+            return {"automaticShutdown": "open" if on else "close", "shutdownAfterTime": int(delay)}
+
+        return await self._verified_control(
+            "delayClose_cmd",
+            prepare,
+            lambda s: (
+                s.open_state("autoShutdown") is desired["on"]
+                and s.number("autoShutdownTime") == desired["delay"]
+            ),
+            ("ready",),
+        )
+
+    async def set_slot(
+        self,
+        slot: int,
+        *,
+        material: str | None = None,
+        color: str | None = None,
+    ) -> PrinterStatus:
+        if type(slot) is not int or not 1 <= slot <= 4:
+            raise ValueError("Material slot must be between 1 and 4")
+        if material is not None and material not in MATERIALS:
+            raise ValueError("Choose a documented Creator 5 material")
+        if color is not None and color not in COLORS.values():
+            raise ValueError("Choose an exact Creator 5 palette color")
+        if material is None and color is None:
+            raise ValueError("Specify material or color")
+        desired: dict[str, str] = {}
+
+        def prepare(status: PrinterStatus) -> dict[str, Any]:
+            old = status.material_slot(slot)
+            mt = material if material is not None else (old["material"] if old else None)
+            rgb = color if color is not None else (old["color"] if old else None)
+            if (
+                not isinstance(mt, str)
+                or not isinstance(rgb, str)
+                or mt not in MATERIALS
+                or rgb not in COLORS.values()
+            ):
+                raise PrinterError("Slot metadata is unsupported; set both fields at the printer")
+            desired.update(material=mt, color=rgb)
+            return {"slot": slot, "mt": mt, "rgb": rgb}
+
+        def confirmed(status: PrinterStatus) -> bool:
+            actual = status.material_slot(slot)
+            return actual is not None and all(actual[k] == v for k, v in desired.items())
+
+        return await self._verified_control("msConfig_cmd", prepare, confirmed, ("ready",))
+
+    @staticmethod
+    def _integer_range(value: float, minimum: int, maximum: int) -> None:
+        if (
+            type(value) not in (int, float)
+            or not math.isfinite(value)
+            or not minimum <= value <= maximum
+            or int(value) != value
+        ):
+            raise ValueError(f"Value must be a whole number between {minimum} and {maximum}")
 
     async def _request(self, endpoint: str, body: dict[str, Any]) -> dict[str, Any]:
         try:
