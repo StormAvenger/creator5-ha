@@ -185,3 +185,13 @@ friendly error explanations preserving raw codes. Implement and validate locally
 then prepare a GitHub update. Do not change the live HA installation or printer.
 No dashboard/automation overwrite, automatic completion dismissal, printer writes,
 external notification delivery or paid services are authorized as development tests.
+
+On 2026-10-26 the owner approved version 0.6.0: default-hidden, optional tools
+sidebar shortcut; recent-file browser and thumbnails; upload-only of trusted sliced
+files; explicitly confirmed reprinting and cancellation. This supersedes historical
+no-start/cancel/upload implementation restrictions. Keep a separate default-off
+file-actions option and action-time admin confirmations. No live printer commands,
+HA installation/restart, paid features or protocol probing are authorized as tests.
+Future protocol research is a documented backlog, using public protocol facts and
+authorized stock LAN behavior, with no bypass, firmware modification or generic
+command interface. Preserve unrelated untracked duplicates.

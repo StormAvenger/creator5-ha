@@ -29,7 +29,8 @@ are very welcome. This project is not affiliated with or endorsed by FlashForge.
 - Chamber-light on/off control (firmware 2.0.0 regression under investigation).
 - Reported lifetime filament, speed multiplier, Z offset, auto-shutdown and material-station activity.
 - Optional pause/resume, completion acknowledgement, slot metadata editing, auto-shutdown, speed and temperature-target controls.
-- Guided native dashboard and optional notification setup.
+- On-demand recent-file browser and previews; optional upload-only, reprint and confirmed cancellation.
+- Guided native dashboard and optional notification setup, with an optional sidebar shortcut.
 - Persisted last-print summary and a configurable bed-cooled indicator.
 - User-set maintenance reminders and selected vendor-verified error explanations.
 - Shared status polling every 10 seconds by default, configurable from 5–300 seconds.
@@ -89,12 +90,26 @@ The separate last-success timestamp entity is disabled by default to avoid noisy
 Activity entries. Current/total layers and progress are continuous measurements,
 so they retain history without a stream of Activity entries. Connection health remains available.
 
-## Dashboard and notifications
+## Files, dashboard and notifications
 
-Open **Creator 5 setup** in the HA sidebar as an administrator. Select your printer
+As an administrator, open **Settings → Devices & services → Creator 5 → Configure**
+and follow **Creator 5 tools**. The tools page remains accessible with its sidebar
+shortcut off (the default). Enable **Show Creator 5 tools in the sidebar** if wanted.
+
+Choose **Refresh files** for the printer's recent-file list and **Show preview** for
+a selected thumbnail. Enable **file uploads, reprints and cancellation** separately
+in Configure to use those actions. Each requires confirmation. Uploads use a unique
+filename, accept trusted sliced `.3mf`/`.gcode` files up to 64 MiB, and never start
+a print. Reprinting requires a clear bed and the correct slicer-numbered material
+slots; previous custom mappings and HA tool notes are not applied. See the
+[file tools guide and limitations](docs/files.md). These new actions are not yet
+hardware-validated.
+
+On the tools page, select your printer
 and click **Create dashboard** for a separate, editable native dashboard with grouped
 material slots, camera, print information and enabled controls. Existing dashboards
-are never replaced.
+are never replaced. A checkbox chooses whether the new dashboard appears in the
+sidebar; it defaults to off and does not change existing dashboards.
 
 On the same page, choose a phone or Home Assistant notifications, select events
 and click **Create alerts**. This creates a native automation you can edit or disable.
@@ -172,8 +187,8 @@ node tests/frontend/test_setup.mjs
 ```
 
 HA runtime tests use a separate Python 3.14 environment pinned to HA 2026.10.1.
-Version 0.5.0 passes 204 client tests, 91 HA tests and 12 frontend workflow checks.
-See [validation and physical-test limitations](docs/releases/0.5.0.md). Earlier
+Version 0.6.0 passes 252 client tests, 106 HA tests and 24 frontend workflow checks.
+See [validation and physical-test limitations](docs/releases/0.6.0.md). Earlier
 public HACS download and fresh authenticated Pro setup were also verified. This does not establish compatibility with every printer or HA version.
 Tests use synthetic data and do not contact a printer. Tests and builds run locally;
 repository Actions remains disabled.

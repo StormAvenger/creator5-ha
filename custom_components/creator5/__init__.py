@@ -45,6 +45,9 @@ async def async_setup(hass, config):
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    from .setup_panel import async_refresh_panel
+
+    await async_refresh_panel(hass)
     client = Creator5Client(
         async_get_clientsession(hass),
         entry.data[CONF_HOST],
@@ -75,7 +78,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_remove_entry(hass, entry):
+    from .setup_panel import async_refresh_panel
+
     await PrintHistory(hass, entry.entry_id).store.async_remove()
+    await async_refresh_panel(hass, exclude_entry_id=entry.entry_id)
 
 
 class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):

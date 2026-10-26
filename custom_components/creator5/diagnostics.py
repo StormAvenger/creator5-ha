@@ -17,7 +17,11 @@ async def async_get_config_entry_diagnostics(
     return {
         "read_only": False,
         "control_scope": ["chamber_light"]
-        + [group for group in CONTROL_GROUPS if entry.options.get(group) is True],
+        + [
+            group
+            for group in (*CONTROL_GROUPS, "file_controls")
+            if entry.options.get(group) is True
+        ],
         "last_control_failure_stage": (
             coordinator.last_control_failure_stage if coordinator is not None else None
         ),

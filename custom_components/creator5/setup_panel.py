@@ -240,6 +240,7 @@ def ws_info(hass, connection, msg):
                     "entry_id": entry.entry_id,
                     "name": entry.title,
                     "dashboard_path": "creator5-" + entry.entry_id.lower(),
+                    "file_controls": entry.options.get("file_controls", False),
                 }
                 for entry in hass.config_entries.async_entries(DOMAIN)
                 if entry.state is ConfigEntryState.LOADED
@@ -302,6 +303,9 @@ def ws_alerts(hass, connection, msg):
 
 
 async def async_setup_panel(hass):
+    from .file_browser import register_files
+
+    register_files(hass)
     for command in (ws_info, ws_dashboard, ws_alerts):
         websocket_api.async_register_command(hass, command)
     await hass.http.async_register_static_paths(
@@ -314,38 +318,51 @@ async def async_setup_panel(hass):
         ]
     )
 
-    async def register_panel():
-        from homeassistant.components import frontend
-        from homeassistant.components.panel_custom import async_register_panel
-
-        if hass.data.setdefault(DOMAIN, {}).get("setup_panel_registered"):
-            return
-        path = "creator5-setup"
-        suffix = 2
-        while frontend.async_panel_exists(hass, path):
-            path = f"creator5-setup-{suffix}"
-            suffix += 1
-        await async_register_panel(
-            hass,
-            frontend_url_path=path,
-            webcomponent_name="creator5-setup-panel",
-            sidebar_title="Creator 5 setup",
-            sidebar_icon="mdi:printer-3d",
-            module_url="/creator5_static/setup.js?v=0.5.0",
-            require_admin=True,
-            config_panel_domain=DOMAIN,
-        )
-        hass.data[DOMAIN]["setup_panel_registered"] = True
-        hass.data[DOMAIN]["setup_panel_path"] = path
-
     if "frontend" in hass.config.components:
-        await register_panel()
+        await async_refresh_panel(hass)
     else:
 
         @callback
         def frontend_loaded(event):
             if event.data.get("component") == "frontend":
                 remove_listener()
-                hass.async_create_task(register_panel())
+                hass.async_create_task(async_refresh_panel(hass))
 
         remove_listener = hass.bus.async_listen(EVENT_COMPONENT_LOADED, frontend_loaded)
+
+
+async def async_refresh_panel(hass, *, exclude_entry_id=None):
+    """Keep a hidden configuration page; optionally show one shortcut for all printers."""
+    if "frontend" not in hass.config.components:
+        return
+    from homeassistant.components import frontend
+    from homeassistant.components.panel_custom import async_register_panel
+
+    data = hass.data.setdefault(DOMAIN, {})
+    visible = any(
+        entry.entry_id != exclude_entry_id
+        and entry.disabled_by is None
+        and entry.options.get("show_setup_sidebar", False) is True
+        for entry in hass.config_entries.async_entries(DOMAIN)
+    )
+    if data.get("setup_panel_registered"):
+        if data.get("setup_panel_visible") == visible:
+            return
+        path = data["setup_panel_path"]
+        frontend.async_remove_panel(hass, path)
+    else:
+        path, suffix = "creator5-setup", 2
+        while frontend.async_panel_exists(hass, path):
+            path = f"creator5-setup-{suffix}"
+            suffix += 1
+    await async_register_panel(
+        hass,
+        frontend_url_path=path,
+        webcomponent_name="creator5-setup-panel",
+        sidebar_title="Creator 5 tools" if visible else None,
+        sidebar_icon="mdi:printer-3d",
+        module_url="/creator5_static/setup.js?v=0.6.0",
+        require_admin=True,
+        config_panel_domain=DOMAIN,
+    )
+    data.update(setup_panel_registered=True, setup_panel_path=path, setup_panel_visible=visible)

@@ -33,7 +33,7 @@
     "step": {
       "init": {
         "title": "Monitoring, materials and optional controls",
-        "description": "New controls are off by default. Enable only the groups you want. No command is sent when saving these settings. Completion acknowledgement clears the printer prompt only when explicitly pressed or called by your own automation. Slot assignments are manual; camera connects only when viewed.",
+        "description": "Open [Creator 5 tools]({setup_url}) for files, dashboards and alerts. The tools sidebar shortcut and file actions are off by default. Each upload, start or cancellation requires confirmation. Saving options sends no printer command. Existing tool assignments are manual.",
         "data": {
           "poll_seconds": "Status update interval (seconds, 5\u2013300)",
           "camera_enabled": "Enable printer camera",
@@ -55,7 +55,9 @@
           "offline_alert_minutes": "Lost-connection alert delay (minutes)",
           "bed_cleaning_hours": "Bed-cleaning reminder interval (printing hours; 0 disables)",
           "rail_lubrication_hours": "Rail-lubrication reminder interval (printing hours; 0 disables)",
-          "nozzle_inspection_hours": "Nozzle-inspection reminder interval (printing hours; 0 disables)"
+          "nozzle_inspection_hours": "Nozzle-inspection reminder interval (printing hours; 0 disables)",
+          "show_setup_sidebar": "Show Creator 5 tools in the sidebar",
+          "file_controls": "Enable file uploads, reprints and cancellation (admin confirmation required)"
         }
       }
     },

@@ -1,10 +1,12 @@
-# Setup, print summaries and reminders — 0.5.0
+# Setup, print summaries and reminders — 0.6.0
 
 ## Create a dashboard
 
-After updating through HACS and restarting HA, open **Creator 5 setup** in the
-sidebar while signed in as an administrator. Select a configured printer, choose
-a dashboard title/address, then click **Create dashboard**.
+After updating through HACS and restarting HA, open **Creator 5 tools** from the
+integration's Configure form while signed in as an administrator. The optional
+**Show Creator 5 tools in the sidebar** preference defaults to off. Select a
+configured printer, choose a dashboard title/address and optional sidebar checkbox,
+then click **Create dashboard**. Existing dashboards and their visibility are unchanged.
 
 The new native dashboard has Printer and Materials views, using the selected
 printer's actual entity IDs. Renamed entities are supported and disabled entities
@@ -23,7 +25,7 @@ Headless HA installations keep monitoring without loading a frontend.
 
 ## Choose notifications
 
-On **Creator 5 setup**, choose **Home Assistant notifications** or a registered
+On **Creator 5 tools**, choose **Home Assistant notifications** or a registered
 HA Companion App phone, select the desired events, and click **Create alerts**.
 
 | Event | Behavior |

@@ -84,3 +84,10 @@ as uncertainty. Native dashboard/automation APIs and storage/event helpers were
 checked against installed HA 2026.10.1 source and its official frontend. The setup
 JavaScript, generated card configurations and tests are original. The official
 frontend package is only an isolated test dependency, not vendored source.
+
+File-tool research (0.6.0): the Creator 5 and HTTP wiki references above provide
+file-list/thumbnail shapes, multipart header names, default numbered material-slot
+behavior, and the upload-mapping retention caveat. Only protocol facts informed
+original code and synthetic tests. No implementation/schema, proprietary sliced
+file, firmware, real capture or owner filename was copied. New file writes remain
+hardware-unverified. See the bounded [future research plan](protocol-research-backlog.md).

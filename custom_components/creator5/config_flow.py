@@ -137,6 +137,8 @@ class Creator5OptionsFlow(OptionsFlow):
                 )
             ),
             vol.Required("camera_enabled", default=current["camera_enabled"]): bool,
+            vol.Required("show_setup_sidebar", default=current["show_setup_sidebar"]): bool,
+            vol.Required("file_controls", default=current["file_controls"]): bool,
             vol.Optional("camera_stream_url", default=current["camera_stream_url"]): str,
         }
         for key, low, high in (
@@ -164,4 +166,10 @@ class Creator5OptionsFlow(OptionsFlow):
                 )
             )
             schema[vol.Optional(f"tool_{tool}_note", default=current[f"tool_{tool}_note"])] = str
-        return self.async_show_form(step_id="init", data_schema=vol.Schema(schema), errors=errors)
+        path = self.hass.data.get(DOMAIN, {}).get("setup_panel_path", "creator5-setup")
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(schema),
+            errors=errors,
+            description_placeholders={"setup_url": f"/{path}"},
+        )

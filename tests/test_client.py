@@ -1,5 +1,6 @@
 """Protocol and credential-boundary tests use synthetic responses, never the LAN."""
 
+import json
 from typing import cast
 
 import aiohttp
@@ -11,6 +12,14 @@ from creator5py.cli import probe
 class Response:
     def __init__(self, payload, status=200):
         self.payload, self.status = payload, status
+        self.content = self
+
+    async def iter_chunked(self, size):
+        if isinstance(self.payload, Exception):
+            raise self.payload
+        data = json.dumps(self.payload).encode()
+        for offset in range(0, len(data), size):
+            yield data[offset : offset + size]
 
     async def __aenter__(self):
         return self

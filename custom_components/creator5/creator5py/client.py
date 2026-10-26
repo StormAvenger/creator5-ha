@@ -1,15 +1,19 @@
 """Authenticated status and narrowly scoped, readback-verified LAN controls."""
 
 import asyncio
+import base64
+import binascii
 import ipaddress
+import json
 import math
 import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, BinaryIO
 
 import aiohttp
 
+from .files import file_name, validate_slice
 from .palette import COLORS, MATERIALS
 
 
@@ -240,6 +244,174 @@ class Creator5Client:
         if not isinstance(detail, dict) or not isinstance(detail.get("status"), str):
             raise PrinterError("Printer returned missing or invalid status detail")
         return PrinterStatus(detail)
+
+    async def list_files(self) -> list[str]:
+        """Return only the printer's reported recent sliced filenames."""
+        async with self._operation_lock:
+            return await self._list_files()
+
+    async def _list_files(self) -> list[str]:
+        payload = await self._request("/gcodeList", {})
+        names = payload.get("gcodeList")
+        if not isinstance(names, list) or len(names) > 256:
+            raise PrinterError("Printer returned an invalid file list")
+        result = []
+        for name in names:
+            try:
+                file_name(name)
+            except (ValueError, TypeError):
+                continue
+            if name not in result:
+                result.append(name)
+        return result
+
+    async def get_file_thumbnail(self, name: str) -> tuple[bytes, str]:
+        file_name(name)
+        async with self._operation_lock:
+            if name not in await self._list_files():
+                raise PrinterError("File is no longer in the printer's file list")
+            payload = await self._request("/gcodeThumb", {"fileName": name})
+        encoded = payload.get("imageData")
+        if not isinstance(encoded, str) or len(encoded) > 2800000:
+            raise PrinterError("File thumbnail unavailable or too large")
+        try:
+            content = base64.b64decode(encoded, validate=True)
+        except (ValueError, binascii.Error):
+            raise PrinterError("Invalid file thumbnail") from None
+        if content.startswith(b"\x89PNG\r\n\x1a\n") and len(content) >= 33:
+            return content, "image/png"
+        if content.startswith(b"\xff\xd8") and content.endswith(b"\xff\xd9"):
+            return content, "image/jpeg"
+        raise PrinterError("File thumbnail is not a supported image")
+
+    @staticmethod
+    def _ready(status: PrinterStatus) -> None:
+        if status.model is None or status.state != "ready":
+            raise PrinterError("Printer must report ready before uploading or starting a print")
+
+    @staticmethod
+    def file_job_name(status: PrinterStatus) -> str | None:
+        if status.state not in ("printing", "heating", "pause", "paused", "calibrate_doing"):
+            return None
+        try:
+            return file_name(status.detail.get("printFileName"))
+        except (ValueError, TypeError):
+            return None
+
+    async def start_file(self, name: str, *, confirmed: bool = False) -> PrinterStatus:
+        """Start exactly once, using the sliced file's numbered slot assignments."""
+        file_name(name)
+        if confirmed is not True:
+            raise ValueError("Confirm the clear bed, compatible slice and numbered material slots")
+        async with self._operation_lock:
+            self._ready(await self._get_status())
+            if name not in await self._list_files():
+                raise PrinterError("File is no longer in the printer's file list")
+            # Leveling is always on. No inferred material mapping, flow or timelapse command.
+            try:
+                await self._request(
+                    "/printGcode",
+                    {
+                        "fileName": name,
+                        "levelingBeforePrint": True,
+                        "flowCalibration": False,
+                        "timeLapseVideo": False,
+                    },
+                )
+            except AuthenticationError:
+                raise
+            except PrinterError:
+                raise ControlError(
+                    "request", "Start outcome is unconfirmed; check the printer before retrying"
+                ) from None
+            for attempt in range(3):
+                if attempt:
+                    await asyncio.sleep(0.5)
+                after = await self._control_status()
+                if self.file_job_name(after) == name:
+                    return after
+            raise ControlError(
+                "mismatch",
+                "Start was acknowledged but not verified; check the printer before retrying",
+            )
+
+    async def cancel_print(
+        self, name: str, elapsed: float, *, confirmed: bool = False
+    ) -> PrinterStatus:
+        """Cancel a confirmed, freshly identified active job. Never dismiss its dialog."""
+        file_name(name)
+        if (
+            confirmed is not True
+            or type(elapsed) not in (int, float)
+            or not math.isfinite(elapsed)
+            or elapsed < 0
+        ):
+            raise ValueError("Confirm the current print before cancelling")
+
+        def prepare(status: PrinterStatus) -> dict[str, Any]:
+            current = status.nonnegative("printDuration")
+            if (
+                self.file_job_name(status) != name
+                or current is None
+                or not elapsed <= current <= elapsed + 90
+            ):
+                raise PrinterError("The current print changed; review it and confirm again")
+            return {"action": "cancel", "jobID": ""}
+
+        return await self._verified_control(
+            "jobCtl_cmd",
+            prepare,
+            lambda s: s.state in ("cancel", "cancelled", "canceled", "ready"),
+            ("printing", "heating", "paused", "pause"),
+        )
+
+    async def upload_file(self, name: str, stream: BinaryIO) -> PrinterStatus:
+        """Upload only, with no start or material-mapping headers, and no retry."""
+        # Large validation is done off the event loop; the caller retains the temporary file.
+        size = await asyncio.to_thread(validate_slice, stream, name)
+        async with self._operation_lock:
+            self._ready(await self._get_status())
+            if name in await self._list_files():
+                raise PrinterError("Upload filename already exists; choose a new unique name")
+            form = aiohttp.FormData()
+            form.add_field(
+                "gcodeFile", stream, filename=name, content_type="application/octet-stream"
+            )
+            headers = {
+                **self._auth,
+                "fileSize": str(size),
+                "printNow": "false",
+                "levelingBeforePrint": "true",
+                "flowCalibration": "false",
+                "timeLapseVideo": "false",
+            }
+            try:
+                await self._request("/uploadGcode", {}, form=form, headers=headers)
+            except AuthenticationError:
+                raise
+            except PrinterError:
+                raise ControlError(
+                    "request",
+                    "Upload outcome is unconfirmed; refresh the file list before retrying",
+                ) from None
+            after = await self._control_status()
+            try:
+                names = await self._list_files()
+            except AuthenticationError:
+                raise
+            except PrinterError:
+                raise ControlError(
+                    "readback",
+                    "Upload acknowledged but file verification failed; "
+                    "check the file list before retrying",
+                ) from None
+            if name not in names:
+                raise ControlError(
+                    "mismatch",
+                    "Upload acknowledged but not confirmed in the file list; "
+                    "do not retry automatically",
+                )
+            return after
 
     async def get_current_thumbnail(self) -> tuple[bytes, str]:
         """Read the fixed LAN current-job image, never a reported URL or camera."""
@@ -476,20 +648,39 @@ class Creator5Client:
         ):
             raise ValueError(f"Value must be a whole number between {minimum} and {maximum}")
 
-    async def _request(self, endpoint: str, body: dict[str, Any]) -> dict[str, Any]:
+    async def _request(
+        self,
+        endpoint: str,
+        body: dict[str, Any],
+        *,
+        form: aiohttp.FormData | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
+        options: dict[str, Any] = {"json": {**self._auth, **body}}
+        if form is not None:
+            options = {"data": form, "headers": headers}
         try:
             async with self._session.post(
                 self._url + endpoint,
-                json={**self._auth, **body},
-                timeout=self._timeout,
+                **options,
+                timeout=aiohttp.ClientTimeout(total=120) if form is not None else self._timeout,
                 allow_redirects=False,
             ) as response:
                 if response.status in (401, 403):
                     raise AuthenticationError("Printer rejected LAN authentication")
                 if response.status != 200:
                     raise PrinterError(f"Printer returned HTTP {response.status}")
-                # Creator firmware sometimes misspells application/json.
-                payload = await response.json(content_type=None)
+                # Bound file replies before parsing, including imageData and malformed lists.
+                if endpoint in ("/gcodeList", "/gcodeThumb", "/printGcode", "/uploadGcode"):
+                    data = bytearray()
+                    async for chunk in response.content.iter_chunked(65536):
+                        if len(data) + len(chunk) > 4 * 1024 * 1024:
+                            raise PrinterError("Printer file response exceeds size limit")
+                        data.extend(chunk)
+                    payload = json.loads(data)
+                else:
+                    # Creator firmware sometimes misspells application/json.
+                    payload = await response.json(content_type=None)
         except (TimeoutError, aiohttp.ClientError):
             raise PrinterError("Printer unreachable or request timed out") from None
         except (ValueError, UnicodeError):

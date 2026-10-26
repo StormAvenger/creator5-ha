@@ -1,4 +1,4 @@
-# Optional controls and extended telemetry — 0.4.0
+# Optional controls and extended telemetry — 0.6.0
 
 Experimental. Only Creator 5 Pro has physical monitoring tests. The controls below
 are implemented from documented LAN protocol facts and synthetic tests; they are
@@ -54,8 +54,11 @@ by this integration. Acknowledgement never starts another print.
 - Commands and polling are serialized. A timeout does not trigger another command
   or an alternative command name. A failed response leaves the outcome uncertain;
   a matching reported state is required before publishing a changed snapshot.
-- There is no cancel/start, upload, motion, extrusion, filament loading, Z-offset
-  adjustment, fan control, firmware management or arbitrary-command service.
+- Version 0.6.0 adds a separate, default-off file-actions preference for confirmed
+  uploads, reprints and cancellation in the admin tools page. These actions do not
+  expose an unconfirmed button/service to automations. See [file tools](files.md).
+- No motion, extrusion, filament loading, Z-offset adjustment, fan control, firmware
+  management or arbitrary-command service is included.
 
 ## New readouts
 
