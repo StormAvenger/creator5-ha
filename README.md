@@ -29,6 +29,9 @@ are very welcome. This project is not affiliated with or endorsed by FlashForge.
 - Chamber-light on/off control (firmware 2.0.0 regression under investigation).
 - Reported lifetime filament, speed multiplier, Z offset, auto-shutdown and material-station activity.
 - Optional pause/resume, completion acknowledgement, slot metadata editing, auto-shutdown, speed and temperature-target controls.
+- Guided native dashboard and optional notification setup.
+- Persisted last-print summary and a configurable bed-cooled indicator.
+- User-set maintenance reminders and selected vendor-verified error explanations.
 - Shared status polling every 10 seconds by default, configurable from 5–300 seconds.
 
 New control groups are **off by default** and enabled individually in Configure.
@@ -77,7 +80,8 @@ control commands. Unsupported or conflicting model identification stops setup.
 ### 3. Optional settings
 
 Open the integration's **Configure** form to adjust the polling interval, enable
-camera viewing, assign tools to material slots and enter material notes. Update
+camera viewing, cooling/alert thresholds and maintenance intervals, assign tools to
+material slots and enter material notes. Update
 manual assignments when you change the physical setup. Optional control groups can
 be enabled here too; saving options sends no printer commands.
 
@@ -85,10 +89,19 @@ The separate last-success timestamp entity is disabled by default to avoid noisy
 Activity entries. Current/total layers and progress are continuous measurements,
 so they retain history without a stream of Activity entries. Connection health remains available.
 
-## Material-slot dashboard
+## Dashboard and notifications
 
-The integration creates entities, not a dashboard. The grouped material-slot view
-is an optional separate addition using built-in Home Assistant cards.
+Open **Creator 5 setup** in the HA sidebar as an administrator. Select your printer
+and click **Create dashboard** for a separate, editable native dashboard with grouped
+material slots, camera, print information and enabled controls. Existing dashboards
+are never replaced.
+
+On the same page, choose a phone or Home Assistant notifications, select events
+and click **Create alerts**. This creates a native automation you can edit or disable.
+No alerts are installed automatically, and filenames are excluded from messages.
+
+See [setup, print summaries, cooling and maintenance](docs/usability.md). The older
+manual dashboard examples remain available:
 
 - [Full dashboard example](dashboards/creator5.yaml)
 - [Material-slot card example](dashboards/material-slots.yaml)
@@ -138,9 +151,8 @@ Do not post LAN codes, serial numbers, IP/MAC addresses, private camera URLs, ra
 printer responses or unreviewed diagnostics. Integration diagnostics omit printer
 credentials and identifiers, but review the entire file before sharing it.
 
-Useful future work includes guided dashboard creation, broader firmware and base-model
-testing, clearer onboarding, and investigating camera reconnect behavior. These are
-ideas for future releases, not promises of currently implemented features.
+Useful future work includes broader firmware/base-model testing, more verified error
+meanings and investigating camera reconnect behavior. Hardware test reports are welcome.
 
 ## Development and validation
 
@@ -156,11 +168,12 @@ python3 -m venv .venv
 .venv/bin/ruff check .
 .venv/bin/ruff format --check .
 .venv/bin/mypy
+node tests/frontend/test_setup.mjs
 ```
 
 HA runtime tests use a separate Python 3.14 environment pinned to HA 2026.10.1.
-Version 0.4.0 passed 259 offline tests; its new controls have not yet been validated
-on a physical printer. See [release validation](docs/releases/0.4.0.md). Earlier
+Version 0.5.0 passes 204 client tests, 91 HA tests and 12 frontend workflow checks.
+See [validation and physical-test limitations](docs/releases/0.5.0.md). Earlier
 public HACS download and fresh authenticated Pro setup were also verified. This does not establish compatibility with every printer or HA version.
 Tests use synthetic data and do not contact a printer. Tests and builds run locally;
 repository Actions remains disabled.

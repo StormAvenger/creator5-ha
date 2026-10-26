@@ -75,3 +75,12 @@ The installed HA 2026.10.1 source establishes continuous-sensor Activity filteri
 and number-unit conversion behavior. New code/tests were independently written.
 No firmware binaries, decompilation, traffic capture, bypass or third-party code
 reuse was involved. Firmware 2.0.0 control compatibility remains unverified.
+
+Usability research (0.5.0): selected error-code meanings come from FlashForge's
+[Creator 5 error reference](https://wiki.flashforge.com/en/creator-series/creator-5-series/error_code_creator_5).
+Summaries/hints are original paraphrases of protocol facts; no page, firmware,
+implementation or repair media is bundled. Multiple documented causes are retained
+as uncertainty. Native dashboard/automation APIs and storage/event helpers were
+checked against installed HA 2026.10.1 source and its official frontend. The setup
+JavaScript, generated card configurations and tests are original. The official
+frontend package is only an isolated test dependency, not vendored source.

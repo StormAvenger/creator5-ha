@@ -176,3 +176,12 @@ Publish the tested candidate as experimental 0.4.0, including clear disclosure
 that new controls lack hardware acceptance and the 2.0.0 light regression remains
 unresolved. This supersedes the draft-only publication gate; it does not authorize
 HA installation/restart or live control tests. Keep Actions disabled and no paid usage.
+
+On 2026-10-26 the owner approved all six proposed usability features: guided
+native dashboard creation; persisted last-print summary with incomplete-session
+labeling; configurable bed-cooled indicator; guided opt-in notifications for useful
+events; user-set maintenance reminders with record-service buttons; and verified
+friendly error explanations preserving raw codes. Implement and validate locally,
+then prepare a GitHub update. Do not change the live HA installation or printer.
+No dashboard/automation overwrite, automatic completion dismissal, printer writes,
+external notification delivery or paid services are authorized as development tests.

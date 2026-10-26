@@ -49,12 +49,18 @@
           "job_controls": "Enable pause, resume and completion acknowledgement",
           "material_controls": "Enable slot material and color editing (idle only)",
           "printer_controls": "Enable speed override and auto shutdown settings",
-          "temperature_controls": "Enable temperature targets (Celsius)"
+          "temperature_controls": "Enable temperature targets (Celsius)",
+          "bed_cooled_c": "Bed-cooled threshold (\u00b0C, bed only)",
+          "pause_alert_minutes": "Prolonged-pause alert delay (minutes)",
+          "offline_alert_minutes": "Lost-connection alert delay (minutes)",
+          "bed_cleaning_hours": "Bed-cleaning reminder interval (printing hours; 0 disables)",
+          "rail_lubrication_hours": "Rail-lubrication reminder interval (printing hours; 0 disables)",
+          "nozzle_inspection_hours": "Nozzle-inspection reminder interval (printing hours; 0 disables)"
         }
       }
     },
     "error": {
-      "invalid_options": "Use an interval of 5\u2013300 seconds, slot numbers 0\u20134 and short plain-text notes. Camera URL must use this printer\u2019s IP, port 8080 and /?action=stream."
+      "invalid_options": "Check the update interval, camera address, tool assignments, cooling threshold, alert delays and maintenance intervals."
     }
   }
 }

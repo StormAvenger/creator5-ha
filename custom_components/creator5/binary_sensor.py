@@ -5,6 +5,7 @@ from homeassistant.const import EntityCategory
 
 from .const import CONF_SERIAL
 from .entity import Creator5Entity
+from .history import MAINTENANCE
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -18,6 +19,10 @@ async def async_setup_entry(hass, entry, async_add_entities):
         Creator5Connection(coordinator, entry.data[CONF_SERIAL]),
         Creator5Problem(coordinator, entry.data[CONF_SERIAL]),
         Creator5ShutdownStatus(coordinator, entry.data[CONF_SERIAL]),
+    ]
+    entities += [Creator5BedCooled(coordinator, entry.data[CONF_SERIAL])]
+    entities += [
+        Creator5MaintenanceDue(coordinator, entry.data[CONF_SERIAL], key) for key in MAINTENANCE
     ]
     async_add_entities(entities)
 
@@ -84,3 +89,31 @@ class Creator5ShutdownStatus(Creator5Entity, BinarySensorEntity):
     @property
     def is_on(self):
         return self.coordinator.data.open_state("autoShutdown")
+
+
+class Creator5BedCooled(Creator5Entity, BinarySensorEntity):
+    def __init__(self, coordinator, serial):
+        super().__init__(coordinator, serial, "bed_cooled", "Bed cooled after print")
+
+    @property
+    def is_on(self):
+        return self.coordinator.history.bed_cooled
+
+    @property
+    def extra_state_attributes(self):
+        return {"threshold_celsius": self.coordinator.options["bed_cooled_c"], "scope": "bed_only"}
+
+
+class Creator5MaintenanceDue(Creator5Entity, BinarySensorEntity):
+    _attr_device_class = BinarySensorDeviceClass.PROBLEM
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator, serial, key):
+        super().__init__(coordinator, serial, f"{key}_due", f"{MAINTENANCE[key]} due")
+        self._key = key
+
+    @property
+    def is_on(self):
+        c = self.coordinator
+        remaining = c.history.remaining(self._key, c.data.lifetime_print_hours, c.options)
+        return remaining <= 0 if remaining is not None else None

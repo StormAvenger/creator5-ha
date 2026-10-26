@@ -139,6 +139,19 @@ class Creator5OptionsFlow(OptionsFlow):
             vol.Required("camera_enabled", default=current["camera_enabled"]): bool,
             vol.Optional("camera_stream_url", default=current["camera_stream_url"]): str,
         }
+        for key, low, high in (
+            ("bed_cooled_c", 20, 70),
+            ("pause_alert_minutes", 1, 120),
+            ("offline_alert_minutes", 1, 30),
+            ("bed_cleaning_hours", 0, 10000),
+            ("rail_lubrication_hours", 0, 10000),
+            ("nozzle_inspection_hours", 0, 10000),
+        ):
+            schema[vol.Required(key, default=current[key])] = selector.NumberSelector(
+                selector.NumberSelectorConfig(
+                    min=low, max=high, step=1, mode=selector.NumberSelectorMode.BOX
+                )
+            )
         for group in CONTROL_GROUPS:
             schema[vol.Required(group, default=current[group])] = bool
         for tool in range(1, 5):

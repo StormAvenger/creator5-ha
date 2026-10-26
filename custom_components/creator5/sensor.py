@@ -12,6 +12,8 @@ from homeassistant.const import (
 
 from .const import CONF_SERIAL
 from .entity import Creator5Entity
+from .error_info import SOURCE, explanation
+from .history import MAINTENANCE
 
 # Unknown or absent fields return None, not a fabricated zero.
 PRO_ONLY_SENSORS = {"chamberTemp", "chamberTargetTemp", "chamberFanSpeed"}
@@ -88,6 +90,14 @@ async def async_setup_entry(hass, entry, async_add_entities):
             )
         ]
         + [Creator5LastUpdate(entry.runtime_data, entry.data[CONF_SERIAL])]
+        + [
+            Creator5LastPrint(entry.runtime_data, entry.data[CONF_SERIAL]),
+            Creator5ErrorExplanation(entry.runtime_data, entry.data[CONF_SERIAL]),
+        ]
+        + [
+            Creator5MaintenanceHours(entry.runtime_data, entry.data[CONF_SERIAL], key)
+            for key in MAINTENANCE
+        ]
         + [
             Creator5JobSensor(entry.runtime_data, entry.data[CONF_SERIAL], key)
             for key in ("filename", "completion", "lifetime", "storage")
@@ -361,4 +371,76 @@ class Creator5Telemetry(Creator5Entity, SensorEntity):
             "zero_means": "no_reported_slot",
             "action_code": status.station_number("stateAction"),
             "step_code": status.station_number("stateStep"),
+        }
+
+
+class Creator5LastPrint(Creator5Entity, SensorEntity):
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = ["completed", "cancelled", "unconfirmed"]
+
+    def __init__(self, coordinator, serial):
+        super().__init__(coordinator, serial, "last_print", "Last print")
+
+    @property
+    def available(self):
+        return True  # Local record remains useful while the printer is off.
+
+    @property
+    def native_value(self):
+        job = self.coordinator.history.last_job
+        return job["outcome"] if job else None
+
+    @property
+    def extra_state_attributes(self):
+        job = self.coordinator.history.last_job
+        return dict(job) if job else {}
+
+
+class Creator5ErrorExplanation(Creator5Entity, SensorEntity):
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator, serial):
+        super().__init__(coordinator, serial, "error_explanation", "Error explanation")
+
+    @property
+    def native_value(self):
+        return explanation(self.coordinator.data)[0]
+
+    @property
+    def extra_state_attributes(self):
+        _title, hint, known = explanation(self.coordinator.data)
+        return {
+            "code": self.coordinator.data.error_code,
+            "suggested_check": hint,
+            "recognized": known,
+            "reference": SOURCE,
+        }
+
+
+class Creator5MaintenanceHours(Creator5Entity, SensorEntity):
+    _attr_native_unit_of_measurement = UnitOfTime.HOURS
+    _attr_device_class = SensorDeviceClass.DURATION
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_suggested_display_precision = 1
+
+    def __init__(self, coordinator, serial, key):
+        super().__init__(coordinator, serial, f"{key}_remaining", f"{MAINTENANCE[key]} remaining")
+        self._key = key
+
+    @property
+    def native_value(self):
+        c = self.coordinator
+        return c.history.remaining(self._key, c.data.lifetime_print_hours, c.options)
+
+    @property
+    def extra_state_attributes(self):
+        c = self.coordinator
+        mark = c.history.maintenance.get(self._key, {})
+        return {
+            "interval_hours": c.options[f"{self._key}_hours"],
+            "last_recorded_at": mark.get("recorded_at"),
+            "counter_reset": mark.get("invalid", False),
+            "tracking_started_without_service_record": bool(mark)
+            and mark.get("recorded_at") is None,
         }

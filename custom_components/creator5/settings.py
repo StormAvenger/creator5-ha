@@ -49,6 +49,18 @@ def validated_options(data, host):
             "Camera URL must be the configured printer's HTTP MJPEG stream on port 8080"
         )
     result = {"poll_seconds": interval, "camera_enabled": enabled, "camera_stream_url": source}
+    for key, default, low, high in (
+        ("bed_cooled_c", 40, 20, 70),
+        ("pause_alert_minutes", 10, 1, 120),
+        ("offline_alert_minutes", 2, 1, 30),
+        ("bed_cleaning_hours", 0, 0, 10000),
+        ("rail_lubrication_hours", 0, 0, 10000),
+        ("nozzle_inspection_hours", 0, 0, 10000),
+    ):
+        value = data.get(key, default)
+        if type(value) not in (int, float) or not low <= value <= high or int(value) != value:
+            raise ValueError("Invalid cooling, alert or maintenance preference")
+        result[key] = int(value)
     for group in CONTROL_GROUPS:
         enabled_control = data.get(group, False)
         if type(enabled_control) is not bool:

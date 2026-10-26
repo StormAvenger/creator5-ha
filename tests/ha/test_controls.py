@@ -75,7 +75,7 @@ async def test_readouts_and_quiet_continuous_sensors_preserve_meaningful_state(h
             assert hass.states.get(entity_id).attributes["state_class"] == "measurement"
             assert is_sensor_continuous(hass, registry, entity_id)
         assert not is_sensor_continuous(hass, registry, "sensor.creator_5_state")
-        assert not hass.states.async_all("button")
+        assert all("record_" in state.entity_id for state in hass.states.async_all("button"))
         assert not hass.states.async_all("number")
         assert not hass.states.async_all("select")
         assert not hass.states.async_all("switch")
@@ -92,7 +92,7 @@ async def test_opt_in_controls_use_real_services_and_shared_verified_snapshots(h
         new=AsyncMock(return_value=PrinterStatus(DETAIL)),
     ) as read:
         entry = await setup(hass, dict.fromkeys(CONTROL_GROUPS, True))
-        assert len(hass.states.async_all("button")) == 3
+        assert len(hass.states.async_all("button")) == 6
         assert len(hass.states.async_all("number")) == 8
         assert len(hass.states.async_all("select")) == 8
         assert len(hass.states.async_all("switch")) == 1
