@@ -164,3 +164,9 @@ layer/progress Activity stream without deleting history. Firmware 2.0.0 is now
 reported by the owner and HA; status works but light commands time out. Do not
 claim a firmware fix or try guessed commands. Finish offline development and obtain
 specific action-time approval before HA activation or physical control tests.
+
+After reviewing the 0.3.5 candidate, the owner requested GitHub-only preparation
+and publication for review; installation/restart/light-test approval was not given.
+Keep draft PR #2 for review and preserve the live installation. The owner intends
+0.4.0 as a later release if the candidate is satisfactory; do not publish that
+release or perform live controls merely from this development instruction.
