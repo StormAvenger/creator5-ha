@@ -170,3 +170,9 @@ and publication for review; installation/restart/light-test approval was not giv
 Keep draft PR #2 for review and preserve the live installation. The owner intends
 0.4.0 as a later release if the candidate is satisfactory; do not publish that
 release or perform live controls merely from this development instruction.
+
+The owner subsequently explicitly requested public publication of the update.
+Publish the tested candidate as experimental 0.4.0, including clear disclosure
+that new controls lack hardware acceptance and the 2.0.0 light regression remains
+unresolved. This supersedes the draft-only publication gate; it does not authorize
+HA installation/restart or live control tests. Keep Actions disabled and no paid usage.

@@ -1,4 +1,4 @@
-# Optional controls and extended telemetry — 0.3.5 candidate
+# Optional controls and extended telemetry — 0.4.0
 
 Experimental. Only Creator 5 Pro has physical monitoring tests. The controls below
 are implemented from documented LAN protocol facts and synthetic tests; they are
@@ -84,14 +84,14 @@ inspection confirms firmware 2.0.0 and connected status monitoring during a prin
 This does not establish whether the timeout occurs in command handling or in the
 subsequent status verification. No physical light command was sent in this session.
 
-This candidate separates command-request failures from status-verification failures,
+This release separates command-request failures from status-verification failures,
 records only the stage in cached diagnostics, and prevents overlapping poll/control
 requests. These are diagnostic and concurrency improvements, **not a confirmed fix**.
 No verified replacement for the documented `lightControl_cmd` was found. No guessed
 commands, firmware modifications, rollback or printer restart are attempted.
 
 Next acceptance: after the current print ends and the owner approves, install the
-candidate with all new control groups off, observe normal polling, then run one
+release with all new control groups off, observe normal polling, then run one
 light-only test and check its failure stage or verified state. Test print-affecting
 controls separately on a deliberate test job with specific owner approval.
 

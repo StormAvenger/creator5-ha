@@ -159,9 +159,9 @@ python3 -m venv .venv
 ```
 
 HA runtime tests use a separate Python 3.14 environment pinned to HA 2026.10.1.
-Version 0.3.5 is an offline-tested candidate; its new controls have not yet been
-validated on a physical printer. See [candidate validation](docs/releases/0.3.5.md). Public HACS download and fresh authenticated Pro setup were
-also verified. This does not establish compatibility with every printer or HA version.
+Version 0.4.0 passed 259 offline tests; its new controls have not yet been validated
+on a physical printer. See [release validation](docs/releases/0.4.0.md). Earlier
+public HACS download and fresh authenticated Pro setup were also verified. This does not establish compatibility with every printer or HA version.
 Tests use synthetic data and do not contact a printer. Tests and builds run locally;
 repository Actions remains disabled.
 
