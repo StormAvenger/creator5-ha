@@ -103,16 +103,19 @@ async def test_light_on_wait_capture_alert_then_light_restored(hass, media, prin
     assert await hass.config_entries.async_unload(entry.entry_id)
 
 
-async def test_light_already_on_is_left_alone_and_not_waited_for(hass, media, printer):
+@pytest.mark.parametrize("reported", ["open", None])
+async def test_light_on_or_unknown_is_left_alone_and_not_waited_for(
+    hass, media, printer, reported
+):
     state, calls, _light, _camera, warmup = printer
-    state["lightStatus"] = "open"
+    state["lightStatus"] = reported
     events = listen(hass)
     entry = await setup(hass)
     await complete_print(hass, entry, state)
     assert calls == []
     warmup.assert_not_awaited()
     assert events[0]["image"] is not None
-    assert state["lightStatus"] == "open"
+    assert state["lightStatus"] == reported
     assert await hass.config_entries.async_unload(entry.entry_id)
 
 
