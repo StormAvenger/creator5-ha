@@ -1,20 +1,15 @@
 # Standing user constraints
 
-The user requires zero paid GitHub usage. Student benefits may be used after
-activation only when the feature is verified free and cannot produce overage charges.
+GitHub usage must cost $0. Follow docs/cost-policy.md.
 
+- As of 2026-11-06 the owner has a GitHub Education account and approves GitHub
+  Actions on this public repository using standard GitHub-hosted runners only.
+  This supersedes the earlier "keep Actions disabled" rule.
+- Never use larger runners, workflow artifacts or Actions caches, Codespaces, paid
+  Copilot, paid security/marketplace services, LFS or Packages storage.
 - Never start paid features, trials that can convert to paid plans, plan upgrades,
   payment-method setup, budget increases or purchases.
-- Keep repository Actions disabled. Run tests, lint, typing and builds locally.
-  Do not run/rerun hosted workflows, create Codespaces, request paid Copilot reviews,
-  enable paid security/marketplace services, or use metered LFS/package features.
-- After education benefits activate, verify the active offer, expiry, limits and
-  no-overage controls before proposing a covered feature. Never enable it solely
-  because three days have elapsed or because free credits are advertised.
-- Use ordinary source commits, branches, issues, PRs and source releases. Unknown
-  cost means use a local/no-charge alternative instead of risking a charge.
-- The former workflow in docs/reference is archival; never restore active triggers
-  without a new feature-specific user decision and verified zero-cost controls.
+- Unknown cost means use a local/no-charge alternative or ask the owner first.
 - Do not change repository visibility as a cost workaround.
 
 On 2026-10-11 the user resumed local LAN access while the printer is printing.

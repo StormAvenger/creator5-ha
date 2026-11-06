@@ -192,8 +192,9 @@ HA runtime tests use a separate Python 3.14 environment pinned to HA 2026.10.1.
 Version 0.7.0 passes 252 client tests, 137 HA tests and 24 frontend workflow checks.
 See [validation and physical-test limitations](docs/releases/0.7.0.md). Earlier
 public HACS download and fresh authenticated Pro setup were also verified. This does not establish compatibility with every printer or HA version.
-Tests use synthetic data and do not contact a printer. Tests and builds run locally;
-repository Actions remains disabled.
+Tests use synthetic data and do not contact a printer. The same checks, plus HACS and
+hassfest validation, run in GitHub Actions on standard free runners for this public
+repository; see the [cost policy](docs/cost-policy.md).
 
 See [validation evidence](docs/hacs-candidate.md), [API research](docs/api-research.md),
 [development scope and sources](docs/legal-and-sources.md), and the
