@@ -1,0 +1,227 @@
+# Agent history (archive)
+
+**Not authoritative.** This is the dated log of owner instructions that made up
+AGENTS.md through 0.7.0, kept verbatim for context. Many entries were later
+superseded (for example "keep Actions disabled", "never record footage" and the
+firmware 2.0.0 light "regression"). The current rules are in
+[AGENTS.md](../AGENTS.md); where they differ, AGENTS.md wins.
+
+New rule changes are recorded below the line at the end, newest last.
+
+---
+
+# Standing user constraints
+
+GitHub usage must cost $0. Follow docs/cost-policy.md.
+
+- As of 2026-11-06 the owner has a GitHub Education account and approves GitHub
+  Actions on this public repository using standard GitHub-hosted runners only.
+  This supersedes the earlier "keep Actions disabled" rule.
+- Never use larger runners, workflow artifacts or Actions caches, Codespaces, paid
+  Copilot, paid security/marketplace services, LFS or Packages storage.
+- Never start paid features, trials that can convert to paid plans, plan upgrades,
+  payment-method setup, budget increases or purchases.
+- Unknown cost means use a local/no-charge alternative or ask the owner first.
+- Do not change repository visibility as a cost workaround.
+
+On 2026-10-11 the user resumed local LAN access while the printer is printing.
+Do not stop, pause, resume, change temperatures, upload, reboot, update firmware,
+or otherwise alter the print. Use only the one-shot authenticated POST /detail
+status endpoint after credentials and target identity are available locally.
+One directed UDP discovery packet to the supplied target on port 48899 may obtain
+its serial. No broadcast, multicast, subnet scan, guessed codes or authentication bypass.
+Discovery identified the Creator 5 Pro. After the owner corrected code capitalization,
+one authenticated status read succeeded, reporting printing and firmware 1.9.9.
+Keep credentials case-sensitive and private. Do not repeat reads without a concrete
+validation need; use the private cached snapshot for offline development.
+The user subsequently authorized continuing the next Home Assistant installation
+steps while the print runs, provided it is not cancelled or otherwise altered.
+An isolated creator5 component may be staged and read-only monitoring configured;
+verify existing HA state first and preserve existing configuration. Normal status
+polling is allowed for live monitoring; print-control requests remain prohibited.
+Follow docs/legal-and-sources.md and docs/project-guide.md.
+
+On 2026-10-14 the owner requested continuation of the prepared activation step.
+The component was added successfully to HA Core 2026.10.1 without restarting HA.
+Credentials are stored in HA's private config entry; one device and 13 sensors
+refresh through the read-only coordinator. Do not repeat the standalone probe
+without a concrete need while HA is already polling. No live disconnect, credential
+change, unload or full-print test is yet recorded. Follow docs/live-acceptance.md.
+
+The owner subsequently requested additional monitoring, device-specific Celsius,
+and chamber light as the sole control. Version 0.2.0 was subsequently approved and installed after natural completion.
+It is live with 30 entities. The narrow set_light(bool) method is authorized development
+scope; all print, heater, fan, motion, upload and material writes remain prohibited.
+Before browser activation of the custom update, obtain specific action-time
+approval. Do not send live light commands as part of setup or ordinary polling.
+Physical comparisons must not involve opening doors or disrupting a running print.
+
+The approved 0.2.0 HA Core restart/recovery succeeded. One LED-only off/on cycle
+was verified through status readback while ready, restoring the initial on state.
+All twelve temperatures are Celsius. Do not repeat the light test without a new
+validation need. Printing → completed → ready was observed naturally; remaining
+time is unknown outside active/paused states because a stale value was observed
+on completion. Physical comparisons and printer-network recovery remain pending.
+
+The latest owner-approved development scope is version 0.3.0: 10-second default
+and configurable polling, camera viewing, API health/last success, model/firmware/
+validated error codes, slot colors, nozzle sizes and user-configured material-slot
+assignments. The owner confirmed a current mapping privately; configure it in HA,
+never hardcode it for all installations. Do not add other reporting/controls without
+asking. Camera requests are read-only, bounded to the same configured printer;
+never send camera-control commands, follow redirects, expose URLs or credentials,
+or create paid/cloud services. (The former "never record footage" wording is
+withdrawn; see 2026-11-06 below.) Obtain action-time approval before
+browser installation/activation of the custom update and its new camera access.
+
+Version 0.3.0 was specifically approved and installed on 2026-10-14 after ready
+was observed. HA restarted and loaded all 49 entities. Ten-second status updates,
+camera viewing/reopening, diagnostics redaction and manual mappings were checked.
+The high-flow note describes material, not nozzle type; nozzle sizes remain API
+reported. Two brief camera unavailable entries occurred around initial viewing/
+closing and recovered on the next status poll; sustained later viewing worked.
+Keep that observation in the acceptance guide until its cause is established.
+No print controls or light test were sent during this activation.
+
+The owner requested quiet Activity on 2026-10-14. The separate last-success timestamp
+entity is disabled in HA; preserve that preference. The coordinator and cached
+diagnostic timestamp still update every 10 seconds. Host Recorder/logbook exclude
+that entity as well. Do not purge old history or re-enable the entity automatically.
+
+On 2026-10-14 the owner explicitly approved installing 0.3.1, an idle-only HA
+Core restart and a grouped slot dashboard. Preserve the active print protections.
+The owner selected GPLv3: use GPL-3.0-only, with the unmodified GNU text in LICENSE.
+Keep repository visibility private until a separate publication decision.
+
+The owner also explicitly approved replacing remote history on both main and
+offline-validation-guide with privacy-cleaned commits, understanding that commit
+IDs change and other clones need resynchronization. This answers the auto-review
+rejection's requested exact branch approval. The local rewrite preserved all
+original commit trees/messages/dates and a private recovery bundle. Use exact
+force-with-lease values recorded privately; do not overwrite unexpected remote work.
+
+Approved privacy history replacement succeeded atomically on both GitHub branches;
+all reachable branch author/committer emails now use the GitHub noreply identity.
+The original recovery bundle is private and outside the repository. Unreferenced
+GitHub objects/caches and other copies are not proven erased; do not claim that.
+0.3.1 activation succeeded while ready; diagnostics show version 0.3.1 and 10-second
+successful polling. Four native swatches and the Creator 5 slot dashboard are live.
+The existing disabled timestamp preference and manual material mappings remain.
+No print-affecting or light commands were sent. Repository remains private.
+
+The owner requested HACS installation plus IP/LAN-code-only setup and model
+detection. 0.3.2 is prepared: targeted discovery obtains serial; PID and status
+model must agree. Pro-only chamber/door entities are omitted for base/unknown
+models. Base support is documented as hardware-unverified. HACS metadata, original
+local icons and component GPL text are included. 147 tests, clean component-archive
+HA setup and official 2026.10.1 hassfest pass locally. Live 0.3.2 activation and
+public HACS download acceptance are pending; the live host is still on 0.3.1.
+Keep the repo private until separate publication approval. No hosted Actions.
+
+The owner specifically approved 0.3.2 installation/restart/form checking. It is now
+installed after ready/connected and no running HA scripts were verified. The live
+form has only IP and LAN code; the existing printer returned already_configured
+after targeted identity lookup, without altering its config entry. This checks
+discovery/duplicates, not a fresh live authenticated setup. HA reports 0.3.2, one
+device and 53 entities; 10-second successful polling, disabled timestamp, slot
+mappings/high-flow note and clean component logs were checked. Normal OS file
+picker uploads installed icons/license; browser security settings were untouched.
+No light or print-affecting commands were sent. Keep repository private.
+
+The owner now explicitly authorizes public publication and a real HACS install
+test after deleting the integration. This supersedes the earlier keep-private
+release gate. Promote the tested 0.3.2 code to the default branch before download.
+Keep Actions disabled, protect credentials and preserve the print protections.
+Record actual HACS download and fresh setup results without overstating evidence.
+
+Public HACS acceptance succeeded on 2026-10-14 after owner action-time approval.
+HACS downloaded main commit 8b69923; an idle-only HA restart and fresh two-field
+authenticated setup created a new Pro entry with 53 entities. Diagnostics confirm
+successful 10-second polling. Keep the optional timestamp disabled. No print or
+light controls were sent. The repository is public; previous private-only gates
+are historical. Retained older PR-linked commit metadata is not claimed erased.
+
+The owner requests the next patch release and a concise public README with a
+prominent experimental/use-at-your-own-risk warning, AI-assisted development
+transparency, Pro-only hardware testing and contribution guidance. Current 0.3.2
+advances to 0.3.3. This release changes documentation/version metadata only;
+publication does not authorize a new HA restart or unrelated feature work.
+Privacy audit covers tracked files and reachable branch history; distinguish
+synthetic IP test values from real owner data and retain the old GitHub metadata
+caveat. No raw diagnostics, MACs, known credentials or owner LAN/HA address were found.
+
+The owner approved the recommended job-monitoring scope: filename, current model
+thumbnail, estimated finish time, reported lifetime runtime and free storage.
+Version 0.3.4 is prepared with offline tests and a fixed, bounded GET /getThum
+reader. Automatic approval review rejected the live thumbnail request under the
+older status-only printer-access rule. Do not retry live thumbnail reads or
+install/restart HA until specific owner activation approval arrives. No new
+printer controls are authorized. Keep filenames/images out of diagnostics and
+owner identifiers out of public fixtures. Existing unrelated untracked files
+with duplicate " 2" names are not part of this change; do not edit or stage them.
+
+On 2026-10-25 the owner expanded development scope to lifetime filament, speed
+multiplier, Z offset, auto-shutdown and material-station readouts; explicit completion
+acknowledgement, slot material/color edits, auto-shutdown settings, speed override,
+temperature targets and pause/resume. This supersedes historical light-only
+implementation scope, not the prohibition on unsolicited live writes. New controls
+must be opt-in, state-guarded, bounded and verified by readback. Never automatically
+acknowledge completion; expose a button for owner-created automations only. Do not
+add cancel, start, motion, loading, firmware or generic-command controls. Quiet the
+layer/progress Activity stream without deleting history. Firmware 2.0.0 is now
+reported by the owner and HA; status works but light commands time out. Do not
+claim a firmware fix or try guessed commands. Finish offline development and obtain
+specific action-time approval before HA activation or physical control tests.
+
+After reviewing the 0.3.5 candidate, the owner requested GitHub-only preparation
+and publication for review; installation/restart/light-test approval was not given.
+Keep draft PR #2 for review and preserve the live installation. The owner intends
+0.4.0 as a later release if the candidate is satisfactory; do not publish that
+release or perform live controls merely from this development instruction.
+
+The owner subsequently explicitly requested public publication of the update.
+Publish the tested candidate as experimental 0.4.0, including clear disclosure
+that new controls lack hardware acceptance. (The 2.0.0 light "regression" noted
+at the time was later traced to local Wi-Fi; see 2026-11-06.) This supersedes the draft-only publication gate; it does not authorize
+HA installation/restart or live control tests. Keep Actions disabled and no paid usage.
+
+On 2026-10-26 the owner approved all six proposed usability features: guided
+native dashboard creation; persisted last-print summary with incomplete-session
+labeling; configurable bed-cooled indicator; guided opt-in notifications for useful
+events; user-set maintenance reminders with record-service buttons; and verified
+friendly error explanations preserving raw codes. Implement and validate locally,
+then prepare a GitHub update. Do not change the live HA installation or printer.
+No dashboard/automation overwrite, automatic completion dismissal, printer writes,
+external notification delivery or paid services are authorized as development tests.
+
+On 2026-10-26 the owner approved version 0.6.0: default-hidden, optional tools
+sidebar shortcut; recent-file browser and thumbnails; upload-only of trusted sliced
+files; explicitly confirmed reprinting and cancellation. This supersedes historical
+no-start/cancel/upload implementation restrictions. Keep a separate default-off
+file-actions option and action-time admin confirmations. No live printer commands,
+HA installation/restart, paid features or protocol probing are authorized as tests.
+Future protocol research is a documented backlog, using public protocol facts and
+authorized stock LAN behavior, with no bypass, firmware modification or generic
+command interface. Preserve unrelated untracked duplicates.
+
+On 2026-11-06 the owner approved 0.6.1 reliability fixes and then requested camera
+pictures on the existing alerts: switch the chamber light on, wait about 10 s,
+grab a picture, then restore the light. Combined as 0.7.0 on fix/reliability-0.6.1 (draft PR
+#5). Pictures are opt-in. No live HA install, light test or printer write was done.
+
+On 2026-11-06 the owner confirmed chamber-light control works on firmware 2.0.0;
+the earlier timeouts were a local Wi-Fi issue. Remove regression wording from
+current docs; historical release notes stay as written. The owner also withdrew
+the "never record footage" rule: it was about privacy, not local features. Local
+pictures, recordings and timelapses are allowed when stored locally in HA and kept
+private: never make them public, upload them to cloud services, or put images,
+filenames or camera URLs in diagnostics, logs or public fixtures.
+
+---
+
+## Changes after the AGENTS.md rewrite
+
+- 2026-11-06: AGENTS.md rewritten as current rules and guidelines only; the
+  dated log above moved here. Owner approved 0.7.1 stability work: brief-glitch
+  grace, offline polling back-off, weekly latest-HA CI, Dependabot, alert logic
+  moved out of the coordinator.

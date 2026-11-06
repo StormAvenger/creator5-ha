@@ -48,7 +48,7 @@ def printer():
             "custom_components.creator5.camera.Creator5Camera.async_camera_image",
             new=AsyncMock(return_value=JPEG),
         ) as camera,
-        patch("custom_components.creator5._light_warmup", new=AsyncMock()) as warmup,
+        patch("custom_components.creator5.alerts._light_warmup", new=AsyncMock()) as warmup,
     ):
         yield state, calls, light, camera, warmup
 

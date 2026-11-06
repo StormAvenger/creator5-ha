@@ -85,7 +85,8 @@ async def test_ten_second_cadence_health_timestamp_and_manual_assignment(hass, f
         latest = hass.states.get("sensor.creator_5_last_successful_status_update").state
         assert latest != initial
         read.side_effect = PrinterError("Disconnected")
-        await entry.runtime_data.async_refresh()
+        for _ in range(3):  # past the brief-glitch grace
+            await entry.runtime_data.async_refresh()
         await hass.async_block_till_done()
         assert hass.states.get("binary_sensor.creator_5_status_connection").state == "off"
         assert hass.states.get("sensor.creator_5_last_successful_status_update").state == latest

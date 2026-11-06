@@ -9,8 +9,9 @@ this public repository on that basis.
 - GitHub Actions on **standard GitHub-hosted runners** (`ubuntu-latest`, etc.) in this
   public repository. GitHub's billing docs state these are free for public
   repositories and do not consume included usage.
-- The workflows in `.github/workflows/`: HACS validation, hassfest, and the client,
-  Home Assistant and frontend tests.
+- The workflows in `.github/workflows/`: HACS validation, hassfest, the client,
+  Home Assistant and frontend tests, and a weekly test against the newest HA.
+- Dependabot version-update PRs (free for public repositories).
 - Ordinary source control: commits, branches, issues, PRs, tags and source releases.
 
 ## Not allowed

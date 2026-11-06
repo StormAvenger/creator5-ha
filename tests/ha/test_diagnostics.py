@@ -41,6 +41,8 @@ async def test_diagnostics_uses_cache_and_excludes_arbitrary_secrets(hass):
             "last_control_failure_stage": None,
             "last_update_success": True,
             "poll_seconds": 10,
+            "current_poll_seconds": 10,
+            "consecutive_failures": 0,
             "last_successful_update": entry.runtime_data.last_successful_update.isoformat(),
             "cached_readings": {
                 "progress_percent": 25,
@@ -56,7 +58,8 @@ async def test_diagnostics_uses_cache_and_excludes_arbitrary_secrets(hass):
         assert read.await_count == requests_before
 
         read.side_effect = PrinterError("PRIVATE-ERROR")
-        await entry.runtime_data.async_refresh()
+        for _ in range(3):  # past the brief-glitch grace
+            await entry.runtime_data.async_refresh()
         requests_before = read.await_count
         report = await async_get_config_entry_diagnostics(hass, entry)
         assert report["last_update_success"] is False
@@ -74,6 +77,8 @@ async def test_diagnostics_before_setup_has_no_readings(hass):
         "last_control_failure_stage": None,
         "last_update_success": None,
         "poll_seconds": None,
+        "current_poll_seconds": None,
+        "consecutive_failures": None,
         "last_successful_update": None,
         "cached_readings": None,
     }

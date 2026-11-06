@@ -10,7 +10,6 @@ import probatio as vol
 from homeassistant.components import websocket_api
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.components.http.const import KEY_HASS_USER
-from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN
 from .creator5py import PrinterError
@@ -172,10 +171,7 @@ async def ws_execute(hass, connection, msg):
 
 
 def publish(coordinator, status):
-    coordinator.last_control_failure_stage = None
-    coordinator.last_successful_update = dt_util.utcnow()
-    coordinator._process_status(status)
-    coordinator.async_set_updated_data(status)
+    coordinator.publish_status(status)
 
 
 class FileUploadView(HomeAssistantView):

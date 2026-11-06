@@ -28,9 +28,15 @@ async def async_get_config_entry_diagnostics(
         "last_update_success": (
             coordinator.last_update_success if coordinator is not None else None
         ),
-        "poll_seconds": coordinator.update_interval.total_seconds()
+        "poll_seconds": coordinator.normal_interval.total_seconds()
         if coordinator is not None
         else None,
+        "current_poll_seconds": coordinator.update_interval.total_seconds()
+        if coordinator is not None
+        else None,
+        "consecutive_failures": (
+            coordinator.consecutive_failures if coordinator is not None else None
+        ),
         "last_successful_update": (
             coordinator.last_successful_update.isoformat()
             if coordinator is not None and coordinator.last_successful_update is not None

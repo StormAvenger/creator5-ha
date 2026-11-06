@@ -161,7 +161,8 @@ async def test_invalid_estimates_and_disconnect_recovery_never_reuse_old_eta(has
         await hass.async_block_till_done()
         coordinator = entry.runtime_data
         read.side_effect = PrinterError("Disconnected")
-        await coordinator.async_refresh()
+        for _ in range(3):  # past the brief-glitch grace
+            await coordinator.async_refresh()
         await hass.async_block_till_done()
         assert coordinator.estimated_completion is None
         assert hass.states.get("sensor.creator_5_estimated_finish_time").state == "unavailable"

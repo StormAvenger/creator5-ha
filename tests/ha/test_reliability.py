@@ -63,7 +63,8 @@ async def update(hass, entry, read, **fields):
 
 async def go_offline(hass, entry, read, freezer, minutes=2):
     read.side_effect = PrinterError("Offline")
-    await entry.runtime_data.async_refresh()
+    for _ in range(3):  # past the brief-glitch grace
+        await entry.runtime_data.async_refresh()
     freezer.tick(timedelta(minutes=minutes))
     async_fire_time_changed(hass, datetime.now(UTC))
     await hass.async_block_till_done()
@@ -152,7 +153,7 @@ async def test_known_printer_off_at_startup_loads_unavailable_and_recovers(
         # Polling continues and the printer is picked up when it is switched on.
         read.side_effect = None
         read.return_value = PrinterStatus(BASE)
-        freezer.tick(timedelta(seconds=11))
+        freezer.tick(timedelta(seconds=61))  # offline polling backs off to 60 s
         async_fire_time_changed(hass, datetime.now(UTC))
         await hass.async_block_till_done()
         assert hass.states.get("sensor.creator_5_bed_temperature").state == "25.0"

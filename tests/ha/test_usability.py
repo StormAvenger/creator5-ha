@@ -92,7 +92,8 @@ async def test_summary_completion_once_cooling_latch_and_local_reload(hass):
         assert "sample.3mf" not in str(report)
         assert "last_job" not in report
         read.side_effect = PrinterError("Offline")
-        await entry.runtime_data.async_refresh()
+        for _ in range(3):  # past the brief-glitch grace
+            await entry.runtime_data.async_refresh()
         assert hass.states.get("sensor.creator_5_last_print").state == "completed"
         assert await hass.config_entries.async_unload(entry.entry_id)
 
@@ -139,7 +140,8 @@ async def test_active_restart_gap_disconnect_and_same_name_new_job_are_partial(h
         assert entry.runtime_data.history.last_job["outcome"] == "unconfirmed"
         assert entry.runtime_data.history.active["incomplete"] is True
         read.side_effect = PrinterError("Offline")
-        await entry.runtime_data.async_refresh()
+        for _ in range(3):  # past the brief-glitch grace
+            await entry.runtime_data.async_refresh()
         assert entry.runtime_data.history.active["incomplete"] is True
         read.side_effect = None
         await update(hass, entry, read, status="completed")
@@ -170,7 +172,8 @@ async def test_offline_and_pause_alerts_are_delayed_once_and_cancel_on_recovery(
         await hass.async_block_till_done()
         assert len(events) == 1
         read.side_effect = PrinterError("Offline")
-        await entry.runtime_data.async_refresh()
+        for _ in range(3):  # past the brief-glitch grace
+            await entry.runtime_data.async_refresh()
         freezer.tick(timedelta(seconds=61))
         async_fire_time_changed(hass, datetime.now(UTC))
         await hass.async_block_till_done()
@@ -182,7 +185,8 @@ async def test_offline_and_pause_alerts_are_delayed_once_and_cancel_on_recovery(
         read.side_effect = None
         await update(hass, entry, read)
         read.side_effect = PrinterError("Offline")
-        await entry.runtime_data.async_refresh()
+        for _ in range(3):  # past the brief-glitch grace
+            await entry.runtime_data.async_refresh()
         read.side_effect = None
         await update(hass, entry, read)
         freezer.tick(timedelta(seconds=61))
@@ -191,8 +195,8 @@ async def test_offline_and_pause_alerts_are_delayed_once_and_cancel_on_recovery(
         assert len(events) == 2
         coordinator = entry.runtime_data
         assert await hass.config_entries.async_unload(entry.entry_id)
-        assert coordinator._pause_timer is None
-        assert coordinator._offline_timer is None
+        assert coordinator.alerts.pause_timer is None
+        assert coordinator.alerts.offline_timer is None
 
 
 async def test_error_hints_are_verified_and_notify_once_per_error_without_startup_replay(hass):

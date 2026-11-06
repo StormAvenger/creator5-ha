@@ -148,6 +148,7 @@ then remove the repository through HACS and follow its restart instructions.
 | Invalid LAN code | Exact capitalization; use the LAN code, not the serial number |
 | Cannot read status | Printer powered on and reachable from HA on TCP 8898 |
 | Printer IP changed | Use **⋮ → Reconfigure** on the integration, or add the printer again; the saved address is updated and history is kept |
+| Readings flicker or go unavailable briefly | One or two missed status replies are ignored; longer outages show unavailable. Frequent outages usually mean a weak Wi-Fi link to the printer |
 | Printer off when HA starts | Entities show unavailable until it is switched on; no restart needed. Very first setup still needs the printer on |
 | Model mismatch | Report model and firmware; setup deliberately stops rather than guessing |
 | No camera picture | Camera viewing enabled and TCP 8080 reachable |
@@ -189,13 +190,14 @@ node tests/frontend/test_setup.mjs
 ```
 
 HA runtime tests use a separate Python 3.14 environment pinned to HA 2026.10.1.
-Version 0.7.0 passes 252 client tests, 137 HA tests and 24 frontend workflow checks.
-See [validation and physical-test limitations](docs/releases/0.7.0.md). Earlier
+Version 0.7.1 passes 252 client tests, 142 HA tests and 24 frontend workflow checks.
+See [validation and physical-test limitations](docs/releases/0.7.1.md). Earlier
 public HACS download and fresh authenticated Pro setup were also verified. This does not establish compatibility with every printer or HA version.
 Tests use synthetic data and do not contact a printer. The same checks, plus HACS and
 hassfest validation, run in GitHub Actions on standard free runners for this public
 repository; see the [cost policy](docs/cost-policy.md).
 
+AI agents working on this repository follow [AGENTS.md](AGENTS.md).
 See [validation evidence](docs/hacs-candidate.md), [API research](docs/api-research.md),
 [development scope and sources](docs/legal-and-sources.md), and the
 [project guide](docs/project-guide.md).

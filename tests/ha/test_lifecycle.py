@@ -61,7 +61,8 @@ async def test_sensor_values_connection_loss_recovery_and_unload(hass, freezer):
         assert read.await_count == 2
 
         read.side_effect = PrinterError("Disconnected")
-        await entry.runtime_data.async_refresh()
+        for _ in range(3):  # past the brief-glitch grace
+            await entry.runtime_data.async_refresh()
         await hass.async_block_till_done()
         assert all(
             s.state == "unavailable"
