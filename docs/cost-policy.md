@@ -30,8 +30,10 @@ alternative or ask the owner first.
 
 ## Owner-side safeguards
 
-- Settings → Actions → General: allow actions and reusable workflows, ideally
-  restricted to GitHub-made actions plus `hacs/action` and `home-assistant/actions`.
+- Settings → Actions → General: only GitHub-made actions plus `hacs/action` and
+  `home-assistant/actions/hassfest` are allowed, and actions must be pinned to a
+  full commit SHA. Update the pinned SHAs (commented with their tag/branch) when
+  upgrading an action.
 - Billing → Budgets: keep any Actions budget at $0 with usage stopped at the limit.
   Without a payment method, GitHub blocks usage instead of charging.
 - Check Billing → Usage occasionally; it should show $0 billed.
