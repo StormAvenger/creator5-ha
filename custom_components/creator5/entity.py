@@ -13,10 +13,13 @@ class Creator5Entity(CoordinatorEntity):
         super().__init__(coordinator)
         self._attr_name = name
         self._attr_unique_id = f"{serial}_{key}"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, serial)},
-            manufacturer="FlashForge",
-            name="Creator 5",
-            model=coordinator.data.model,
-            sw_version=coordinator.data.firmware_version,
+        info = DeviceInfo(
+            identifiers={(DOMAIN, serial)}, manufacturer="FlashForge", name="Creator 5"
         )
+        # Omit unknown values (e.g. printer off at startup) so the device registry
+        # keeps the last reported model and firmware instead of clearing them.
+        if coordinator.data.model is not None:
+            info["model"] = coordinator.data.model
+        if coordinator.data.firmware_version is not None:
+            info["sw_version"] = coordinator.data.firmware_version
+        self._attr_device_info = info

@@ -7,11 +7,13 @@ from homeassistant.core import callback
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import CONF_CHECK_CODE, CONF_SERIAL, DOMAIN
+from .const import CONF_CHECK_CODE, CONF_MODEL, CONF_SERIAL, DOMAIN
 from .creator5py import AuthenticationError, Creator5Client, PrinterError
 from .creator5py.client import private_address
 from .creator5py.discovery import discover_identity
-from .settings import CONTROL_GROUPS, validated_options
+from .settings import CONTROL_GROUPS, stored_options, validated_options
+
+PRODUCT_MODELS = {40: "Creator 5", 41: "Creator 5 Pro"}
 
 
 class Creator5ConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -76,41 +78,98 @@ class Creator5ConfigFlow(ConfigFlow, domain=DOMAIN):
                 except PrinterError:
                     errors["base"] = "discovery_failed"
                 else:
-                    expected_model = {40: "Creator 5", 41: "Creator 5 Pro"}.get(identity.product_id)
+                    expected_model = PRODUCT_MODELS.get(identity.product_id)
                     if expected_model is None:
                         errors["base"] = "unsupported_model"
                     else:
                         await self.async_set_unique_id(identity.serial)
-                        self._abort_if_unique_id_configured()
+                        # The serial was just read from this address, so a DHCP
+                        # move is safe to record; the LAN code is left to reauth.
+                        self._abort_if_unique_id_configured(updates={CONF_HOST: host})
                         data = {
                             CONF_HOST: host,
                             CONF_SERIAL: identity.serial,
                             CONF_CHECK_CODE: check_code,
                         }
-                        try:
-                            status = await Creator5Client(
-                                async_get_clientsession(self.hass),
-                                host,
-                                identity.serial,
-                                check_code,
-                            ).get_status()
-                        except AuthenticationError:
-                            errors["base"] = "invalid_auth"
-                        except PrinterError:
-                            errors["base"] = "cannot_connect"
-                        except ValueError:
-                            errors["base"] = "invalid_config"
-                        else:
-                            if status.model != expected_model:
-                                errors["base"] = "model_mismatch"
-                            else:
-                                return self.async_create_entry(title=status.model, data=data)
+                        errors, model = await self._verify(data, expected_model)
+                        if not errors:
+                            return self.async_create_entry(
+                                title=model, data={**data, CONF_MODEL: model}
+                            )
         return self.async_show_form(
             step_id="user",
             errors=errors,
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_HOST): str,
+                    vol.Required(CONF_CHECK_CODE): selector.TextSelector(
+                        selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
+                    ),
+                }
+            ),
+        )
+
+    async def _verify(self, data, expected_model):
+        """One authenticated status read; return form errors and the verified model."""
+        try:
+            status = await Creator5Client(
+                async_get_clientsession(self.hass),
+                data[CONF_HOST],
+                data[CONF_SERIAL],
+                data[CONF_CHECK_CODE],
+            ).get_status()
+        except AuthenticationError:
+            return {"base": "invalid_auth"}, None
+        except PrinterError:
+            return {"base": "cannot_connect"}, None
+        except ValueError:
+            return {"base": "invalid_config"}, None
+        if status.model != expected_model:
+            return {"base": "model_mismatch"}, None
+        return {}, status.model
+
+    async def async_step_reconfigure(self, user_input=None):
+        """Change the address or LAN code of the same physical printer."""
+        entry = self._get_reconfigure_entry()
+        errors = {}
+        if user_input is not None:
+            host = user_input[CONF_HOST].strip()
+            check_code = user_input[CONF_CHECK_CODE].strip()
+            try:
+                private_address(host)
+                if not check_code:
+                    raise ValueError("Empty LAN code")
+            except ValueError:
+                errors["base"] = "invalid_config"
+            else:
+                try:
+                    identity = await discover_identity(host)
+                except PrinterError:
+                    errors["base"] = "discovery_failed"
+                else:
+                    expected_model = PRODUCT_MODELS.get(identity.product_id)
+                    if expected_model is None:
+                        errors["base"] = "unsupported_model"
+                    else:
+                        await self.async_set_unique_id(identity.serial)
+                        # Never repoint an entry (and its history) at another printer.
+                        self._abort_if_unique_id_mismatch(reason="wrong_printer")
+                        data = {
+                            **entry.data,
+                            CONF_HOST: host,
+                            CONF_CHECK_CODE: check_code,
+                        }
+                        errors, model = await self._verify(data, expected_model)
+                        if not errors:
+                            return self.async_update_reload_and_abort(
+                                entry, data_updates={**data, CONF_MODEL: model}
+                            )
+        return self.async_show_form(
+            step_id="reconfigure",
+            errors=errors,
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_HOST, default=entry.data[CONF_HOST]): str,
                     vol.Required(CONF_CHECK_CODE): selector.TextSelector(
                         selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
                     ),
@@ -129,7 +188,7 @@ class Creator5OptionsFlow(OptionsFlow):
                 errors["base"] = "invalid_options"
             else:
                 return self.async_create_entry(title="", data=options)
-        current = validated_options(self.config_entry.options, self.config_entry.data[CONF_HOST])
+        current = stored_options(self.config_entry.options, self.config_entry.data[CONF_HOST])
         schema = {
             vol.Required("poll_seconds", default=current["poll_seconds"]): selector.NumberSelector(
                 selector.NumberSelectorConfig(

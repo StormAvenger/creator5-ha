@@ -76,6 +76,10 @@ class Creator5Problem(Creator5Entity, BinarySensorEntity):
 
     @property
     def is_on(self):
+        # Some failures report an error state with an empty code; treat the
+        # state itself as authoritative rather than the absence of a code.
+        if self.coordinator.data.state == "error":
+            return True
         code = self.coordinator.data.error_code
         return code != "none" if code is not None else None
 

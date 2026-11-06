@@ -83,3 +83,17 @@ def validated_options(data, host):
         result[f"tool_{tool}_slot"] = slot
         result[f"tool_{tool}_note"] = note.strip()
     return result
+
+
+def stored_options(data, host):
+    """Validate saved options; drop a camera URL that names a previous printer address.
+
+    A custom camera URL must point at the configured printer. After the printer's
+    IP changes it no longer does, which must not prevent the integration loading.
+    """
+    try:
+        return validated_options(data, host)
+    except ValueError:
+        if not data.get("camera_stream_url"):
+            raise
+        return validated_options({**data, "camera_stream_url": ""}, host)

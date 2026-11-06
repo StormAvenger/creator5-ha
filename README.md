@@ -147,6 +147,8 @@ then remove the repository through HACS and follow its restart instructions.
 | Could not identify printer | Correct IP, LAN mode and UDP 48899 access from HA |
 | Invalid LAN code | Exact capitalization; use the LAN code, not the serial number |
 | Cannot read status | Printer powered on and reachable from HA on TCP 8898 |
+| Printer IP changed | Use **⋮ → Reconfigure** on the integration, or add the printer again; the saved address is updated and history is kept |
+| Printer off when HA starts | Entities show unavailable until it is switched on; no restart needed. Very first setup still needs the printer on |
 | Model mismatch | Report model and firmware; setup deliberately stops rather than guessing |
 | No camera picture | Camera viewing enabled and TCP 8080 reachable |
 | Light times out on firmware 2.0.0 | Known owner-reported regression despite working status polling; no verified workaround yet. Do not repeatedly retry commands |
@@ -187,8 +189,8 @@ node tests/frontend/test_setup.mjs
 ```
 
 HA runtime tests use a separate Python 3.14 environment pinned to HA 2026.10.1.
-Version 0.6.0 passes 252 client tests, 106 HA tests and 24 frontend workflow checks.
-See [validation and physical-test limitations](docs/releases/0.6.0.md). Earlier
+Version 0.6.1 passes 252 client tests, 126 HA tests and 24 frontend workflow checks.
+See [validation and physical-test limitations](docs/releases/0.6.1.md). Earlier
 public HACS download and fresh authenticated Pro setup were also verified. This does not establish compatibility with every printer or HA version.
 Tests use synthetic data and do not contact a printer. Tests and builds run locally;
 repository Actions remains disabled.

@@ -6,7 +6,7 @@ from datetime import timedelta
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, Platform, UnitOfTemperature
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
@@ -15,12 +15,12 @@ from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
-from .const import CONF_CHECK_CODE, CONF_SERIAL, DOMAIN
+from .const import ACTIVE_STATES, CONF_CHECK_CODE, CONF_MODEL, CONF_SERIAL, DOMAIN, MODELS
 from .creator5py import AuthenticationError, Creator5Client, PrinterError, PrinterStatus
 from .creator5py.client import ControlError
 from .error_info import explanation
 from .history import MAINTENANCE, PrintHistory
-from .settings import validated_options
+from .settings import stored_options
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -58,7 +58,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator = Creator5Coordinator(hass, entry, client)
     await coordinator.history.async_load()
     entry.async_on_unload(coordinator.cancel_event_timers)
-    await coordinator.async_config_entry_first_refresh()
+    try:
+        await coordinator.async_config_entry_first_refresh()
+    except ConfigEntryNotReady:
+        # A printer that is switched off is normal. With a previously verified
+        # model, load entities as unavailable so local records (last print,
+        # connection status) stay visible; polling continues and recovers them.
+        model = entry.data.get(CONF_MODEL)
+        if model not in MODELS:
+            raise
+        coordinator.data = PrinterStatus({"status": "offline", "model": model})
+    else:
+        model = coordinator.data.model
+        if model is not None and entry.data.get(CONF_MODEL) != model:
+            # Before the update listener is registered, so this does not reload.
+            hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_MODEL: model})
     entry.runtime_data = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(async_reload_options))
@@ -96,7 +110,7 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
         self._pause_notified = False
         self._offline_notified = False
         self.last_control_failure_stage = None
-        self.options = validated_options(entry.options, entry.data[CONF_HOST])
+        self.options = stored_options(entry.options, entry.data[CONF_HOST])
         self.last_successful_update = None
         self.estimated_completion = None
         self._eta_job = None
@@ -149,7 +163,15 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
 
     def _connection_failed(self):
         self.history.missed_update()
-        if not self._observed_once or self._offline_timer or self._offline_notified:
+        if (
+            not self._observed_once
+            or self._offline_timer
+            or self._offline_notified
+            # Only a loss during a job is alert-worthy; powering off an idle,
+            # finished or auto-shutdown printer is not.
+            or self.data is None
+            or self.data.state not in ACTIVE_STATES
+        ):
             return
 
         @callback
@@ -158,7 +180,8 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
             if not self.last_update_success:
                 self._offline_notified = True
                 self._emit(
-                    "offline", "Printer connection has been lost for the configured interval."
+                    "offline",
+                    "Printer connection was lost during a print and has not recovered.",
                 )
 
         self._offline_timer = async_call_later(

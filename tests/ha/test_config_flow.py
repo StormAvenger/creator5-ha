@@ -40,7 +40,7 @@ async def test_user_flow(hass):
         result = await hass.config_entries.flow.async_configure(result["flow_id"], INPUT)
         await hass.async_block_till_done()
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert result["data"] == DATA
+    assert result["data"] == {**DATA, "model": "Creator 5 Pro"}
     assert result["result"].unique_id == DATA["serial_number"]
 
 
@@ -129,7 +129,7 @@ async def test_automatic_model_detection(hass, identity_lookup, pid, model):
         await hass.async_block_till_done()
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["title"] == model
-    assert result["data"] == DATA
+    assert result["data"] == {**DATA, "model": model}
     identity_lookup.assert_awaited_once_with(INPUT["host"])
 
 

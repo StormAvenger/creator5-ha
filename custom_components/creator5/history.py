@@ -1,5 +1,6 @@
 """Bounded local job summary and maintenance records; never sent to diagnostics."""
 
+import re
 from copy import deepcopy
 from datetime import datetime, timedelta
 
@@ -13,6 +14,7 @@ MAINTENANCE = {
     "nozzle_inspection": "Nozzle inspection",
 }
 ACTIVE = ("printing", "paused", "pause")
+OUTCOMES = ("completed", "failed", "cancelled", "unconfirmed")
 
 
 def timestamp(value):
@@ -44,13 +46,14 @@ def clean_job(value, *, active=False):
         "duration_seconds": finite_number(value.get("duration_seconds"), 366 * 86400),
         "incomplete": bool(value.get("incomplete", True)),
     }
+    code = value.get("error_code")
+    if isinstance(code, str) and re.fullmatch(r"E[0-9]{4}", code):
+        job["error_code"] = code
+    if value.get("error_seen") is True:
+        job["error_seen"] = True
     if not active:
         finished = timestamp(value.get("finished_at"))
-        if finished is None or value.get("outcome") not in (
-            "completed",
-            "cancelled",
-            "unconfirmed",
-        ):
+        if finished is None or value.get("outcome") not in OUTCOMES:
             return None
         job.update(finished_at=finished, outcome=value["outcome"])
     return job
@@ -129,6 +132,10 @@ class PrintHistory:
             self.save_later(soon=True)
 
     def _finish(self, outcome, now):
+        # A job that hit a printer error and then ended without completing failed;
+        # it is neither an unexplained return to ready nor a deliberate cancel.
+        if outcome != "completed" and self.active.get("error_seen"):
+            outcome = "failed"
         self.last_job = {**self.active, "outcome": outcome, "finished_at": now.isoformat()}
         if outcome == "unconfirmed":
             self.last_job["incomplete"] = True
@@ -144,6 +151,17 @@ class PrintHistory:
         if self.active and status.state in ACTIVE and filename is None:
             self.missed_update()
         duration = status.nonnegative("printDuration", maximum=366 * 86400)
+        code = status.error_code
+        if self.active and (status.state == "error" or code not in (None, "none")):
+            # Recorded, not finished: errors such as filament runout can be
+            # recovered and the job resumed to completion.
+            changed = not self.active.get("error_seen")
+            self.active["error_seen"] = True
+            if code not in (None, "none") and self.active.get("error_code") != code:
+                self.active["error_code"] = code
+                changed = True
+            if changed:
+                self.save_later(soon=True)
         if status.state in ACTIVE and filename is not None:
             old_duration = self.active["duration_seconds"] if self.active else None
             restarted = (

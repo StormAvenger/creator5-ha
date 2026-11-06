@@ -34,7 +34,7 @@ HA Companion App phone, select the desired events, and click **Create alerts**.
 | Bed cooled | Once after that completion, when the bed is below the configured Celsius threshold and its target is off |
 | Printer error | Once for a newly observed error/code; unchanged errors do not repeat |
 | Prolonged pause | Once after a continuous pause reaches the configured delay |
-| Connection lost | Once after a continuous outage reaches the configured delay |
+| Connection lost | Once after an outage that starts during a job (printing, heating or paused) reaches the configured delay. Switching off an idle, finished or auto-shut-down printer does not alert |
 | Maintenance due | Once when a configured reminder crosses its printing-hours interval |
 
 No alerts are created during installation or by saving Configure options. Creating
@@ -53,9 +53,13 @@ existing poll interval, so detection is not instantaneous.
 
 ## Last-print summary
 
-The **Last print** sensor retains one most recent result: completed, cancelled or
-unconfirmed. Attributes include filename, the reported elapsed duration, inferred
-start time, completion-observed time and an incomplete-observation flag. The
+The **Last print** sensor retains one most recent result: completed, failed,
+cancelled or unconfirmed. Attributes include filename, the reported elapsed duration,
+inferred start time, completion-observed time and an incomplete-observation flag.
+A job is **failed** when HA saw an error state or error code during it and it then
+ended without completing (returned to ready or was cancelled). `error_code` holds the
+last reported code, if any. A recovered error, such as a resumed filament runout,
+still ends as completed, with `error_code` kept for reference. The
 created dashboard displays these details without needing custom cards.
 
 HA records this summary from observed transitions; the printer is not queried for

@@ -376,7 +376,7 @@ class Creator5Telemetry(Creator5Entity, SensorEntity):
 
 class Creator5LastPrint(Creator5Entity, SensorEntity):
     _attr_device_class = SensorDeviceClass.ENUM
-    _attr_options = ["completed", "cancelled", "unconfirmed"]
+    _attr_options = ["completed", "failed", "cancelled", "unconfirmed"]
 
     def __init__(self, coordinator, serial):
         super().__init__(coordinator, serial, "last_print", "Last print")

@@ -15,6 +15,14 @@
           "host": "Printer LAN IPv4 address",
           "check_code": "LAN check code"
         }
+      },
+      "reconfigure": {
+        "title": "Change printer address or LAN code",
+        "description": "Enter the printer's current IP address and LAN code. Setup checks that address and only accepts the same printer, so history and settings are kept.",
+        "data": {
+          "host": "Printer LAN IPv4 address",
+          "check_code": "LAN check code"
+        }
       }
     },
     "error": {
@@ -26,7 +34,9 @@
       "model_mismatch": "Discovery and authenticated status did not identify the same Creator 5 model. Setup was not saved."
     },
     "abort": {
-      "already_configured": "This printer is already configured."
+      "already_configured": "This printer is already configured. If its IP address changed, the saved address was updated.",
+      "wrong_printer": "That address belongs to a different printer. Add it as a new printer instead.",
+      "reconfigure_successful": "Printer connection updated."
     }
   },
   "options": {
@@ -35,7 +45,7 @@
         "title": "Monitoring, materials and optional controls",
         "description": "Open [Creator 5 tools]({setup_url}) for files, dashboards and alerts. The tools sidebar shortcut and file actions are off by default. Each upload, start or cancellation requires confirmation. Saving options sends no printer command. Existing tool assignments are manual.",
         "data": {
-          "poll_seconds": "Status update interval (seconds, 5\u2013300)",
+          "poll_seconds": "Status update interval (seconds, 5–300)",
           "camera_enabled": "Enable printer camera",
           "camera_stream_url": "Camera MJPEG URL (optional; otherwise use printer report)",
           "tool_1_slot": "Tool 1: assigned material slot (0 = unassigned)",
@@ -50,7 +60,7 @@
           "material_controls": "Enable slot material and color editing (idle only)",
           "printer_controls": "Enable speed override and auto shutdown settings",
           "temperature_controls": "Enable temperature targets (Celsius)",
-          "bed_cooled_c": "Bed-cooled threshold (\u00b0C, bed only)",
+          "bed_cooled_c": "Bed-cooled threshold (°C, bed only)",
           "pause_alert_minutes": "Prolonged-pause alert delay (minutes)",
           "offline_alert_minutes": "Lost-connection alert delay (minutes)",
           "bed_cleaning_hours": "Bed-cleaning reminder interval (printing hours; 0 disables)",
