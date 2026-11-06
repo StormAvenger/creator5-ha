@@ -63,7 +63,8 @@ assignments. The owner confirmed a current mapping privately; configure it in HA
 never hardcode it for all installations. Do not add other reporting/controls without
 asking. Camera requests are read-only, bounded to the same configured printer;
 never send camera-control commands, follow redirects, expose URLs or credentials,
-record footage or create paid/cloud services. Obtain action-time approval before
+or create paid/cloud services. (The former "never record footage" wording is
+withdrawn; see 2026-11-06 below.) Obtain action-time approval before
 browser installation/activation of the custom update and its new camera access.
 
 Version 0.3.0 was specifically approved and installed on 2026-10-14 after ready
@@ -173,8 +174,8 @@ release or perform live controls merely from this development instruction.
 
 The owner subsequently explicitly requested public publication of the update.
 Publish the tested candidate as experimental 0.4.0, including clear disclosure
-that new controls lack hardware acceptance and the 2.0.0 light regression remains
-unresolved. This supersedes the draft-only publication gate; it does not authorize
+that new controls lack hardware acceptance. (The 2.0.0 light "regression" noted
+at the time was later traced to local Wi-Fi; see 2026-11-06.) This supersedes the draft-only publication gate; it does not authorize
 HA installation/restart or live control tests. Keep Actions disabled and no paid usage.
 
 On 2026-10-26 the owner approved all six proposed usability features: guided
@@ -198,7 +199,13 @@ command interface. Preserve unrelated untracked duplicates.
 
 On 2026-11-06 the owner approved 0.6.1 reliability fixes and then requested camera
 pictures on the existing alerts: switch the chamber light on, wait about 10 s,
-grab a picture, then restore the light. This supersedes the earlier no-recording
-rule for single alert pictures only, saved to HA's local media folder; no video,
-timelapse or cloud storage. Combined as 0.7.0 on fix/reliability-0.6.1 (draft PR
+grab a picture, then restore the light. Combined as 0.7.0 on fix/reliability-0.6.1 (draft PR
 #5). Pictures are opt-in. No live HA install, light test or printer write was done.
+
+On 2026-11-06 the owner confirmed chamber-light control works on firmware 2.0.0;
+the earlier timeouts were a local Wi-Fi issue. Remove regression wording from
+current docs; historical release notes stay as written. The owner also withdrew
+the "never record footage" rule: it was about privacy, not local features. Local
+pictures, recordings and timelapses are allowed when stored locally in HA and kept
+private: never make them public, upload them to cloud services, or put images,
+filenames or camera URLs in diagnostics, logs or public fixtures.

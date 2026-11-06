@@ -126,7 +126,7 @@ async def test_unconfirmed_light_still_takes_picture_and_restores_only_if_on(
     async def failing(on):
         calls.append(on)
         if on:
-            # Firmware 2.0.0 style: no confirmation, but the LED may have changed.
+            # Network timeout: no confirmation, but the LED may have changed.
             state["lightStatus"] = "open" if actually_on else "close"
             raise ControlError("request", "Control request failed; outcome unconfirmed")
         state["lightStatus"] = "close"

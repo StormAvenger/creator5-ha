@@ -10,8 +10,7 @@ is detected by the integration, but its behavior has not been verified on a
 physical printer. Compatibility is not guaranteed.
 
 I'm currently running this integration on my own Creator 5 Pro, and it is working
-well for monitoring in my setup. Light control currently times out on firmware
-2.0.0; see the compatibility note below. It was developed quickly with substantial AI assistance
+well for monitoring and chamber-light control in my setup. It was developed quickly with substantial AI assistance
 ("vibe-coded"), so expect rough edges and bugs. It is experimental software,
 provided without warranty. Feedback, testing reports, code reviews and contributions
 are very welcome. This project is not affiliated with or endorsed by FlashForge.
@@ -26,7 +25,7 @@ are very welcome. This project is not affiliated with or endorsed by FlashForge.
 - Pro-specific chamber readings and door/lid status.
 - Reported fan readings, firmware/model information, error codes and connection health.
 - On-demand camera viewing through Home Assistant.
-- Chamber-light on/off control (firmware 2.0.0 regression under investigation).
+- Chamber-light on/off control.
 - Reported lifetime filament, speed multiplier, Z offset, auto-shutdown and material-station activity.
 - Optional pause/resume, completion acknowledgement, slot metadata editing, auto-shutdown, speed and temperature-target controls.
 - On-demand recent-file browser and previews; optional upload-only, reprint and confirmed cancellation.
@@ -48,7 +47,7 @@ See [controls, limits and validation status](docs/controls.md).
 | --- | --- |
 | Home Assistant | Minimum 2026.10.1; tested with 2026.10.1 |
 | Printer | Creator 5 Pro in LAN mode |
-| Firmware | Prior LAN/light tests: 1.9.9. Monitoring observed on 2.0.0; light requests time out. New controls need hardware validation |
+| Firmware | Monitoring and light control on 1.9.9 and 2.0.0. Other new controls need hardware validation |
 | Standard Creator 5 | Experimental detection and synthetic tests only; no hardware validation |
 | HACS | Installed and connected to GitHub |
 | Network | HA must reach the printer: UDP 48899, TCP 8898, and TCP 8080 for camera viewing |
@@ -152,7 +151,7 @@ then remove the repository through HACS and follow its restart instructions.
 | Printer off when HA starts | Entities show unavailable until it is switched on; no restart needed. Very first setup still needs the printer on |
 | Model mismatch | Report model and firmware; setup deliberately stops rather than guessing |
 | No camera picture | Camera viewing enabled and TCP 8080 reachable |
-| Light times out on firmware 2.0.0 | Known owner-reported regression despite working status polling; no verified workaround yet. Do not repeatedly retry commands |
+| Light or other control times out | Check the printer's Wi-Fi signal and HA's route to it; status polling can keep working on a weak link. Check the printer before retrying |
 | Optional control unavailable | Enable its group in Configure and check the allowed printer states in the controls guide |
 | Tool material is unknown | Assign that tool to a material slot in Configure |
 

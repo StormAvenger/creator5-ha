@@ -35,8 +35,8 @@ be enabled too). For completed, bed-cooled, error and prolonged-pause alerts:
 3. It sends the alert with the picture, then switches the light back off.
 
 A light that is already on, or whose state is unknown, is left alone. Set the delay
-to 0 to never switch the light. If the light command is unconfirmed (the known
-firmware 2.0.0 timeout), the picture is still taken without waiting; the light is
+to 0 to never switch the light. If the light command can't be confirmed (for
+example a weak Wi-Fi link), the picture is still taken without waiting; the light is
 switched off afterwards only if a fresh status read reports it on. Each command is
 sent at most once. Alerts with pictures arrive about 10–20 seconds later than
 without. Connection-lost and maintenance alerts never include a picture. Reloading
@@ -76,8 +76,8 @@ No alerts are created during installation or by saving Configure options. Creati
 alerts explicitly adds an editable native automation. Existing automations are
 preserved; an existing Creator 5 alert automation is detected rather than replaced.
 New automations use unique IDs. Edit/disable/delete them under **Settings →
-Automations & scenes**. Generated alerts send messages only; no printer commands,
-completion acknowledgement, snapshots or recordings are attached. Filenames are
+Automations & scenes**. Generated alerts send messages only; they send no printer
+commands or completion acknowledgement. Alert pictures are separate and opt-in (above). Filenames are
 excluded from notifications.
 
 The defaults are a 10-minute prolonged pause and a 2-minute connection outage.

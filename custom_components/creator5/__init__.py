@@ -191,7 +191,7 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
                     await self.async_set_light(True)
                     light_confirmed = True
                 except PrinterError as err:
-                    # Known firmware 2.0.0 timeout: take the picture regardless.
+                    # E.g. a network timeout: take the picture regardless.
                     _LOGGER.debug("Snapshot light could not be confirmed on: %s", err)
                 if light_confirmed:
                     await _light_warmup(delay)

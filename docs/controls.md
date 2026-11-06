@@ -80,23 +80,12 @@ Activity filtering suppresses continuous sensor updates while Recorder history a
 readings remain available. Past events are not purged. The optional last-success
 entity remains disabled by default; existing preferences are retained.
 
-## Firmware 2.0.0 light regression
+## Chamber light
 
-The owner reports no light change and a network timeout from HA. Read-only HA UI
-inspection confirms firmware 2.0.0 and connected status monitoring during a print.
-This does not establish whether the timeout occurs in command handling or in the
-subsequent status verification. No physical light command was sent in this session.
-
-This release separates command-request failures from status-verification failures,
-records only the stage in cached diagnostics, and prevents overlapping poll/control
-requests. These are diagnostic and concurrency improvements, **not a confirmed fix**.
-No verified replacement for the documented `lightControl_cmd` was found. No guessed
-commands, firmware modifications, rollback or printer restart are attempted.
-
-Next acceptance: after the current print ends and the owner approves, install the
-release with all new control groups off, observe normal polling, then run one
-light-only test and check its failure stage or verified state. Test print-affecting
-controls separately on a deliberate test job with specific owner approval.
+`lightControl_cmd` switches the chamber LED and is verified by status readback. The
+owner confirms it works on firmware 2.0.0; earlier timeouts were a local Wi-Fi issue.
+Command-request and status-verification failures are reported as separate stages in
+cached diagnostics, and polling never overlaps a control request.
 
 ## Sources
 

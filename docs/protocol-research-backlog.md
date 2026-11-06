@@ -6,8 +6,8 @@ capture, firmware inspection or modification was performed for this release.
 
 ## Questions worth investigating
 
-1. Compare documented command behavior with firmware 2.0.0, particularly the light
-   timeout and any differences in acknowledgement versus actual state changes.
+1. Compare documented command behavior with firmware 2.0.0, particularly any
+   differences in acknowledgement versus actual state changes.
 2. Establish whether fan requests are ineffective as the Creator 5 reference says,
    or whether a newer stock API exposes a verified, distinct control path.
 3. Look for a reliable, explicit active-tool signal and per-tool filament usage.

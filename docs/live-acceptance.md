@@ -106,5 +106,5 @@ reports that light commands do nothing and HA reports a network timeout. That
 message alone cannot distinguish control-request and status-readback failure.
 No light, print, heater, material, shutdown or other write was sent in this session;
 HA was not restarted. The optional-control 0.3.5 candidate is offline-tested only.
-Its improved failure-stage diagnostics and serialized requests are not a confirmed
-light fix. See [the new controls acceptance plan](controls.md).
+**Resolved 2026-11-06:** the owner traced the light timeouts to a local Wi-Fi
+issue; light control works on 2.0.0. The failure-stage diagnostics remain useful. See [the new controls acceptance plan](controls.md).
