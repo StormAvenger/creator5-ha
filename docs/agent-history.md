@@ -225,3 +225,6 @@ filenames or camera URLs in diagnostics, logs or public fixtures.
   dated log above moved here. Owner approved 0.7.1 stability work: brief-glitch
   grace, offline polling back-off, weekly latest-HA CI, Dependabot, alert logic
   moved out of the coordinator.
+- 2026-11-06: Owner adopted four clarifications reviewed with ChatGPT: agent vs.
+  owner printer control (rule 1), archive entries never active, test requirements
+  split by HA/client, and private in-HA image storage vs. logs/diagnostics.

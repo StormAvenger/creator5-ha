@@ -6,7 +6,10 @@ working practices as they stand today.
 
 - The dated history of how these rules evolved is in
   [docs/agent-history.md](docs/agent-history.md). It is context only and **not
-  authoritative**: where it disagrees with this file, this file wins.
+  authoritative**: where it disagrees with this file, this file wins. Historical
+  entries must never be treated as active instructions, even when this file
+  doesn't explicitly contradict them. Use the archive for context, never to
+  decide current permissions or requirements.
 - The owner's explicit instructions in the current conversation override this
   file. When the owner changes a standing rule, update this file and add a dated
   line to the end of docs/agent-history.md.
@@ -30,10 +33,13 @@ working practices as they stand today.
 
 ### The owner's printer and Home Assistant
 
-1. **No printer writes without action-time approval.** Light, pause/resume,
-   temperatures, speed, slot edits, auto-shutdown, upload, start, cancel or any
-   other command needs the owner's explicit go-ahead at the time. Never interrupt
-   or alter a running print.
+1. **No unauthorized printer writes.** An AI agent must get the owner's explicit,
+   action-time approval before directly sending any command to a live printer
+   (light, pause/resume, temperatures, speed, slot edits, auto-shutdown, upload,
+   start, cancel or anything else). This does not restrict normal, user-initiated
+   Home Assistant controls or automations the owner configures. Never interrupt
+   or modify an active print without specific authorization for that action.
+   Offline development and synthetic testing need no approval.
 2. **Reads are minimal.** A status read (`POST /detail`) is fine when there is a
    concrete validation need. Discovery is one directed UDP packet to the
    configured IP on port 48899: no broadcast, multicast or subnet scans.
@@ -53,10 +59,12 @@ working practices as they stand today.
 ### Privacy
 
 6. Never commit, log or publish LAN codes, serial numbers, IP/MAC addresses,
-   camera URLs, raw printer responses, or print filenames/images. Keep them out of
-   diagnostics, logs, alerts' metadata and test fixtures. Test data is synthetic.
-7. Local pictures, recordings and timelapses are allowed when stored locally in HA
-   and kept private. Never make them public or upload them to cloud services.
+   camera URLs or raw printer responses. Keep them out of repository content,
+   diagnostics, logs and test fixtures. Test data is synthetic.
+7. Private, owner-configured image storage inside Home Assistant is permitted
+   (alert pictures, recordings, timelapses). Images and print filenames must not
+   appear in repository content, logs, diagnostics exports or external telemetry,
+   and must never be made public or uploaded to cloud services.
 
 ### Cost: GitHub must bill $0
 
@@ -118,8 +126,10 @@ working practices as they stand today.
   ```
 
   Client and HA tests must run separately (duplicate test file basenames).
-- **Tests.** Every behavior change gets tests using real HA classes and synthetic
-  printer data. For bug fixes, confirm the new test fails on the old code.
+- **Tests.** Every behavior change requires appropriate regression tests. Home
+  Assistant behavior is tested with real HA classes and synthetic printer data;
+  standalone client behavior with isolated client tests. For bug fixes, confirm
+  the regression test fails against the previous implementation whenever practical.
 - **Releases.** Bump `custom_components/creator5/manifest.json` and
   `pyproject.toml`, add `docs/releases/<version>.md`, update README test counts,
   then publish a GitHub release tagged `v<version>` (HACS updates come from
