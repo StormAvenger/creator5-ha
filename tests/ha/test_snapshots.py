@@ -104,9 +104,7 @@ async def test_light_on_wait_capture_alert_then_light_restored(hass, media, prin
 
 
 @pytest.mark.parametrize("reported", ["open", None])
-async def test_light_on_or_unknown_is_left_alone_and_not_waited_for(
-    hass, media, printer, reported
-):
+async def test_light_on_or_unknown_is_left_alone_and_not_waited_for(hass, media, printer, reported):
     state, calls, _light, _camera, warmup = printer
     state["lightStatus"] = reported
     events = listen(hass)
