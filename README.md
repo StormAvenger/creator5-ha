@@ -31,6 +31,7 @@ are very welcome. This project is not affiliated with or endorsed by FlashForge.
 - Optional pause/resume, completion acknowledgement, slot metadata editing, auto-shutdown, speed and temperature-target controls.
 - On-demand recent-file browser and previews; optional upload-only, reprint and confirmed cancellation.
 - Guided native dashboard and optional notification setup, with an optional sidebar shortcut.
+- Optional camera pictures on alerts, briefly switching on the chamber light if it was off.
 - Persisted last-print summary and a configurable bed-cooled indicator.
 - User-set maintenance reminders and selected vendor-verified error explanations.
 - Shared status polling every 10 seconds by default, configurable from 5–300 seconds.
@@ -189,8 +190,8 @@ node tests/frontend/test_setup.mjs
 ```
 
 HA runtime tests use a separate Python 3.14 environment pinned to HA 2026.10.1.
-Version 0.6.1 passes 252 client tests, 126 HA tests and 24 frontend workflow checks.
-See [validation and physical-test limitations](docs/releases/0.6.1.md). Earlier
+Version 0.7.0 passes 252 client tests, 136 HA tests and 24 frontend workflow checks.
+See [validation and physical-test limitations](docs/releases/0.7.0.md). Earlier
 public HACS download and fresh authenticated Pro setup were also verified. This does not establish compatibility with every printer or HA version.
 Tests use synthetic data and do not contact a printer. Tests and builds run locally;
 repository Actions remains disabled.

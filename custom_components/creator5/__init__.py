@@ -1,5 +1,6 @@
 """Experimental Creator 5 monitoring and chamber-light control."""
 
+import asyncio
 import logging
 from datetime import timedelta
 
@@ -21,6 +22,15 @@ from .creator5py.client import ControlError
 from .error_info import explanation
 from .history import MAINTENANCE, PrintHistory
 from .settings import stored_options
+from .snapshots import SNAPSHOT_KINDS, async_save_snapshot
+
+_LOGGER = logging.getLogger(__name__)
+
+
+async def _light_warmup(seconds):
+    """Let the chamber light and camera exposure settle before the picture."""
+    await asyncio.sleep(seconds)
+
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -115,6 +125,9 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
         self.estimated_completion = None
         self._eta_job = None
         self._eta_marker = None
+        # Set by the camera platform when camera viewing is enabled.
+        self.camera = None
+        self._snapshot_lock = asyncio.Lock()
         super().__init__(
             hass,
             logging.getLogger(__name__),
@@ -142,6 +155,15 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
     def _emit(self, kind, message):
         if not self._observed_once:
             return
+        if kind in SNAPSHOT_KINDS and self.options["alert_snapshots"] and self.camera is not None:
+            # The alert is sent once the picture is saved, typically 10–20 s later.
+            self.entry.async_create_background_task(
+                self.hass, self._emit_with_snapshot(kind, message), "Creator 5 alert snapshot"
+            )
+            return
+        self._fire(kind, message, None)
+
+    def _fire(self, kind, message, image):
         device = dr.async_get(self.hass).async_get_device_by_identifier(
             (DOMAIN, self.entry.data[CONF_SERIAL]), self.entry.entry_id
         )
@@ -152,8 +174,52 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
                 "device_id": device.id if device else None,
                 "kind": kind,
                 "message": message,
+                "image": image,
             },
         )
+
+    async def _emit_with_snapshot(self, kind, message):
+        """Light on (if it was off), wait, capture, alert, then restore the light."""
+        async with self._snapshot_lock:
+            delay = self.options["snapshot_light_seconds"]
+            # Only toggle a light reported off, so its previous state is known and
+            # restorable. A light already on, or of unknown state, is left alone.
+            switch_light = delay > 0 and self.data.open_state("lightStatus") is False
+            light_confirmed = False
+            if switch_light:
+                try:
+                    await self.async_set_light(True)
+                    light_confirmed = True
+                except PrinterError as err:
+                    # Known firmware 2.0.0 timeout: take the picture regardless.
+                    _LOGGER.debug("Snapshot light could not be confirmed on: %s", err)
+                if light_confirmed:
+                    await _light_warmup(delay)
+            image = None
+            try:
+                frame = await self.camera.async_camera_image()
+                if frame:
+                    image = await async_save_snapshot(self.hass, self.entry.entry_id, kind, frame)
+            except (OSError, PrinterError) as err:
+                _LOGGER.warning("Could not save the alert snapshot: %s", err)
+            self._fire(kind, message, image)
+            if switch_light:
+                await self._restore_light_off(light_confirmed)
+
+    async def _restore_light_off(self, confirmed_on):
+        """Send one off command, and only when the light is (or may be) on."""
+        if not confirmed_on:
+            # The on command's outcome was unconfirmed; check before writing.
+            try:
+                status = await self.client.get_status()
+            except PrinterError:
+                return
+            if status.open_state("lightStatus") is not True:
+                return
+        try:
+            await self.async_set_light(False)
+        except PrinterError as err:
+            _LOGGER.warning("Chamber light may still be on after the alert snapshot: %s", err)
 
     def cancel_event_timers(self):
         for name in ("_pause_timer", "_offline_timer"):

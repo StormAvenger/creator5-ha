@@ -179,7 +179,8 @@ async def test_generated_alert_automation_only_delivers_selected_new_events(hass
         {"entry_id": entry.entry_id, "kind": "completed", "message": "Print completed."},
     )
     await hass.async_block_till_done()
-    assert notifications == [{"title": "Creator 5", "message": "Print completed."}]
+    # No picture was attached to this event, so the phone gets an empty data block.
+    assert notifications == [{"title": "Creator 5", "message": "Print completed.", "data": {}}]
     assert "notify.mobile_app_synthetic_phone" in notification_targets(hass)
     assert await hass.config_entries.async_unload(entry.entry_id)
 

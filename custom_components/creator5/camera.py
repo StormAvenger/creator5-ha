@@ -21,9 +21,10 @@ BOUNDARY = "creator5frame"
 
 async def async_setup_entry(hass, entry, async_add_entities):
     if entry.runtime_data.options["camera_enabled"]:
-        async_add_entities(
-            [Creator5Camera(entry.runtime_data, entry.data[CONF_SERIAL], entry.data[CONF_HOST])]
-        )
+        camera = Creator5Camera(entry.runtime_data, entry.data[CONF_SERIAL], entry.data[CONF_HOST])
+        # Alert snapshots share this entity's single upstream camera connection.
+        entry.runtime_data.camera = camera
+        async_add_entities([camera])
 
 
 class Creator5Camera(Creator5Entity, Camera):

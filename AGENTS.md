@@ -195,3 +195,10 @@ HA installation/restart, paid features or protocol probing are authorized as tes
 Future protocol research is a documented backlog, using public protocol facts and
 authorized stock LAN behavior, with no bypass, firmware modification or generic
 command interface. Preserve unrelated untracked duplicates.
+
+On 2026-11-06 the owner approved 0.6.1 reliability fixes and then requested camera
+pictures on the existing alerts: switch the chamber light on, wait about 10 s,
+grab a picture, then restore the light. This supersedes the earlier no-recording
+rule for single alert pictures only, saved to HA's local media folder; no video,
+timelapse or cloud storage. Combined as 0.7.0 on fix/reliability-0.6.1 (draft PR
+#5). Pictures are opt-in. No live HA install, light test or printer write was done.

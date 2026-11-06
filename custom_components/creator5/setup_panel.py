@@ -200,6 +200,30 @@ def notification_targets(hass):
     return targets
 
 
+def alert_data(target):
+    """Message, plus the alert's camera picture when the integration attached one."""
+    if target.startswith("notify."):
+        # Android reads `image`; iOS reads `attachment`. Both accept media paths and
+        # fetch them with the app's own Home Assistant login.
+        return {
+            "title": "Creator 5",
+            "message": "{{ trigger.event.data.message }}",
+            "data": (
+                "{{ {'image': trigger.event.data.image, 'attachment': "
+                "{'url': trigger.event.data.image, 'content-type': 'jpeg'}} "
+                "if trigger.event.data.image else {} }}"
+            ),
+        }
+    # Notification-panel images cannot load authenticated media; point to it instead.
+    return {
+        "title": "Creator 5",
+        "message": (
+            "{{ trigger.event.data.message }}{% if trigger.event.data.image %} "
+            "A camera picture was saved in Media → creator5.{% endif %}"
+        ),
+    }
+
+
 def alert_config(entry, target, kinds):
     return {
         "alias": f"{entry.title} · Printer alerts",
@@ -217,12 +241,7 @@ def alert_config(entry, target, kinds):
                 "value_template": "{{ trigger.event.data.kind in " + repr(kinds) + " }}",
             }
         ],
-        "actions": [
-            {
-                "action": target,
-                "data": {"title": "Creator 5", "message": "{{ trigger.event.data.message }}"},
-            }
-        ],
+        "actions": [{"action": target, "data": alert_data(target)}],
         "mode": "queued",
         "max": 10,
     }

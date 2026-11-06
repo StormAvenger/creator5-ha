@@ -67,7 +67,9 @@
           "rail_lubrication_hours": "Rail-lubrication reminder interval (printing hours; 0 disables)",
           "nozzle_inspection_hours": "Nozzle-inspection reminder interval (printing hours; 0 disables)",
           "show_setup_sidebar": "Show Creator 5 tools in the sidebar",
-          "file_controls": "Enable file uploads, reprints and cancellation (admin confirmation required)"
+          "file_controls": "Enable file uploads, reprints and cancellation (admin confirmation required)",
+          "alert_snapshots": "Attach a camera picture to alerts (needs the printer camera enabled)",
+          "snapshot_light_seconds": "Alert picture: seconds to light the chamber first (0 = don't switch the light)"
         }
       }
     },

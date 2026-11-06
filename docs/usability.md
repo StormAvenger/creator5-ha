@@ -23,6 +23,41 @@ The admin setup page is separate from the dashboard. If its usual sidebar addres
 is occupied, the integration uses an available suffix and preserves the existing panel.
 Headless HA installations keep monitoring without loading a frontend.
 
+## Alert pictures
+
+Enable **Attach a camera picture to alerts** in Configure (the printer camera must
+be enabled too). For completed, bed-cooled, error and prolonged-pause alerts:
+
+1. If the chamber light reports off, the integration switches it on and waits the
+   configured time (default 10 s, 0–30) for the light and camera exposure to settle.
+2. It grabs one frame through the existing camera entity and saves it to
+   **Media → creator5**, keeping the 20 most recent pictures per printer.
+3. It sends the alert with the picture, then switches the light back off.
+
+A light that is already on, or whose state is unknown, is left alone. Set the delay
+to 0 to never switch the light. If the light command is unconfirmed (the known
+firmware 2.0.0 timeout), the picture is still taken without waiting; the light is
+switched off afterwards only if a fresh status read reports it on. Each command is
+sent at most once. Alerts with pictures arrive about 10–20 seconds later than
+without. Connection-lost and maintenance alerts never include a picture. Reloading
+the integration during the few seconds the light is on can leave it on.
+
+Phone alerts show the picture (Android `image`, iOS `attachment`); the Companion app
+fetches it with its own login, and the file is not made public. Home Assistant
+notification-panel alerts can't display authenticated media, so they say a picture
+was saved instead.
+
+**Existing alert automations are not changed.** To get pictures, delete your Creator
+5 alert automation and click **Create alerts** again, or add this to its notify
+action in YAML:
+
+```yaml
+data: >-
+  {{ {'image': trigger.event.data.image, 'attachment':
+  {'url': trigger.event.data.image, 'content-type': 'jpeg'}}
+  if trigger.event.data.image else {} }}
+```
+
 ## Choose notifications
 
 On **Creator 5 tools**, choose **Home Assistant notifications** or a registered

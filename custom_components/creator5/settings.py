@@ -49,7 +49,7 @@ def validated_options(data, host):
             "Camera URL must be the configured printer's HTTP MJPEG stream on port 8080"
         )
     result = {"poll_seconds": interval, "camera_enabled": enabled, "camera_stream_url": source}
-    for key in ("show_setup_sidebar", "file_controls"):
+    for key in ("show_setup_sidebar", "file_controls", "alert_snapshots"):
         value = data.get(key, False)
         if type(value) is not bool:
             raise ValueError("Sidebar and file-control preferences must be boolean")
@@ -58,6 +58,7 @@ def validated_options(data, host):
         ("bed_cooled_c", 40, 20, 70),
         ("pause_alert_minutes", 10, 1, 120),
         ("offline_alert_minutes", 2, 1, 30),
+        ("snapshot_light_seconds", 10, 0, 30),
         ("bed_cleaning_hours", 0, 0, 10000),
         ("rail_lubrication_hours", 0, 0, 10000),
         ("nozzle_inspection_hours", 0, 0, 10000),
