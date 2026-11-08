@@ -199,6 +199,9 @@ class Creator5OptionsFlow(OptionsFlow):
             vol.Required("show_setup_sidebar", default=current["show_setup_sidebar"]): bool,
             vol.Required("file_controls", default=current["file_controls"]): bool,
             vol.Required("alert_snapshots", default=current["alert_snapshots"]): bool,
+            vol.Required(
+                "auto_dismiss_completion", default=current["auto_dismiss_completion"]
+            ): bool,
             vol.Optional("camera_stream_url", default=current["camera_stream_url"]): str,
         }
         for key, low, high in (
@@ -206,6 +209,7 @@ class Creator5OptionsFlow(OptionsFlow):
             ("pause_alert_minutes", 1, 120),
             ("offline_alert_minutes", 1, 30),
             ("snapshot_light_seconds", 0, 30),
+            ("auto_dismiss_minutes", 1, 240),
             ("bed_cleaning_hours", 0, 10000),
             ("rail_lubrication_hours", 0, 10000),
             ("nozzle_inspection_hours", 0, 10000),

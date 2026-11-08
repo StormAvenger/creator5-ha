@@ -228,3 +228,6 @@ filenames or camera URLs in diagnostics, logs or public fixtures.
 - 2026-11-06: Owner adopted four clarifications reviewed with ChatGPT: agent vs.
   owner printer control (rule 1), archive entries never active, test requirements
   split by HA/client, and private in-HA image storage vs. logs/diagnostics.
+- 2026-11-07: Owner requested 0.7.2 optional automatic dismissal of the
+  print-complete screen after a chosen delay. Supersedes "never acknowledge
+  completion automatically" for that opt-in option only; still off by default.

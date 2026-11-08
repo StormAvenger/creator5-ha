@@ -19,11 +19,28 @@ buttons, number fields, dropdowns and a switch then appear on the device.
 | Printer settings | Speed override; auto-shutdown switch and delay | Speed while printing; shutdown configuration only while ready |
 | Temperature targets | Bed, four nozzles, Pro chamber | Ready, printing or paused; no chamber control for non-Pro |
 
-**Completion acknowledgement is never automatic.** It tells the printer that the
-platform has been cleared; it cannot check that the object was physically removed.
-If desired, use Home Assistant's automation editor to call the acknowledge button
-only after your own conditions are satisfied. No automation is installed or enabled
-by this integration. Acknowledgement never starts another print.
+**Completion acknowledgement tells the printer the platform has been cleared**; it
+cannot check that the object was physically removed. It never starts another print.
+By default it only happens when you press the button (or your own automation does).
+
+### Automatic dismissal of the print-complete screen (optional, off by default)
+
+Enable **Automatically dismiss the print-complete screen** in Configure and choose
+the delay (1–240 minutes, default 10). Separate from the job-controls group.
+
+- The countdown starts when the printer shows its completed screen (including when
+  HA first sees a printer already sitting on it). After the delay, one acknowledgement
+  is sent; the printer must still report completed, and the result is verified.
+- Pressing the button yourself, or starting a new print, cancels the countdown.
+- A failed or unconfirmed attempt is never retried for that print; the screen stays
+  until you press it. If the printer is offline when the delay ends, nothing is sent
+  and a fresh countdown starts once it is seen on the completed screen again.
+
+**Trade-off:** that screen is the printer's check that the bed is clear. While it
+shows, a new job can't start. Once it's dismissed, a print sent remotely (slicer,
+vendor app, or this integration's reprint) could start on top of a part left on the
+bed. Starting the next print at the printer yourself is unaffected. Choose a delay
+long enough that you'd normally have removed the part.
 
 ## Limits and behavior
 

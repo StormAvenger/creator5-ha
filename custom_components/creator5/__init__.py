@@ -14,6 +14,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util import dt as dt_util
 
 from .alerts import Creator5Alerts
+from .auto_dismiss import AutoDismiss
 from .const import CONF_CHECK_CODE, CONF_MODEL, CONF_SERIAL, DOMAIN, MODELS
 from .creator5py import AuthenticationError, Creator5Client, PrinterError, PrinterStatus
 from .creator5py.client import ControlError
@@ -117,6 +118,7 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
         # Set by the camera platform when camera viewing is enabled.
         self.camera = None
         self.alerts = Creator5Alerts(self)
+        self.auto_dismiss = AutoDismiss(self)
         self.normal_interval = timedelta(seconds=self.options["poll_seconds"])
         super().__init__(
             hass,
@@ -160,6 +162,7 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
 
     def cancel_event_timers(self):
         self.alerts.cancel_timers()
+        self.auto_dismiss.cancel()
 
     def publish_status(self, status):
         """Share a verified status returned by a control command."""
@@ -174,6 +177,7 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
         self._update_completion(status)
         events = self.history.observe(status, self.last_successful_update, self.options)
         self.alerts.observe(status, events)
+        self.auto_dismiss.observe(status)
 
     def record_service(self, key):
         self.history.record_service(key, self.data.lifetime_print_hours, dt_util.utcnow())
@@ -197,6 +201,15 @@ class Creator5Coordinator(DataUpdateCoordinator[PrinterStatus]):
         # The client verifies the light state before publishing the shared snapshot.
         try:
             status = await self.client.set_light(on)
+        except ControlError as err:
+            self.last_control_failure_stage = err.stage
+            raise
+        self.publish_status(status)
+
+    async def async_dismiss_completion(self):
+        """Owner-enabled automatic acknowledgement; not gated by job controls."""
+        try:
+            status = await self.client.dismiss_completion()
         except ControlError as err:
             self.last_control_failure_stage = err.stage
             raise

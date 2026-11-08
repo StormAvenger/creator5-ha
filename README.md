@@ -31,13 +31,15 @@ are very welcome. This project is not affiliated with or endorsed by FlashForge.
 - On-demand recent-file browser and previews; optional upload-only, reprint and confirmed cancellation.
 - Guided native dashboard and optional notification setup, with an optional sidebar shortcut.
 - Optional camera pictures on alerts, briefly switching on the chamber light if it was off.
+- Optional automatic dismissal of the print-complete screen after a chosen delay.
 - Persisted last-print summary and a configurable bed-cooled indicator.
 - User-set maintenance reminders and selected vendor-verified error explanations.
 - Shared status polling every 10 seconds by default, configurable from 5–300 seconds.
 
 New control groups are **off by default** and enabled individually in Configure.
-Completion acknowledgement only runs when its button is pressed or called by your
-own automation. Slot edits change metadata, not filament loading. Material
+Completion acknowledgement runs when its button is pressed, by your own automation,
+or, if you enable it, automatically after a delay you choose (see the trade-off in
+the controls guide). Slot edits change metadata, not filament loading. Material
 assignments remain manual; the integration does not detect which slot feeds each tool.
 See [controls, limits and validation status](docs/controls.md).
 
@@ -190,8 +192,8 @@ node tests/frontend/test_setup.mjs
 ```
 
 HA runtime tests use a separate Python 3.14 environment pinned to HA 2026.10.1.
-Version 0.7.1 passes 252 client tests, 142 HA tests and 24 frontend workflow checks.
-See [validation and physical-test limitations](docs/releases/0.7.1.md). Earlier
+Version 0.7.2 passes 252 client tests, 153 HA tests and 24 frontend workflow checks.
+See [validation and physical-test limitations](docs/releases/0.7.2.md). Earlier
 public HACS download and fresh authenticated Pro setup were also verified. This does not establish compatibility with every printer or HA version.
 Tests use synthetic data and do not contact a printer. The same checks, plus HACS and
 hassfest validation, run in GitHub Actions on standard free runners for this public

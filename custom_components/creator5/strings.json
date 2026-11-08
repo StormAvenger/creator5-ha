@@ -69,7 +69,9 @@
           "show_setup_sidebar": "Show Creator 5 tools in the sidebar",
           "file_controls": "Enable file uploads, reprints and cancellation (admin confirmation required)",
           "alert_snapshots": "Attach a camera picture to alerts (needs the printer camera enabled)",
-          "snapshot_light_seconds": "Alert picture: seconds to light the chamber first (0 = don't switch the light)"
+          "snapshot_light_seconds": "Alert picture: seconds to light the chamber first (0 = don't switch the light)",
+          "auto_dismiss_completion": "Automatically dismiss the print-complete screen (tells the printer the bed is clear)",
+          "auto_dismiss_minutes": "Minutes after completion before dismissing (1–240)"
         }
       }
     },

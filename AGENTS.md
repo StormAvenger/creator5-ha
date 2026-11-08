@@ -93,9 +93,11 @@ working practices as they stand today.
   fresh model/state first, has bounded inputs, is sent once, and is verified by
   status readback. Never retry a write automatically. Report an unconfirmed
   outcome honestly rather than assuming success.
-- **No unattended actions.** Never acknowledge completion, start a print or
-  cancel automatically. Expose explicit buttons/confirmations; automations are the
-  user's own choice.
+- **No unattended actions** unless the owner opts in. Never start or cancel a
+  print automatically. Completion may be acknowledged automatically only through
+  the owner-enabled auto-dismiss option (off by default, one verified attempt per
+  completion). Otherwise expose explicit buttons/confirmations; automations are
+  the user's own choice.
 - **Saving options sends no commands.** New behavior that changes what the
   integration does (sends commands, captures images, notifies) is off by default.
 - **Unknown stays unknown.** Missing, malformed or out-of-range fields become

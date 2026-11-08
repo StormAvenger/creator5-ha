@@ -19,7 +19,7 @@ async def async_get_config_entry_diagnostics(
         "control_scope": ["chamber_light"]
         + [
             group
-            for group in (*CONTROL_GROUPS, "file_controls")
+            for group in (*CONTROL_GROUPS, "file_controls", "auto_dismiss_completion")
             if entry.options.get(group) is True
         ],
         "last_control_failure_stage": (
