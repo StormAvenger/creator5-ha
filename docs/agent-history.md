@@ -231,3 +231,5 @@ filenames or camera URLs in diagnostics, logs or public fixtures.
 - 2026-11-07: Owner requested 0.7.2 optional automatic dismissal of the
   print-complete screen after a chosen delay. Supersedes "never acknowledge
   completion automatically" for that opt-in option only; still off by default.
+- 2026-11-11: Owner adopted a standard header for every update post (release
+  notes, PR descriptions, issue status replies): see docs/update-posts.md.
