@@ -136,6 +136,10 @@ working practices as they stand today.
   `pyproject.toml`, add `docs/releases/<version>.md`, update README test counts,
   then publish a GitHub release tagged `v<version>` (HACS updates come from
   releases). Release notes state what was and wasn't validated on hardware.
+- **Update posts.** Release notes, PR descriptions and issue replies that
+  announce a fix or status start with the short header in
+  [docs/update-posts.md](docs/update-posts.md): an "In short" line, a type label
+  and "Should you update?". Security summaries stay generic.
 - **Docs.** Update the user docs when behavior changes. More documentation is
   welcome; keep each doc focused and current, and record history in release notes
   or docs/agent-history.md rather than rewriting the past.
